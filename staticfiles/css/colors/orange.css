@@ -1,0 +1,167 @@
+.navbar-default .navbar-toggle .icon-bar {
+    background-color: #e41c2c;
+}
+
+.main-menu .navbar-default .navbar-nav .active a {
+    color: #e41c2c;
+}
+
+.main-menu nav li a::after {
+    background: #e41c2c;
+}
+
+.typer {
+    color: #e41c2c !important;
+}
+
+.banner-text h2 {
+    color: #e41c2c;
+}
+
+.book-btn a {
+    background: #e41c2c;
+    border: 3px solid #e41c2c;
+}
+
+.book-btn a:hover {
+    border: 3px solid #f04900;
+}
+
+.hvr-underline-from-center::before {
+    background: #f04900;
+}
+
+.block-title {
+    color: #e41c2c;
+}
+
+.item-type-zoom .item-hover:hover::before {
+    background: rgba(228, 28, 44, 0.5);
+}
+
+.special-box .owl-theme .owl-controls .owl-page.active span {
+    background: #e41c2c;
+}
+
+.offer-item div h3 {
+    color: #e41c2c;
+}
+
+.tab-menu .is-active {
+    background: #e41c2c;
+}
+
+.tab-menu .slick-arrow.slick-prev {
+    background: #e41c2c url(../../images/back.png) no-repeat center;
+    background-position: 2px 4px;
+}
+
+.tab-menu .slick-arrow.slick-next {
+    background: #e41c2c url(../../images/next.png) no-repeat center;
+    background-position: 7px 4px;
+}
+
+.offer-item .offer-price {
+    border: 1px solid #e41c2c;
+}
+
+.sf-team:hover .text-col {
+    background-color: #e41c2c;
+}
+
+.gal-item a::after {
+    background-color: rgba(228, 28, 44, 0.75);
+}
+
+.overlay i:hover {
+    border: 1px solid #e41c2c;
+    color: #e41c2c;
+}
+
+.blog-btn-v a {
+    background: #e41c2c;
+    border: 3px solid #e41c2c;
+}
+
+.book-srv a {
+    background: #e41c2c;
+    border: 3px solid #e41c2c;
+}
+
+.panel-pricing .panel-heading {
+    background: #e41c2c;
+}
+
+.panel-pricing {
+    border: 1px solid #e41c2c;
+}
+
+.panel-body p strong span {
+    color: #e41c2c;
+}
+
+.pricing-main .panel-footer a {
+    background: #e41c2c;
+    border: 3px solid #e41c2c;
+}
+
+.pricing-main .panel-footer a:hover {
+    border: 3px solid #f04900;
+}
+
+.reserve-book-btn button {
+    background: #e41c2c;
+    border: 3px solid #e41c2c;
+}
+
+.reserve-book-btn button:hover a {
+    color: #000000;
+}
+
+.footer-news form a {
+    background: #e41c2c;
+}
+
+.footer-news form a:hover {
+    border: 2px dotted #e41c2c;
+}
+
+.footer-box-a h3 {
+    color: #e41c2c;
+}
+
+.footer-box-b h3 {
+    color: #e41c2c;
+}
+
+.footer-box-c h3 {
+    color: #e41c2c;
+}
+
+.footer-box-d h3 {
+    color: #e41c2c;
+}
+
+.footer-box-c p a:hover {
+    color: #e41c2c;
+}
+
+.footer-box-b ul li a:hover {
+    color: #e41c2c;
+}
+
+.footer-box .socials-box a:hover .social-circle-border {
+    color: #e41c2c;
+}
+
+.footer-box-c p i {
+    color: #e41c2c;
+}
+
+.copyright-main {
+    background: #e41c2c;
+}
+
+#color-panel a.panel-button:hover {
+    color: #e41c2c;
+}
