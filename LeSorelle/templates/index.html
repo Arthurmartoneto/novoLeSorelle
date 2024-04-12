@@ -21,6 +21,7 @@
     <!-- Site Icons -->
     <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon" />
     <link rel="apple-touch-icon" href="{% static 'images/apple-touch-icon.png' %}">
+    
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
@@ -34,14 +35,14 @@
     <!-- Modernizer -->
     <script src="{% static 'js/modernizer.js' %}"></script>
 
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
+    <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
+
 
 </head>
 
 <body>
+
+    <!-- site-header -->
     <div id="site-header">
         <header id="header" class="header-block-top">
             <div class="container">
@@ -50,6 +51,7 @@
 
                         <!-- navbar -->
                         <nav class="navbar navbar-default" id="mainNav">
+
                             <div class="navbar-header">
                                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
                                     <span class="sr-only">Toggle navigation</span>
@@ -59,23 +61,25 @@
                                 </button>
                                 <div class="logo">
                                     <a class="navbar-brand js-scroll-trigger logo-header" href="#">
-                                        <img src="images/logo.png" alt="">
+                                        <img src="{% static 'images/logo.png' %}" alt="">
                                     </a>
                                 </div>
                             </div>
+
                             <div id="navbar" class="navbar-collapse collapse">
                                 <ul class="nav navbar-nav navbar-right">
                                     <li class="active"><a href="#banner">Home</a></li>
-                                    <li><a href="#about">About us</a></li>
+                                    <li><a href="#about">Sobre Nós</a></li>
                                     <li><a href="#menu">Menu</a></li>
-                                    <li><a href="#our_team">Team</a></li>
+                                    <li><a href="#our_team">Time</a></li>
                                     <li><a href="#gallery">Gallery</a></li>
                                     <li><a href="#blog">Blog</a></li>
-                                    <li><a href="#pricing">pricing</a></li>
+                                    <li><a href="#pricing">Preços</a></li>
                                     <li><a href="#reservation">Reservaion</a></li>
-                                    <li><a href="#footer">Contact us</a></li>
+                                    <li><a href="#footer">Contato</a></li>
                                 </ul>
                             </div>
+
                             <!-- end nav-collapse -->
                         </nav>
                         <!-- end navbar -->
@@ -89,32 +93,28 @@
         <!-- end header -->
     </div>
 	<!-- end site-header -->
-	
+
+	<!-- banner -->
     <div id="banner" class="banner full-screen-mode parallax">
         <div class="container pr">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <div class="banner-static">
                     <div class="banner-text">
                         <div class="banner-cell">
-                            <h1>Dinner with us  <span class="typer" id="some-id" data-delay="200" data-delim=":" data-words="Friends:Family:Officemates" data-colors="red"></span><span class="cursor" data-cursorDisplay="_" data-owner="some-id"></span></h1>
-                            <h2>Accidental appearances </h2>
-                            <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diem nonummy nibh euismod</p>
+                            <h1>Seja <span class="typer" id="some-id" data-delay="200" data-delim=":" data-words="Bem Vindo" data-colors="red"></span><span class="cursor" data-cursorDisplay="_" data-owner="some-id"></span></h1>
+                            <h2>Melhor casa de Massas do DF</h2>
+                            <p>Venha conhecer nossa casa de Massas no Sudoeste</p>
                             <div class="book-btn">
-                                <a href="#reservation" class="table-btn hvr-underline-from-center">Book my Table</a>
+                                <a href="#reservation" class="table-btn hvr-underline-from-center">Reserve Minha Mesa</a>
                             </div>
                             <a href="#about">
                                 <div class="mouse"></div>
                             </a>
                         </div>
-                        <!-- end banner-cell -->
                     </div>
-                    <!-- end banner-text -->
                 </div>
-                <!-- end banner-static -->
             </div>
-            <!-- end col -->
         </div>
-        <!-- end container -->
     </div>
     <!-- end banner -->
 
@@ -1181,23 +1181,14 @@
 
     <a href="#" class="scrollup" style="display: none;">Scroll</a>
 
-    <section id="color-panel" class="close-color-panel">
-        <a class="panel-button gray2"><i class="fa fa-cog fa-spin fa-2x"></i></a>
-        <!-- Colors -->
-        <div class="segment">
-            <h4 class="gray2 normal no-padding">Color Scheme</h4>
-            <a title="orange" class="switcher orange-bg"></a>
-            <a title="strong-blue" class="switcher strong-blue-bg"></a>
-            <a title="moderate-green" class="switcher moderate-green-bg"></a>
-            <a title="vivid-yellow" class="switcher vivid-yellow-bg"></a>
-        </div>
-    </section>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <!-- ALL JS FILES -->
-    <script src="js/all.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <!-- ALL PLUGINS -->
-    <script src="js/custom.js"></script>
+    <script src="{% static 'js/all.js' %}"></script>
+    <script src="{% static 'js/base.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+
 </body>
 
 </html>
