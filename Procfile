@@ -1,1 +1,1 @@
-web: guncorn LeSorelle.wsgi --log-file -
+web: gunicorn LeSorelle.wsgi --log-file -
