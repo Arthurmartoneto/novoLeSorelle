@@ -29,8 +29,10 @@ DEBUG = True
 ALLOWED_HOSTS = ['novolesorelle-production.up.railway.app', '127.0.0.1', 'www.lessorellemassas.com.br']
 
 # FORM SUBMISSION
-# Comment out the following line and place your railway URL, and your production URL in the array.
-# CSRF_TRUSTED_ORIGINS = ["*"]
+CSRF_TRUSTED_ORIGINS = [
+    'https://novolesorelle-production.up.railway.app',
+    # Adicione outras origens confiáveis, se necessário
+]
 
 # Application definition
 
@@ -53,11 +55,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
-]
-
-CORS_ORIGIN_WHITELIST = [
-    'https://novolesorelle-production.up.railway.app',
-    # Adicione outras origens que você deseja permitir, se houver
 ]
 
 ROOT_URLCONF = 'mysite.urls'
