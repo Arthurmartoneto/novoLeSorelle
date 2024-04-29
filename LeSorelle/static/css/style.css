@@ -1849,3 +1849,21 @@ textarea:focus, input:focus, select:focus, .bootstrap-select .dropdown-toggle:fo
 .vivid-yellow-bg{
 	background: #fdcb03;
 }
+
+.dropdown-menu-dark {
+    background-color: #333; /* Defina a cor de fundo escura desejada */
+}
+
+.dropdown-menu-dark .dropdown-link {
+    padding: 10px;
+    color: white !important; /* Defina a cor do texto dentro do dropdown */
+    text-decoration: none !important; /* Remova qualquer decoração de texto */
+}
+
+.dropdown-menu-dark .dropdown-link::after {
+    display: none; /* Remova o pseudo-elemento ::after */
+}
+
+.dropdown-menu-dark .dropdown-link::before {
+    display: none; /* Remova o pseudo-elemento ::after */
+}
