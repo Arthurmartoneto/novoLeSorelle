@@ -25,7 +25,7 @@ class Reserva(models.Model):
     telefone = models.CharField(max_length=20)
     food = models.ForeignKey(Food, on_delete=models.CASCADE)  # Certifique-se de que o modelo Food esteja importado corretamente
     peso = models.CharField(max_length=10, null=True)
-    date = models.DateField()
+    date = models.DateField(null=True)
     hora = models.TimeField()
 
     def __str__(self):

@@ -4,75 +4,59 @@
     -ms-text-size-adjust:100%;
     -webkit-text-size-adjust:100%
 }
-
 body{
     margin:0
 }
-
-.article,aside,details,figcaption,figure,footer,header,hgroup,main,menu,nav,section,summary{
+article,aside,details,figcaption,figure,footer,header,hgroup,main,menu,nav,section,summary{
     display:block
 }
-
-.audio,canvas,progress,video{
+audio,canvas,progress,video{
     display:inline-block;
     vertical-align:baseline
 }
-
-.audio:not([controls]){
+audio:not([controls]){
     display:none;
     height:0
 }
-
 [hidden],template{
     display:none
 }
-
-.a{
+a{
     background-color:transparent
 }
-
-.a:active,a:hover{
+a:active,a:hover{
     outline:0
 }
-
-.abbr[title]{
+abbr[title]{
     border-bottom:1px dotted
 }
-
-.b,strong{
+b,strong{
     font-weight:bold
 }
-
-.dfn{
+dfn{
     font-style:italic
 }
-
-.h1{
+h1{
     font-size:2em;
     margin:0.67em 0
 }
-
-.mark{
+mark{
     background:#ff0;
     color:#000
 }
-
-.small{
+small{
     font-size:80%
 }
-
-.sub,sup{
+sub,sup{
     font-size:75%;
     line-height:0;
     position:relative;
     vertical-align:baseline
 }
-
-.sup{
+sup{
     top:-0.5em
 }
-
-.sub{
+sub{
     bottom:-0.25em
 }
 img{
@@ -1249,6 +1233,9 @@ a.bg-primary:hover,a.bg-primary:focus{
 }
 .bg-success{
     background-color:#dff0d8
+}
+.bg-dark{
+    background-color:#333
 }
 a.bg-success:hover,a.bg-success:focus{
     background-color:#c1e2b3
@@ -3882,7 +3869,7 @@ textarea.input-group-sm>.form-control,textarea.input-group-sm>.input-group-addon
 }
 .navbar-default .navbar-nav>.active>a,.navbar-default .navbar-nav>.active>a:hover,.navbar-default .navbar-nav>.active>a:focus{
     color:#555;
-    background-color:#e7e7e7
+    background-color:transparent
 }
 .navbar-default .navbar-nav>.disabled>a,.navbar-default .navbar-nav>.disabled>a:hover,.navbar-default .navbar-nav>.disabled>a:focus{
     color:#ccc;
@@ -3901,7 +3888,7 @@ textarea.input-group-sm>.form-control,textarea.input-group-sm>.input-group-addon
     /*border-color:#e7e7e7*/
 }
 .navbar-default .navbar-nav>.open>a,.navbar-default .navbar-nav>.open>a:hover,.navbar-default .navbar-nav>.open>a:focus{
-    background-color:#e7e7e7;
+    background-color:transparent;
     color:#555
 }
 @media (max-width:767px){
