@@ -25,6 +25,7 @@ class IndexView(TemplateView):
         context = super().get_context_data(**kwargs)
         context['user'] = self.request.user
         context['foods'] = Food.objects.all()  # Passe todos os alimentos para o contexto
+        context['form'] = ReservaForm()
         return context
     
     def post(self, request, *args, **kwargs):

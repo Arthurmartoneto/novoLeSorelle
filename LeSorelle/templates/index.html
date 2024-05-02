@@ -85,7 +85,7 @@
                       <a href="#blog">Blog</a>
                     </li>
                     <li>
-                      <a href="#reservation">Reservaion</a>
+                      <a href="#reservation">Reservas</a>
                     </li>
                     <li>
                       <a href="#footer">Contato</a>
@@ -94,17 +94,17 @@
                       <!-- Dropdown para usuários autenticados -->
                       <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ user.username }} <span class="caret"></span></a>
-                        <ul class="dropdown-menu bg-dark">
+                        <ul class="dropdown-menu dropdown-menu-dark">
                           <!-- Links para o dashboard, configurações e logout -->
                           <li>
-                            <a class="dropdown-link" href="{% url 'dashboard' %}">Dashboard</a>
+                            <a class="dropdown-link" style="padding: 5px;" href="{% url 'dashboard' %}">Dashboard</a>
                           </li>
                           <li>
-                            <a class="dropdown-link" href="#">Configurações</a>
+                            <a class="dropdown-link" style="padding: 5px;" href="#">Configurações</a>
                           </li>
                           <li role="separator" class="divider"></li>
                           <li>
-                            <a class="dropdown-link" href="{% url 'login' %}">Logout</a>
+                            <a class="dropdown-link" style="padding: 5px;" href="{% url 'login' %}">Logout</a>
                           </li>
                         </ul>
                       </li>
@@ -904,27 +904,18 @@
 
                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                   <div class="form-box">
-                    <input type="date" name="date" placeholder="Data de Retirada" />
+                    <input type="date" id="id_data" name="date" placeholder="Data de Retirada" required />
                   </div>
                 </div>
                 <!-- end col -->
 
                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                  <div class="form-box">
-                    <input type="time" name="hora" placeholder="Horário" />
-                  </div>
+                  <div class="form-box">{{ form.hora }}</div>
                 </div>
                 <!-- end col -->
 
                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                  <div class="form-box">
-                    <select name="peso" id="peso" class="selectpicker" required>
-                      <option selected disabled>Peso</option>
-                      <option value="400g">400g</option>
-                      <option value="500g">500g</option>
-                      <option value="1KG">1KG</option>
-                    </select>
-                  </div>
+                  <div class="form-box">{{ form.peso }}</div>
                 </div>
                 <!-- end col -->
 
@@ -1127,3 +1118,38 @@
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
   </body>
 </html>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Referência ao formulário
+    var form = document.getElementById('reserva-form')
+  
+    // Evento de envio do formulário
+    form.addEventListener('submit', function (event) {
+      // Referências aos campos obrigatórios
+      var dateField = document.getElementsByName('date')[0]
+      var horaField = document.getElementsByName('hora')[0]
+      var foodField = document.getElementById('preferred_food')
+  
+      // Variável para armazenar os nomes dos campos faltando
+      var camposFaltando = []
+  
+      // Verifica se os campos obrigatórios foram preenchidos
+      if (!dateField.value) {
+        camposFaltando.push('Data de Retirada')
+      }
+      if (!horaField.value) {
+        camposFaltando.push('Horário')
+      }
+      if (foodField.selectedIndex === 0) {
+        camposFaltando.push('Prato')
+      }
+  
+      // Se algum campo estiver faltando, impede o envio do formulário e exibe uma mensagem de aviso
+      if (camposFaltando.length > 0) {
+        event.preventDefault()
+        alert('Por favor, preencha os seguintes campos obrigatórios: ' + camposFaltando.join(', '))
+      }
+    })
+  })
+</script>
