@@ -93,7 +93,7 @@
                     {% if user.is_authenticated %}
                       <!-- Dropdown para usuários autenticados -->
                       <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ user.username }} <span class="caret"></span></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ user.first_name }} {{ user.last_name }}<span class="caret"></span></a>
                         <ul class="dropdown-menu dropdown-menu-dark">
                           <!-- Links para o dashboard, configurações e logout -->
                           <li>
@@ -881,19 +881,6 @@
               <!-- form -->
               <form id="reserva-form" class="reservations-box" method="post">
                 {% csrf_token %}
-                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                  <div class="form-box">
-                    <input type="text" name="name_completo" id="name_completo" placeholder="Nome Completo" required />
-                  </div>
-                </div>
-                <!-- end col -->
-
-                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                  <div class="form-box">
-                    <input type="email" name="email" id="email" placeholder="E-mail" required />
-                  </div>
-                </div>
-                <!-- end col -->
 
                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                   <div class="form-box">
@@ -952,26 +939,6 @@
     <!-- reservations-main -->
 
     <div id="footer" class="footer-main">
-      <div class="footer-news pad-top-100 pad-bottom-70 parallax">
-        <div class="container">
-          <div class="row">
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-              <div class="wow fadeIn" data-wow-duration="1s" data-wow-delay="0.1s">
-                <h2 class="ft-title color-white text-center">Newsletter</h2>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit</p>
-              </div>
-              <form>
-                <input type="email" placeholder="Enter your e-mail id" />
-                <a href="#" class="orange-btn"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></a>
-              </form>
-            </div>
-            <!-- end col -->
-          </div>
-          <!-- end row -->
-        </div>
-        <!-- end container -->
-      </div>
-      <!-- end footer-news -->
       <div class="footer-box pad-top-70">
         <div class="container">
           <div class="row">
@@ -983,7 +950,7 @@
               </div>
               <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
                 <div class="footer-box-a">
-                  <h3>About Us</h3>
+                  <h3>Sobre nós</h3>
                   <p>Aenean commodo ligula eget dolor aenean massa. Cum sociis nat penatibu set magnis dis parturient montes.</p>
                   <ul class="socials-box footer-socials pull-left">
                     <li>
@@ -1003,7 +970,7 @@
                     <li>
                       <a href="#">
                         <div class="social-circle-border">
-                          <i class="fa fa-google-plus"></i>
+                          <i class="fa fa-instagram"></i>
                         </div>
                       </a>
                     </li>

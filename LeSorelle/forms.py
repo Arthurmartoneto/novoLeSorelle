@@ -32,10 +32,8 @@ class ReservaForm(forms.ModelForm):
 
     class Meta:
         model = Reserva
-        fields = ['name_completo', 'email', 'telefone', 'food', 'peso', 'date', 'hora']
+        fields = ['telefone', 'food', 'peso', 'date', 'hora']
         widgets = {
-            'name_completo': forms.TextInput(attrs={'class': 'form-control'}),
-            'email': forms.EmailInput(attrs={'class': 'form-control'}),
             'telefone': forms.TextInput(attrs={'class': 'form-control', 'id': 'telefone'}),
             'date': forms.DateInput(attrs={'class': 'form-control'}),
             'food': forms.Select(attrs={'class': 'selectpicker form-control'}),

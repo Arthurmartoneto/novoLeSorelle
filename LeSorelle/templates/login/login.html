@@ -50,13 +50,13 @@
                     <a href="#" class="forgot-pass">Esqueceu a senha?</a>
                   </div>
                   <div class="text-center">
-                    <button type="submit" class="btn btn-primary btn-block enter-btn">Login</button>
+                    <button type="submit" class="btn btn-primary btn-block enter-btn">Entrar</button>
                     <p class="sign-up text-center">
-                      Ainda não tem conta?<a href="{% url 'register' %}">Faça o registro</a>
+                      Ainda não tem conta?<a href="{% url 'register' %}"> Registro</a>
                     </p>
                   </div>
                   {% if error_message %}
-                    <div class="alert alert-danger mt-3" role="alert">{{ error_message }}</div>
+                    <div class="alert alert-danger mt-3" role="alert">Usuário ou senha Inválidos</div>
                   {% endif %}
                 </form>
               </div>

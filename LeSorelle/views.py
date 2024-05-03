@@ -25,7 +25,11 @@ class IndexView(TemplateView):
         context = super().get_context_data(**kwargs)
         context['user'] = self.request.user
         context['foods'] = Food.objects.all()  # Passe todos os alimentos para o contexto
-        context['form'] = ReservaForm()
+        initial_data = {}
+        if self.request.user.is_authenticated:
+            initial_data['name_completo'] = self.request.user.get_full_name()
+            initial_data['email'] = self.request.user.email
+        context['form'] = ReservaForm(initial=initial_data)
         return context
     
     def post(self, request, *args, **kwargs):
@@ -56,6 +60,10 @@ class IndexView(TemplateView):
 class dashboardView(TemplateView):
     template_name = "dashboards.html"
     
+    
+class tablesView(TemplateView):
+    template_name = "tables/tables.html"
+
 
 class loginView(TemplateView):
     template_name = "login/login.html"
@@ -87,9 +95,16 @@ class registerView(TemplateView):
         username = request.POST.get('username')
         email = request.POST.get('email')
         password = request.POST.get('password')
+        confirm_password = request.POST.get('confirm_password')
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+
+        # Verifica se a senha e a confirmação da senha são iguais
+        if password != confirm_password:
+            return render(request, self.template_name, {'error_message': 'As senhas não coincidem'})
 
         # Cria um novo usuário com os detalhes fornecidos
-        user = User.objects.create_user(username=username, email=email, password=password)
+        user = User.objects.create_user(username=username, email=email, password=password, first_name=first_name, last_name=last_name)
 
         # Redireciona para a página de login após o registro
         return redirect('login')
