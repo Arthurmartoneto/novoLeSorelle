@@ -5,16 +5,21 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib import messages
+
+from django.utils import timezone
 
 from django.shortcuts import render, redirect
 
 from django.http import JsonResponse, HttpResponseRedirect
 
-from .forms import ReservaForm
+from .forms import ReservaForm, FoodForm
 
-from .models import Food
+from .models import Food, Reserva
 
 from django.db.models.signals import post_save
+
+import pdb
 # Create your views here.
 
 
@@ -59,6 +64,25 @@ class IndexView(TemplateView):
 
 class dashboardView(TemplateView):
     template_name = "dashboards.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['reservas'] = Reserva.objects.filter(date=timezone.now().date())
+        # Obtém os quatro últimos pratos para a página de dashboard
+        context['foods_dashboard'] = reversed(Food.objects.all().order_by('-id')[:4])
+        # Passa todos os pratos para o modal
+        context['foods_modal'] = Food.objects.all()
+        context['form'] = FoodForm()  # Inicialize o formulário
+        return context
+
+    def post(self, request, *args, **kwargs):
+        form = FoodForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Prato adicionado com sucesso.')  # Mensagem de sucesso
+        else:
+            messages.error(request, 'Não foi possível adicionar o prato. Por favor, verifique os dados e tente novamente.')  # Mensagem de erro
+        return redirect('dashboard')  # Redirecionar para a mesma página com a mensagem
     
     
 class tablesView(TemplateView):

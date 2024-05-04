@@ -13,7 +13,6 @@ class Food(models.Model):
     img = models.ImageField(upload_to='foods/')  # Você precisará do pacote Pillow instalado para usar ImageField
     descricao = models.TextField()
     valor = models.DecimalField(max_digits=10, decimal_places=2)
-    peso = models.CharField(max_length=4, choices=PESO_CHOICES)
 
     def __str__(self):
         return self.name_food
@@ -30,3 +29,6 @@ class Reserva(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.food.name_food} - {self.date} {self.hora}"
+
+    def get_email(self):
+        return self.usuario.email
