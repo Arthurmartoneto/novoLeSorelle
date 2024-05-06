@@ -96,22 +96,27 @@
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ user.first_name }} {{ user.last_name }}<span class="caret"></span></a>
                         <ul class="dropdown-menu dropdown-menu-dark">
                           <!-- Links para o dashboard, configurações e logout -->
+                          {% if user_is_in_dashboard_group %}
+                            <li>
+                              <a class="dropdown-link" style="padding: 5px;" href="{% url 'dashboard' %}">Dashboard</a>
+                            </li>
+                          {% endif %}
                           <li>
-                            <a class="dropdown-link" style="padding: 5px;" href="{% url 'dashboard' %}">Dashboard</a>
+                            <a class="dropdown-link" style="padding: 5px;" href="#">Meus Pedidos</a>
                           </li>
                           <li>
                             <a class="dropdown-link" style="padding: 5px;" href="#">Configurações</a>
                           </li>
                           <li role="separator" class="divider"></li>
                           <li>
-                            <a class="dropdown-link" style="padding: 5px;" href="{% url 'login' %}">Logout</a>
+                            <a class="dropdown-link" style="padding: 5px;" href="{% url 'login' %}">Sair</a>
                           </li>
                         </ul>
                       </li>
                     {% else %}
                       <!-- Botão de "Entrar" para usuários não autenticados -->
                       <li>
-                        <a href="{% url 'register' %}">Entrar</a>
+                        <a href="{% url 'login' %}">Entrar</a>
                       </li>
                     {% endif %}
                   </ul>
@@ -921,7 +926,7 @@
                 <!-- Botão de envio do formulário -->
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <div class="reserve-book-btn text-center">
-                    <button type="submit" class="hvr-underline-from-center">Reservar</button>
+                    <button type="submit" id="reserveButton" class="hvr-underline-from-center">Reservar</button>
                   </div>
                 </div>
                 <!-- end col -->
@@ -948,43 +953,31 @@
                   <img src="images/logo.png" alt="" />
                 </div>
               </div>
+
+              <!-- Footer sobre nos -->
               <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
                 <div class="footer-box-a">
                   <h3>Sobre nós</h3>
-                  <p>Aenean commodo ligula eget dolor aenean massa. Cum sociis nat penatibu set magnis dis parturient montes.</p>
+                  <p>Cada prato é uma obra de arte efêmera, uma explosão de cores, texturas e aromas que despertam os sentidos e contam histórias únicas.</p>
                   <ul class="socials-box footer-socials pull-left">
                     <li>
-                      <a href="#">
+                      <a href="https://api.whatsapp.com/send?phone=556181156312&text=Quero%20pedir%20meu%20prato%20Le%20Sorelle!%20%F0%9F%8D%9D%E2%9C%A8" target="_blank">
                         <div class="social-circle-border">
-                          <i class="fa fa-facebook"></i>
+                          <i class="fa fa-whatsapp"></i>
                         </div>
                       </a>
                     </li>
                     <li>
-                      <a href="#">
-                        <div class="social-circle-border">
-                          <i class="fa fa-twitter"></i>
-                        </div>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
+                      <a href="https://www.instagram.com/lesorellemassas/" target="_blank">
                         <div class="social-circle-border">
                           <i class="fa fa-instagram"></i>
                         </div>
                       </a>
                     </li>
                     <li>
-                      <a href="#">
+                      <a href="https://www.google.com/maps/place/Le+Sorelle/@-15.8025191,-47.9312711,17z/data=!3m2!4b1!5s0x935a306fc2264585:0xe4f6e28d4eda2d16!4m5!3m4!1s0x935a3071ab78b3c3:0xe71a80ea36a49f54!8m2!3d-15.8025243!4d-47.9290824?shorturl=1" target="_blank">
                         <div class="social-circle-border">
-                          <i class="fa fa-pinterest"></i>
-                        </div>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        <div class="social-circle-border">
-                          <i class="fa fa-linkedin"></i>
+                          <i class="fa fa-location-arrow"></i>
                         </div>
                       </a>
                     </li>
@@ -992,7 +985,9 @@
                 </div>
                 <!-- end footer-box-a -->
               </div>
-              <!-- end col -->
+              <!-- Footer sobre nos -->
+
+              <!-- Footer menu -->
               <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
                 <div class="footer-box-b">
                   <h3>New Menu</h3>
@@ -1011,19 +1006,21 @@
                     </li>
                   </ul>
                 </div>
-                <!-- end footer-box-b -->
+                <!-- Footer menu -->
               </div>
-              <!-- end col -->
+              <!-- Footer sobre nos -->
+
+              <!-- Footer Contatos -->
               <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
                 <div class="footer-box-c">
-                  <h3>Contact Us</h3>
+                  <h3>Contatos</h3>
                   <p>
                     <i class="fa fa-map-signs" aria-hidden="true"></i>
-                    <span>6 E Esplanade, St Albans VIC 3021, Australia</span>
+                    <span>CLSW 304 Bloco C - loja 44, St. Sudoeste, Brasília - DF, 70673-633</span>
                   </p>
                   <p>
                     <i class="fa fa-mobile" aria-hidden="true"></i>
-                    <span>+91 80005 89080</span>
+                    <span>61 3041-4751</span>
                   </p>
                   <p>
                     <i class="fa fa-envelope" aria-hidden="true"></i>
@@ -1032,25 +1029,22 @@
                 </div>
                 <!-- end footer-box-c -->
               </div>
-              <!-- end col -->
+              <!-- Footer Contatos -->
+
+              <!-- Footer horaios -->
               <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
                 <div class="footer-box-d">
-                  <h3>Opening Hours</h3>
-
+                  <h3>Horarios de Funcionamento</h3>
                   <ul>
                     <li>
-                      <p>Monday - Thursday</p>
-                      <span>11:00 AM - 9:00 PM</span>
-                    </li>
-                    <li>
-                      <p>Friday - Saturday</p>
-                      <span>11:00 AM - 5:00 PM</span>
+                      <p>Segunda a Sábado</p>
+                      <span>8:00h - 20:00h</span>
                     </li>
                   </ul>
                 </div>
                 <!-- end footer-box-d -->
               </div>
-              <!-- end col -->
+              <!-- Footer horaios -->
             </div>
             <!-- end footer-in-main -->
           </div>
@@ -1061,7 +1055,7 @@
           <div class="container">
             <div class="row">
               <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                <h6 class="copy-title">Direitos Privados &copy; 2024 Le Sorelle Desenvolvido por <a href="https://www.lessorellemassas.com.br/" target="_blank">Arthur Calorio</a></h6>
+                <h6 class="copy-title">Direitos Privados &copy; 2024 Le Sorelle Desenvolvido por <a href="https://www.instagram.com/a.calorio/?next=%2F" target="_blank">Arthur Calorio</a></h6>
               </div>
             </div>
             <!-- end row -->
@@ -1118,5 +1112,16 @@
         alert('Por favor, preencha os seguintes campos obrigatórios: ' + camposFaltando.join(', '))
       }
     })
+  })
+  
+  // Função para desativar o botão após o envio do formulário
+  function disableButton() {
+    document.getElementById('reserveButton').disabled = true
+    document.getElementById('reserveButton').innerText = 'Enviando...'
+  }
+  
+  // Adicionando evento de clique ao botão de reserva
+  document.getElementById('reserva-form').addEventListener('submit', function () {
+    disableButton()
   })
 </script>

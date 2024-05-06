@@ -215,8 +215,12 @@
                       <div class="row">
                         <div class="col-9">
                           <div class="d-flex align-items-center align-self-start">
-                            <h3 class="mb-0">$12.34</h3>
-                            <p class="text-success ml-2 mb-0 font-weight-medium">+3.5%</p>
+                            {% if media_vendas %}
+                              <h3 class="mb-0">{{ media_vendas|floatformat:2 }}</h3>
+                              <p class="text-success ml-2 mb-0 font-weight-medium">+{{ percentual_media_vendas }}%</p>
+                            {% else %}
+                              <h3 class="mb-0">Nenhuma média por hoje</h3>
+                            {% endif %}
                           </div>
                         </div>
                         <div class="col-3">
@@ -225,7 +229,7 @@
                           </div>
                         </div>
                       </div>
-                      <h6 class="text-muted font-weight-normal">Potential growth</h6>
+                      <h6 class="text-muted font-weight-normal">Média de Vendas no Dia</h6>
                     </div>
                   </div>
                 </div>
@@ -445,11 +449,6 @@
                             <tbody>
                               {% for reserva in reservas %}
                                 <tr>
-                                  <td>
-                                    <div class="form-check form-check-muted m-0">
-                                      <label class="form-check-label"><input type="checkbox" class="form-check-input" /></label>
-                                    </div>
-                                  </td>
                                   <td>{{ reserva.usuario.first_name }} {{ reserva.usuario.last_name }}</td>
                                   <td>{{ reserva.get_email }}</td>
                                   <td>{{ reserva.telefone }}</td>
@@ -713,7 +712,8 @@
             </footer>
             <!-- partial -->
           </div>
-          <!-- main-panel ends -->
+          <!-- paineis -->
+
         </div>
         <!-- Direita -->
       </div>
@@ -732,7 +732,7 @@
                 {% csrf_token %}
                 {{ form.as_p }}
                 <div class="modal-footer">
-                  <button type="submit" class="btn btn-primary">Adicionar</button>
+                  <button type="submit" id="submitBtn" class="btn btn-primary">Adicionar</button>
                   <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
                 </div>
               </form>
@@ -815,3 +815,16 @@
     <!-- End custom js for this page -->
   </body>
 </html>
+
+<script>
+  // Função para desativar o botão após o envio do formulário
+function disableButton() {
+  document.getElementById("submitBtn").disabled = true;
+  document.getElementById("submitBtn").innerText = 'Enviando...';
+}
+
+// Adicionando evento de clique ao botão de envio do formulário
+document.getElementById("novoPratoForm").addEventListener("submit", function() {
+  disableButton();
+});
+</script>

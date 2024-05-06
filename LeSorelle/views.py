@@ -1,13 +1,14 @@
 from django.views.generic import TemplateView
 from django.contrib.auth.views import redirect_to_login
 
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 
 from django.utils import timezone
+from datetime import timedelta
 
 from django.shortcuts import render, redirect
 
@@ -18,6 +19,7 @@ from .forms import ReservaForm, FoodForm
 from .models import Food, Reserva
 
 from django.db.models.signals import post_save
+from django.db.models import Sum
 
 import pdb
 # Create your views here.
@@ -34,13 +36,17 @@ class IndexView(TemplateView):
         if self.request.user.is_authenticated:
             initial_data['name_completo'] = self.request.user.get_full_name()
             initial_data['email'] = self.request.user.email
+
+            # Verifica se o usuário pertence ao grupo "Dashboard"
+            user_is_in_dashboard_group = self.request.user.groups.filter(name='Dashboard').exists()
+            context['user_is_in_dashboard_group'] = user_is_in_dashboard_group
+
         context['form'] = ReservaForm(initial=initial_data)
         return context
     
     def post(self, request, *args, **kwargs):
         form = ReservaForm(request.POST)
         if form.is_valid():
-            
             hora = request.POST.get('hora')
             print("hora:", hora)  # Verifica o valor do campo de hora
             # Salva o formulário e retorna uma instância do modelo preenchida com os dados do formulário
@@ -62,17 +68,35 @@ class IndexView(TemplateView):
             return super().get(request, *args, **kwargs)
 
 
-class dashboardView(TemplateView):
+class dashboardView(LoginRequiredMixin, TemplateView):
     template_name = "dashboards.html"
+    login_url = '/login/'  # URL de login padrão, pode ser alterada conforme necessário
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.groups.filter(name='Dashboard').exists():
+            # Se o usuário não pertence ao grupo "Dashboard", redireciona para a página de login
+            return redirect_to_login(request.get_full_path(), self.login_url)
+        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['reservas'] = Reserva.objects.filter(date=timezone.now().date())
+        context['reservas'] = Reserva.objects.order_by('date')
         # Obtém os quatro últimos pratos para a página de dashboard
         context['foods_dashboard'] = reversed(Food.objects.all().order_by('-id')[:4])
         # Passa todos os pratos para o modal
         context['foods_modal'] = Food.objects.all()
         context['form'] = FoodForm()  # Inicialize o formulário
+
+        # Calcular a média de vendas
+        total_vendas = Reserva.objects.aggregate(total_vendas=Sum('food__valor'))
+        total_reservas = Reserva.objects.count()
+        if total_reservas > 0:
+            media_vendas = total_vendas['total_vendas'] / total_reservas
+        else:
+            media_vendas = 0
+
+        context['media_vendas'] = media_vendas
+
         return context
 
     def post(self, request, *args, **kwargs):
@@ -83,6 +107,7 @@ class dashboardView(TemplateView):
         else:
             messages.error(request, 'Não foi possível adicionar o prato. Por favor, verifique os dados e tente novamente.')  # Mensagem de erro
         return redirect('dashboard')  # Redirecionar para a mesma página com a mensagem
+
     
     
 class tablesView(TemplateView):
