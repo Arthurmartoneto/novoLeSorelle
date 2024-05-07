@@ -82,7 +82,7 @@ class dashboardView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['reservas'] = Reserva.objects.order_by('date')
+        context['reservas'] = Reserva.objects.filter(date__gte=date.today()).order_by('date')
         # Obtém os quatro últimos pratos para a página de dashboard
         context['foods_dashboard'] = reversed(Food.objects.all().order_by('-id')[:4])
         # Passa todos os pratos para o modal
@@ -115,6 +115,7 @@ class dashboardView(LoginRequiredMixin, TemplateView):
         # Calcular a soma total do valor das vendas
         soma_total_vendas = sum(vendas_por_dia.values())
         context['soma_total_vendas'] = soma_total_vendas
+        
 
         # Calcular o preço total de cada reserva
         soma_total_preco = 0
@@ -126,9 +127,28 @@ class dashboardView(LoginRequiredMixin, TemplateView):
             reserva.preco_total = reserva.food.valor * peso_decimal
             soma_total_preco += reserva.preco_total
 
-        context['soma_total_preco'] = soma_total_preco
+        # Arredondar a soma total do preço para duas casas decimais
+        soma_total_preco = round(soma_total_preco, 2)
 
+        context['soma_total_preco'] = soma_total_preco
+        
+        # Calcula a diferença entre a soma total do preço e a meta de 500 reais por dia
+        meta_diaria = 100  # Meta de 100 reais por dia
+        total_vendido = soma_total_preco
+        diferenca_meta = total_vendido - meta_diaria  # Calcula a diferença entre o total vendido e a meta
+
+        context['diferenca_meta'] = diferenca_meta
+        context['meta_diaria'] = meta_diaria  # Passa o valor da meta para o contexto
+
+        total_reservas = Reserva.objects.count()
+        meta_diaria_reservas = 10  # Meta de 10 reservas por dia
+        diferenca_meta_reservas = total_reservas - meta_diaria_reservas
+
+        context['diferenca_meta_reservas'] = diferenca_meta_reservas
+        context['meta_diaria_reservas'] = meta_diaria_reservas
+        
         return context
+            
 
     
 class tablesView(TemplateView):
