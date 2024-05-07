@@ -6,7 +6,7 @@ class ReservaForm(forms.ModelForm):
         ('', 'Peso'),
         ('400g', '400g'),
         ('500g', '500g'),
-        ('1KG', '1KG'),
+        ('1000g', '1000g'),
     ]
     
     HORARIOS_CHOICES = [

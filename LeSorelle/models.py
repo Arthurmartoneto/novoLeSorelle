@@ -3,11 +3,6 @@ from django.contrib.auth.models import User
 
 
 class Food(models.Model):
-    PESO_CHOICES = (
-        ('400g', '400g'),
-        ('500g', '500g'),
-        ('1KG', '1KG'),
-    )
     
     name_food = models.CharField(max_length=100)
     img = models.ImageField(upload_to='foods/')  # Você precisará do pacote Pillow instalado para usar ImageField

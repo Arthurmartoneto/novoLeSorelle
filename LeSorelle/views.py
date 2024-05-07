@@ -8,7 +8,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 
 from django.utils import timezone
-from datetime import timedelta
+from datetime import timedelta, date
+
+from decimal import Decimal
 
 from django.shortcuts import render, redirect
 
@@ -19,7 +21,7 @@ from .forms import ReservaForm, FoodForm
 from .models import Food, Reserva
 
 from django.db.models.signals import post_save
-from django.db.models import Sum
+from django.db.models import Sum, F
 
 import pdb
 # Create your views here.
@@ -97,18 +99,37 @@ class dashboardView(LoginRequiredMixin, TemplateView):
 
         context['media_vendas'] = media_vendas
 
+        # Adicionar contagem de vendas por dia
+        vendas_por_dia = {}
+        reservas_por_dia = Reserva.objects.values('date').annotate(total_vendas=Sum('food__valor'))
+        for reserva in reservas_por_dia:
+            data_reserva = reserva['date']
+            vendas_por_dia[data_reserva] = reserva['total_vendas']
+        # Se não houver reservas para um determinado dia, definimos a contagem de vendas como 0
+        dias_sem_vendas = [day for day in (date.today() - timedelta(n) for n in range(7)) if day not in vendas_por_dia]
+        for dia in dias_sem_vendas:
+            vendas_por_dia[dia] = 0
+        
+        context['vendas_por_dia'] = vendas_por_dia
+
+        # Calcular a soma total do valor das vendas
+        soma_total_vendas = sum(vendas_por_dia.values())
+        context['soma_total_vendas'] = soma_total_vendas
+
+        # Calcular o preço total de cada reserva
+        soma_total_preco = 0
+        for reserva in context['reservas']:
+            # Remover "g" do peso e converter para um número decimal
+            peso_sem_g = reserva.peso.replace('g', '')
+            peso_decimal = Decimal(peso_sem_g) / 1000 if peso_sem_g.endswith('kg') else Decimal(peso_sem_g) / 1000
+            # Calcular o preço total multiplicando o valor por kg do alimento pelo peso
+            reserva.preco_total = reserva.food.valor * peso_decimal
+            soma_total_preco += reserva.preco_total
+
+        context['soma_total_preco'] = soma_total_preco
+
         return context
 
-    def post(self, request, *args, **kwargs):
-        form = FoodForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Prato adicionado com sucesso.')  # Mensagem de sucesso
-        else:
-            messages.error(request, 'Não foi possível adicionar o prato. Por favor, verifique os dados e tente novamente.')  # Mensagem de erro
-        return redirect('dashboard')  # Redirecionar para a mesma página com a mensagem
-
-    
     
 class tablesView(TemplateView):
     template_name = "tables/tables.html"
