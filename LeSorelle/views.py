@@ -13,6 +13,7 @@ from datetime import timedelta, date
 from decimal import Decimal
 
 from django.shortcuts import render, redirect
+from django.urls import reverse
 
 from django.http import JsonResponse, HttpResponseRedirect
 
@@ -47,6 +48,10 @@ class IndexView(TemplateView):
         return context
     
     def post(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            # Se o usuário não estiver autenticado, redirecione-o para a página de login
+            return redirect(reverse('login'))
+
         form = ReservaForm(request.POST)
         if form.is_valid():
             hora = request.POST.get('hora')
@@ -63,7 +68,7 @@ class IndexView(TemplateView):
             reserva_instance.save()
             
             # Redireciona o usuário para a página inicial ou outra página, se desejado
-            return HttpResponseRedirect('/')  # Substitua '/' pela URL desejada
+            return redirect('index')  # Substitua '/' pela URL desejada
         else:
             print(form.errors)
             # Se o formulário não for válido, renderize novamente a página com o formulário e os erros
@@ -83,6 +88,7 @@ class dashboardView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['reservas'] = Reserva.objects.filter(date__gte=date.today()).order_by('date')
+        context['reservas_modal'] = Reserva.objects.all()
         # Obtém os quatro últimos pratos para a página de dashboard
         context['foods_dashboard'] = reversed(Food.objects.all().order_by('-id')[:4])
         # Passa todos os pratos para o modal
@@ -117,7 +123,23 @@ class dashboardView(LoginRequiredMixin, TemplateView):
         context['soma_total_vendas'] = soma_total_vendas
         
 
-        # Calcular o preço total de cada reserva
+        # Calcular o preço total de cada reserva no modal
+        soma_total_preco_modal = 0
+        for reserva_modal in context['reservas_modal']:
+            # Remover "g" do peso e converter para um número decimal
+            peso_sem_g = reserva_modal.peso.replace('g', '')
+            peso_decimal = Decimal(peso_sem_g) / 1000 if peso_sem_g.endswith('kg') else Decimal(peso_sem_g) / 1000
+            # Calcular o preço total multiplicando o valor por kg do alimento pelo peso
+            reserva_modal.preco_total = reserva_modal.food.valor * peso_decimal
+            soma_total_preco_modal += reserva_modal.preco_total
+
+        # Arredondar a soma total do preço para duas casas decimais
+        soma_total_preco_modal = round(soma_total_preco_modal, 2)
+
+        context['soma_total_preco_modal'] = soma_total_preco_modal
+        
+        
+        # Calcular o preço total de cada reserva no modal
         soma_total_preco = 0
         for reserva in context['reservas']:
             # Remover "g" do peso e converter para um número decimal
@@ -150,10 +172,35 @@ class dashboardView(LoginRequiredMixin, TemplateView):
         return context
             
 
-    
 class tablesView(TemplateView):
     template_name = "tables/tables.html"
+    
+    
+class pedidosView(TemplateView):
+    template_name = "pedidos.html"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Recupera as reservas do usuário atual
+        reservas_usuario = Reserva.objects.filter(usuario=self.request.user)
+        context['reservas_usuario'] = reservas_usuario
+        
+        # Calcular o preço total de cada reserva no modal
+        soma_total_preco = 0
+        for reserva in context['reservas_usuario']:
+            # Remover "g" do peso e converter para um número decimal
+            peso_sem_g = reserva.peso.replace('g', '')
+            peso_decimal = Decimal(peso_sem_g) / 1000 if peso_sem_g.endswith('kg') else Decimal(peso_sem_g) / 1000
+            # Calcular o preço total multiplicando o valor por kg do alimento pelo peso
+            reserva.preco_total = reserva.food.valor * peso_decimal
+            soma_total_preco += reserva.preco_total
+
+        # Arredondar a soma total do preço para duas casas decimais
+        soma_total_preco = round(soma_total_preco, 2)
+
+        context['soma_total_preco'] = soma_total_preco
+        
+        return context
 
 class loginView(TemplateView):
     template_name = "login/login.html"

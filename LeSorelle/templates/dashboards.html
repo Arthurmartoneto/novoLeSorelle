@@ -28,7 +28,9 @@
 
 <body>
   {% if user.is_authenticated %}
+  
     <div class="container-scroller">
+
       <!-- Nav esquerda -->
       <nav class="sidebar sidebar-offcanvas" id="sidebar">
         <div class="sidebar-brand-wrapper d-none d-lg-flex align-items-center justify-content-center fixed-top">
@@ -42,9 +44,9 @@
           <li class="nav-item nav-category">
             <span class="nav-link">Navigation</span>
           </li>
-          <li class="nav-item menu-items">
-            <a class="nav-link" href="#">
-              <span class="menu-icon"><i class="mdi mdi-speedometer"></i></span>
+          <li class="nav-item menu-items active">
+            <a class="nav-link" href="{% url 'dashboard' %}">
+              <span class="menu-icon"><i class="mdi mdi-table-large"></i></span>
               <span class="menu-title">Dashboard</span>
             </a>
           </li>
@@ -368,7 +370,12 @@
               <div class="col-12 grid-margin">
                 <div class="card">
                   <div class="card-body">
-                    <h4 class="card-title">Tabela de Reservas</h4>
+                    <div class="d-flex flex-row justify-content-between">
+                      <h4 class="card-title">Tabela de Reservas</h4>
+                      <button type="button" class="nav-link btn btn-primary create-new-button m-1" data-toggle="modal" data-target="#modalReservas">
+                        Todas as Reservas
+                      </button>
+                    </div>
                     <div class="table-responsive">
                       {% if reservas %}
                       <table class="table">
@@ -508,6 +515,58 @@
       </div>
     </div>
     <!-- Modal Pratos -->
+
+    <!-- Modal de Reservas -->
+    <div class="modal fade" id="modalReservas" tabindex="-1" role="dialog" aria-labelledby="modalReservasLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalReservasLabel">Todas as Reservas</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <!-- Tabela para exibir todas as reservas -->
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Cliente</th>
+                  <th>Email</th>
+                  <th>Telefone</th>
+                  <th>Comida</th>
+                  <th>Peso (kg)</th>
+                  <th>Preço Total</th>
+                  <th>Data</th>
+                  <th>Hora</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Aqui você deve iterar sobre suas reservas e preencher a tabela -->
+                <!-- Exemplo: -->
+                {% for reserva in reservas_modal %}
+                <tr>
+                  <td>{{ reservas.usuario.first_name }} {{ reserva.usuario.last_name }}</td>
+                  <td>{{ reserva.get_email }}</td>
+                  <td>{{ reserva.telefone }}</td>
+                  <td>{{ reserva.food.name_food }}</td>
+                  <td>{{ reserva.peso }}</td>
+                  <td>{{ reserva.preco_total |floatformat:"2" }}</td>
+                  <td>{{ reserva.date }}</td>
+                  <td>{{ reserva.hora }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Modal de Reservas -->
+
   {% endif %}
 
   <!-- plugins:js -->
