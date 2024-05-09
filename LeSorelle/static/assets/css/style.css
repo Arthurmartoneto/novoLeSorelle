@@ -8605,7 +8605,9 @@ pre {
 
 .table-hover tbody tr:hover {
   color: #212529;
-  background-color: #000000; }
+  background-color: #000000; 
+  cursor: pointer;
+}
 
 .table-primary,
 .table-primary > th,
@@ -17882,7 +17884,7 @@ div.tagsinput {
 /* Tables */
 .table, .jsgrid .jsgrid-table {
   margin-bottom: 0;
-  color: #6c7293; }
+}
   .table thead th, .jsgrid .jsgrid-table thead th {
     border-top: 0;
     border-bottom-width: 1px;
@@ -21138,3 +21140,4 @@ div.tagsinput {
   transition: all 0.3s ease;
   border: 1px solid transparent; /* Garante que não haja borda */
 }
+

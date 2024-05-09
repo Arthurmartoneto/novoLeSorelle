@@ -5,7 +5,7 @@
     <!-- Required meta tags -->
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <title>Meus pedidos</title>
+    <title>LeSorelle</title>
     <!-- plugins:css -->
     <link rel="stylesheet" href="{% static 'assets/vendors/mdi/css/materialdesignicons.min.css' %}" />
     <link rel="stylesheet" href="{% static 'assets/vendors/css/vendor.bundle.base.css' %}" />
@@ -48,7 +48,8 @@
           <!-- Nav alto -->
           <nav class="navbar p-0 fixed-top d-flex flex-row">
             <div class="navbar-brand-wrapper d-flex d-lg-none align-items-center justify-content-center">
-              <a class="navbar-brand brand-logo-mini" href="index.html"><img src="assets/images/logo-mini.svg" alt="logo" /></a>
+              <a class="navbar-brand brand-logo-mini" href="{% url 'index' %}"><img style="width: 50px; height: auto;" src="{% static 'images/logo.png' %}"
+                alt="logo" /></a>
             </div>
 
             <div class="navbar-menu-wrapper flex-grow d-flex align-items-stretch">
@@ -65,50 +66,7 @@
 
               <!-- Nav Direita -->
               <ul class="navbar-nav navbar-nav-right">
-                <!-- Adicionar -->
-                <li class="nav-item dropdown d-none d-lg-block">
-                  <a class="nav-link btn btn-success create-new-button" id="createbuttonDropdown" data-toggle="dropdown" aria-expanded="false" href="#">+ Adicionar Novo Prato</a>
-                  <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="createbuttonDropdown">
-                    <h6 class="p-3 mb-0">Projetos</h6>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item preview-item">
-                      <div class="preview-thumbnail">
-                        <div class="preview-icon bg-dark rounded-circle">
-                          <i class="mdi mdi-file-outline text-primary"></i>
-                        </div>
-                      </div>
-                      <div class="preview-item-content">
-                        <p class="preview-subject ellipsis mb-1">Novo Prato</p>
-                      </div>
-                    </a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item preview-item">
-                      <div class="preview-thumbnail">
-                        <div class="preview-icon bg-dark rounded-circle">
-                          <i class="mdi mdi-web text-info"></i>
-                        </div>
-                      </div>
-                      <div class="preview-item-content">
-                        <p class="preview-subject ellipsis mb-1">UI Development</p>
-                      </div>
-                    </a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item preview-item">
-                      <div class="preview-thumbnail">
-                        <div class="preview-icon bg-dark rounded-circle">
-                          <i class="mdi mdi-layers text-danger"></i>
-                        </div>
-                      </div>
-                      <div class="preview-item-content">
-                        <p class="preview-subject ellipsis mb-1">Software Testing</p>
-                      </div>
-                    </a>
-                    <div class="dropdown-divider"></div>
-                    <p class="p-3 mb-0 text-center">See all projects</p>
-                  </div>
-                </li>
-                <!-- Adicionar -->
-
+                
                 <!-- links -->
                 <li class="nav-item nav-settings d-none d-lg-block">
                   <a class="nav-link" href="#"><i class="mdi mdi-view-grid"></i></a>
@@ -176,14 +134,14 @@
                   <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="profileDropdown">
                     <h6 class="p-3 mb-0">Perfil</h6>
                     <div class="dropdown-divider"></div>
-                    <a href="#" class="dropdown-item preview-item">
+                    <a href="{% url 'index' %}" class="dropdown-item preview-item">
                       <div class="preview-thumbnail">
                         <div class="preview-icon bg-dark rounded-circle">
-                          <i class="mdi mdi-settings text-success"></i>
+                          <i class="mdi mdi-table text-success"></i>
                         </div>
                       </div>
                       <div class="preview-item-content">
-                        <p class="preview-subject mb-1">Configurações</p>
+                        <p class="preview-subject mb-1">Inicio</p>
                       </div>
                     </a>
                     <div class="dropdown-divider"></div>
@@ -212,14 +170,14 @@
           <div class="main-panel">
             <div class="content-wrapper">
               <div class="page-header">
-                <h3 class="page-title">Meus Pedidos</h3>
+                <h3 class="page-title">Minhas Reservas</h3>
               </div>
               <div class="row">
                 
                 <div class="col-lg-12 grid-margin stretch-card">
                   <div class="card">
                       <div class="card-body">
-                          <h4 class="card-title">Meus Pedidos</h4>
+                          <h4 class="card-title">Minhas Reservas</h4>
                           {% if reservas_usuario %}
                           <div class="table-responsive">
                               <table class="table table-hover">
@@ -231,24 +189,27 @@
                                           <th>Preço Total</th>
                                           <th>Data</th>
                                           <th>Hora</th>
-                                          <th>Status</th>
                                       </tr>
                                   </thead>
                                   <tbody>
-                                      {% for reserva in reservas_usuario %}
-                                      <tr>
-                                          <td><img src="{{ reserva.food.img.url }}" class="rounded-sm" style="width: 100px; height: auto;"></td>
-                                          <td>{{ reserva.food.name_food }}</td>
-                                          <td>{{ reserva.peso }}</td>
-                                          <td>R${{ reserva.preco_total |floatformat:"2" }}</td>
-                                          <td>{{ reserva.date }}</td>
-                                          <td>{{ reserva.hora }}</td>
-                                          <td>
-                                              <!-- Adicione lógica aqui para exibir o status da reserva -->
-                                              <!-- Você pode usar a lógica de cores de acordo com o status -->
-                                          </td>
-                                      </tr>
-                                      {% endfor %}
+                                    {% for reserva in reservas_usuario %}
+                                        <tr class="reserva-link"
+                                            data-img-src="{{ reserva.food.img.url }}"
+                                            data-nome-produto="{{ reserva.food.name_food }}"
+                                            data-peso="{{ reserva.peso }}"
+                                            data-preco-total="{{ reserva.preco_total | floatformat:"2" }}"
+                                            data-data="{{ reserva.date }}"
+                                            data-hora="{{ reserva.hora }}">
+                                            <td>
+                                                <img src="{{ reserva.food.img.url }}" class="rounded-sm" style="width: 100px; height: auto;">
+                                            </td>
+                                            <td>{{ reserva.food.name_food }}</td>
+                                            <td>{{ reserva.peso }}</td>
+                                            <td>R${{ reserva.preco_total | floatformat:"2" }}</td>
+                                            <td>{{ reserva.date }}</td>
+                                            <td>{{ reserva.hora }}</td>
+                                        </tr>
+                                    {% endfor %}
                                   </tbody>
                               </table>
                           </div>
@@ -259,7 +220,6 @@
                   </div>
                 </div>
               
-            
               </div>
             </div>
             <!-- content-wrapper ends -->
@@ -276,6 +236,47 @@
         </div>
         <!-- page-body-wrapper ends -->
       </div>
+
+      <!-- Modal Detalhes Reserva -->
+      <div class="modal fade" id="myModal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <!-- Cabeçalho do Modal -->
+                <div class="modal-header">
+                  <h4 class="modal-title">Detalhes da Reserva</h4>
+                  <button type="button" style="color: white;" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+
+                <!-- Corpo do Modal -->
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <img id="modalImagem" src="" class="img-fluid">
+                        </div>
+                        <div class="col-md-8">
+                            <p><strong>Produto:</strong> <span id="modalNomeProduto"></span></p>
+                            <p><strong>Peso (kg):</strong> <span id="modalPeso"></span></p>
+                            <p><strong>Preço Total:</strong> <span id="modalPrecoTotal"></span></p>
+                            <p><strong>Data:</strong> <span id="modalData"></span></p>
+                            <p><strong>Hora:</strong> <span id="modalHora"></span></p>
+                            <div class="mt-3">
+                              <button type="button" class="btn btn-danger" id="cancelarEntrega">Cancelar Entrega</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer Modal -->
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+      </div>
+      <!-- Modal Detalhes Reserva -->
+
     {% endif %}
     <!-- container-scroller -->
     <!-- plugins:js -->
@@ -294,3 +295,41 @@
     <!-- End custom js for this page -->
   </body>
 </html>
+
+
+<script>
+  $(document).ready(function() {
+      // Adicione um evento de clique aos elementos da tabela com a classe 'reserva-link'
+      $('.reserva-link').click(function() {
+          // Recupere os detalhes da reserva
+          var imgSrc = $(this).data('img-src');
+          var nomeProduto = $(this).data('nome-produto');
+          var peso = $(this).data('peso');
+          var precoTotal = $(this).data('preco-total');
+          var data = $(this).data('data');
+          var hora = $(this).data('hora');
+
+          // Preencha o modal com os detalhes da reserva
+          $('#modalImagem').attr('src', imgSrc);
+          $('#modalNomeProduto').text(nomeProduto);
+          $('#modalPeso').text(peso);
+          $('#modalPrecoTotal').text(precoTotal);
+          $('#modalData').text(data);
+          $('#modalHora').text(hora);
+
+          // Exiba o modal
+          $('#myModal').modal('show');
+      });
+  });
+
+  $(document).ready(function() {
+      // Evento de clique para o botão de cancelar entrega
+      $('#cancelarEntrega').click(function() {
+          // Coloque aqui o código para cancelar a entrega
+          // Por exemplo, você pode enviar uma requisição AJAX para o servidor para cancelar a entrega
+          // Ou exibir uma mensagem de confirmação ao usuário e tomar a ação apropriada
+          // Neste exemplo, apenas fecharemos o modal
+          $('#myModal').modal('hide');
+      });
+  });
+</script>

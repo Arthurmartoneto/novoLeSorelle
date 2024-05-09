@@ -50,19 +50,6 @@
               <span class="menu-title">Dashboard</span>
             </a>
           </li>
-
-          <li class="nav-item menu-items">
-            <a class="nav-link" href="{% url 'tables' %}">
-              <span class="menu-icon"><i class="mdi mdi-table-large"></i></span>
-              <span class="menu-title">Tables</span>
-            </a>
-          </li>
-          <li class="nav-item menu-items">
-            <a class="nav-link" href="pages/charts/chartjs.html">
-              <span class="menu-icon"><i class="mdi mdi-chart-bar"></i></span>
-              <span class="menu-title">Charts</span>
-            </a>
-          </li>
           <li class="nav-item menu-items">
             <a class="nav-link" data-toggle="collapse" href="#auth" aria-expanded="false" aria-controls="auth">
               <span class="menu-icon"><i class="mdi mdi-security"></i></span>
@@ -185,14 +172,14 @@
                   aria-labelledby="profileDropdown">
                   <h6 class="p-3 mb-0">Perfil</h6>
                   <div class="dropdown-divider"></div>
-                  <a href="#" class="dropdown-item preview-item">
+                  <a href="{% url 'index' %}" class="dropdown-item preview-item">
                     <div class="preview-thumbnail">
                       <div class="preview-icon bg-dark rounded-circle">
-                        <i class="mdi mdi-settings text-success"></i>
+                        <i class="mdi mdi-table text-success"></i>
                       </div>
                     </div>
                     <div class="preview-item-content">
-                      <p class="preview-subject mb-1">Configurações</p>
+                      <p class="preview-subject mb-1">Inicio</p>
                     </div>
                   </a>
                   <div class="dropdown-divider"></div>
@@ -318,6 +305,7 @@
             </div>
 
             <div class="row">
+
               <!-- Pratos Adicionados -->
               <div class="col-md-12 grid-margin stretch-card">
                 <div class="card">
@@ -330,7 +318,7 @@
                     <div class="row">
                       <div class="col-12">
                         <div class="table-responsive">
-                          <table class="table">
+                          <table class="table table-hover">
                             <thead>
                               <tr>
                                 <th>Imagem</th>
@@ -341,19 +329,20 @@
                             </thead>
                             <tbody>
                               {% for food in foods_dashboard %}
-                              <tr>
-                                <td>
-                                  <img src="{{ food.img.url }}" class="rounded-sm" style="width: 100px; height: auto;" />
-                                </td>
-                                <td>{{ food.name_food }}</td>
-                                <td>{{ food.descricao }}</td>
-                                <td>{{ food.valor }}Kg</td>
-                                <td>
-                                  <!-- Aqui você pode adicionar botões de ação, como editar ou excluir -->
-                                </td>
+                              <tr class="prato-link"
+                                  data-nome="{{ food.name_food }}"
+                                  data-descricao="{{ food.descricao }}"
+                                  data-valor="{{ food.valor }}"
+                                  data-imagem="{{ food.img.url }}"> <!-- Adiciona o atributo data-imagem -->
+                                  <td>
+                                      <img src="{{ food.img.url }}" class="rounded-sm" style="width: 100px; height: auto;" />
+                                  </td>
+                                  <td>{{ food.name_food }}</td>
+                                  <td>{{ food.descricao }}</td>
+                                  <td>{{ food.valor }}Kg</td>
                               </tr>
                               {% endfor %}
-                            </tbody>
+                          </tbody>
                           </table>
                         </div>
                       </div>
@@ -368,56 +357,57 @@
             <!-- reserva table -->
             <div class="row">
               <div class="col-12 grid-margin">
-                <div class="card">
-                  <div class="card-body">
-                    <div class="d-flex flex-row justify-content-between">
-                      <h4 class="card-title">Tabela de Reservas</h4>
-                      <button type="button" class="nav-link btn btn-primary create-new-button m-1" data-toggle="modal" data-target="#modalReservas">
-                        Todas as Reservas
-                      </button>
-                    </div>
-                    <div class="table-responsive">
-                      {% if reservas %}
-                      <table class="table">
-                        <thead>
-                          <tr>
-                            <th>Cliente</th>
-                            <th>Email</th>
-                            <th>Telefone</th>
-                            <th>Comida</th>
-                            <th>Peso (kg)</th>
-                            <th>Preço Total</th> <!-- Nova coluna para exibir o preço total -->
-                            <th>Data</th>
-                            <th>Hora</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {% for reserva in reservas %}
-                          <tr>
-                            <td>{{ reserva.usuario.first_name }} {{ reserva.usuario.last_name }}</td>
-                            <td>{{ reserva.get_email }}</td>
-                            <td>{{ reserva.telefone }}</td>
-                            <td>{{ reserva.food.name_food }}</td>
-                            <td>{{ reserva.peso }}</td>
-                            <td>{{ reserva.preco_total |floatformat:"2" }}</td> <!-- Exibe o preço total -->
-                            <td>{{ reserva.date }}</td>
-                            <td>{{ reserva.hora }}</td>
-                            <th>
-                              <div class="form-check form-check-muted m-0">
-                                <label class="form-check-label"><input type="checkbox" class="form-check-input" /></label>
-                              </div>
-                            </th>
-                          </tr>
-                          {% endfor %}
-                        </tbody>
-                      </table>
-                      {% else %}
-                      <!-- Mensagem de ausência de reservas -->
-                      <div class="alert alert-info" role="alert">Não há reservas para hoje.</div>
-                      {% endif %}
-                    </div>
+                  <div class="card">
+                      <div class="card-body">
+                          <div class="d-flex flex-row justify-content-between">
+                              <h4 class="card-title">Tabela de Reservas</h4>
+                              <button type="button" class="nav-link btn btn-primary create-new-button m-1" data-toggle="modal" data-target="#modalReservas">Todas as Reservas</button>
+                          </div>
+                          <div class="table-responsive">
+                              {% if reservas %}
+                              <table class="table table-hover">
+                                  <thead>
+                                      <tr>
+                                          <th>Cliente</th>
+                                          <th>Email</th>
+                                          <th>Telefone</th>
+                                          <th>Comida</th>
+                                          <th>Peso (kg)</th>
+                                          <th>Preço Total</th>
+                                          <th>Data</th>
+                                          <th>Hora</th>
+                                      </tr>
+                                  </thead>
+                                  <tbody>
+                                      {% for reserva in reservas %}
+                                      <tr class="reserva-link"
+                                          data-foto-comida="{{ reserva.food.img.url }}"
+                                          data-cliente="{{ reserva.usuario.first_name }} {{ reserva.usuario.last_name }}"
+                                          data-email="{{ reserva.get_email }}"
+                                          data-telefone="{{ reserva.telefone }}"
+                                          data-comida="{{ reserva.food.name_food }}"
+                                          data-peso="{{ reserva.peso }}"
+                                          data-preco-total="{{ reserva.preco_total | floatformat:"2" }}"
+                                          data-data="{{ reserva.date }}"
+                                          data-hora="{{ reserva.hora }}">
+                                          <td>{{ reserva.usuario.first_name }} {{ reserva.usuario.last_name }}</td>
+                                          <td>{{ reserva.get_email }}</td>
+                                          <td>{{ reserva.telefone }}</td>
+                                          <td>{{ reserva.food.name_food }}</td>
+                                          <td>{{ reserva.peso }}</td>
+                                          <td>{{ reserva.preco_total | floatformat:"2" }}</td>
+                                          <td>{{ reserva.date }}</td>
+                                          <td>{{ reserva.hora }}</td>
+                                      </tr>
+                                      {% endfor %}
+                                  </tbody>
+                              </table>
+                              {% else %}
+                              <div class="alert alert-info" role="alert">Não há reservas para hoje.</div>
+                              {% endif %}
+                          </div>
+                      </div>
                   </div>
-                </div>
               </div>
             </div>
             <!-- reserva table -->
@@ -445,8 +435,9 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="novoPratoModalLabel">Adicionar Novo Prato</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                aria-hidden="true">&times;</span></button>
+            <button type="button" style="color: white;" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
           </div>
           <div class="modal-body">
             <!-- Formulário para adicionar novo prato -->
@@ -471,8 +462,9 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="modalPratosLabel">Pratos Adicionados</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Fechar"><span
-                aria-hidden="true">&times;</span></button>
+            <button type="button" style="color: white;" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
           </div>
           <div class="modal-body">
             <div class="table-responsive">
@@ -494,13 +486,8 @@
                     <td>{{ food.name_food }}</td>
                     <td>{{ food.descricao }}</td>
                     <td>{{ food.valor }}Kg</td>
-                    <td>
-                      <!-- Aqui você pode adicionar botões de ação, como editar ou excluir -->
-                    </td>
                     <th>
-                      <div class="form-check form-check-muted m-0">
-                        <label class="form-check-label"><input type="checkbox" class="form-check-input" /></label>
-                      </div>
+                      
                     </th>
                   </tr>
                   {% endfor %}
@@ -516,48 +503,47 @@
     </div>
     <!-- Modal Pratos -->
 
-    <!-- Modal de Reservas -->
-    <div class="modal fade" id="modalReservas" tabindex="-1" role="dialog" aria-labelledby="modalReservasLabel" aria-hidden="true">
+    <!-- Modal de todas Reservas -->
+    <div class="modal fade" id="modalReservas" tabindex="-1" role="dialog" aria-labelledby="modalReservasLabel">
       <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="modalReservasLabel">Todas as Reservas</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <button type="button" style="color: white;" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
           <div class="modal-body">
-            <!-- Tabela para exibir todas as reservas -->
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>Cliente</th>
-                  <th>Email</th>
-                  <th>Telefone</th>
-                  <th>Comida</th>
-                  <th>Peso (kg)</th>
-                  <th>Preço Total</th>
-                  <th>Data</th>
-                  <th>Hora</th>
-                </tr>
-              </thead>
-              <tbody>
-                <!-- Aqui você deve iterar sobre suas reservas e preencher a tabela -->
-                <!-- Exemplo: -->
-                {% for reserva in reservas_modal %}
-                <tr>
-                  <td>{{ reservas.usuario.first_name }} {{ reserva.usuario.last_name }}</td>
-                  <td>{{ reserva.get_email }}</td>
-                  <td>{{ reserva.telefone }}</td>
-                  <td>{{ reserva.food.name_food }}</td>
-                  <td>{{ reserva.peso }}</td>
-                  <td>{{ reserva.preco_total |floatformat:"2" }}</td>
-                  <td>{{ reserva.date }}</td>
-                  <td>{{ reserva.hora }}</td>
-                </tr>
-                {% endfor %}
-              </tbody>
-            </table>
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Cliente</th>
+                    <th>Email</th>
+                    <th>Telefone</th>
+                    <th>Comida</th>
+                    <th>Peso (kg)</th>
+                    <th>Preço Total</th>
+                    <th>Data</th>
+                    <th>Hora</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for reserva in reservas_modal %}
+                  <tr>
+                    <td>{{ reserva.usuario.first_name }} {{ reserva.usuario.last_name }}</td>
+                    <td>{{ reserva.get_email }}</td>
+                    <td>{{ reserva.telefone }}</td>
+                    <td>{{ reserva.food.name_food }}</td>
+                    <td>{{ reserva.peso }}</td>
+                    <td>{{ reserva.preco_total |floatformat:"2" }}</td>
+                    <td>{{ reserva.date }}</td>
+                    <td>{{ reserva.hora }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
@@ -565,7 +551,78 @@
         </div>
       </div>
     </div>
-    <!-- Modal de Reservas -->
+    <!-- Modal de todas Reservas -->
+
+    <!-- Modal Detalhes Reserva -->
+    <div class="modal fade" id="detalhesReserva">
+      <div class="modal-dialog">
+          <div class="modal-content">
+              <!-- Cabeçalho do Modal -->
+              <div class="modal-header">
+                  <h4 class="modal-title">Detalhes da Reserva</h4>
+                  <button type="button" style="color: white;" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+              <!-- Corpo do Modal -->
+              <div class="modal-body">
+                  <img id="modalFotoComida" src="" class="img-fluid">
+                  <p><strong>Cliente:</strong> <span id="modalCliente"></span></p>
+                  <p><strong>Email:</strong> <span id="modalEmail"></span></p>
+                  <p><strong>Telefone:</strong> <span id="modalTelefone"></span></p>
+                  <p><strong>Comida:</strong> <span id="modalComida"></span></p>
+                  <p><strong>Peso (kg):</strong> <span id="modalPeso"></span></p>
+                  <p><strong>Preço Total:</strong> <span id="modalPrecoTotal"></span></p>
+                  <p><strong>Data:</strong> <span id="modalData"></span></p>
+                  <p><strong>Hora:</strong> <span id="modalHora"></span></p>
+              </div>
+              <!-- Rodapé do Modal -->
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+              </div>
+          </div>
+      </div>
+    </div>
+    <!-- Modal Detalhes Reserva -->
+
+    <!-- Modal Detalhes do Prato -->
+    <div class="modal fade" id="modalPratoDetalhes">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <!-- Cabeçalho do Modal -->
+          <div class="modal-header">
+            <h5 class="modal-title">Detalhes do Prato</h5>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+          </div>
+
+          <!-- Corpo do Modal -->
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-4">
+                <img id="modalImagem" src="" class="img-fluid">
+              </div>
+              <div class="col-md-8">
+                <p><strong>Nome:</strong> <span id="modalNome"></span></p>
+                <p><strong>Descrição:</strong> <span id="modalDescricao"></span></p>
+                <p><strong>Valor (Kg):</strong> <span id="modalValor"></span></p>
+
+                <div class="d-flex flex-column">
+                  <button type="button" class="col-1 btn btn-primary mb-3" id="editarPrato">Editar</button>
+                  <button type="button" class="col-1 btn btn-warning mb-3" id="inativarPrato">Inativar</button>
+                  <button type="button" class="col-1 btn btn-danger" id="excluirPrato">Excluir</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Rodapé do Modal -->
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Modal Detalhes do Prato -->
 
   {% endif %}
 
@@ -594,6 +651,56 @@
 </html>
 
 <script>
+  $(document).ready(function() {
+    // Adicione um evento de clique às linhas da tabela com a classe 'reserva-link'
+    $('.reserva-link').click(function() {
+        // Recupere os detalhes da reserva
+        var cliente = $(this).data('cliente');
+        var email = $(this).data('email');
+        var telefone = $(this).data('telefone');
+        var comida = $(this).data('comida');
+        var peso = $(this).data('peso');
+        var precoTotal = $(this).data('preco-total');
+        var data = $(this).data('data');
+        var hora = $(this).data('hora');
+        var fotoComida = $(this).data('foto-comida');
+
+        // Preencha o modal com os detalhes da reserva
+        $('#modalCliente').text(cliente);
+        $('#modalEmail').text(email);
+        $('#modalTelefone').text(telefone);
+        $('#modalComida').text(comida);
+        $('#modalPeso').text(peso);
+        $('#modalPrecoTotal').text(precoTotal);
+        $('#modalData').text(data);
+        $('#modalHora').text(hora);
+        $('#modalFotoComida').attr('src', fotoComida);
+
+        // Exiba o modal
+        $('#detalhesReserva').modal('show');
+    });
+});
+
+$(document).ready(function() {
+  // Adicione um evento de clique às linhas da tabela com a classe 'prato-link'
+  $('.prato-link').click(function() {
+      // Recupere os detalhes do prato
+      var nome = $(this).data('nome');
+      var descricao = $(this).data('descricao');
+      var valor = $(this).data('valor');
+      var imagem = $(this).data('imagem'); // Recupera o URL da imagem
+
+      // Preencha o modal com os detalhes do prato
+      $('#modalNome').text(nome);
+      $('#modalDescricao').text(descricao);
+      $('#modalValor').text(valor);
+      $('#modalImagem').attr('src', imagem); // Define a imagem do prato
+
+      // Exiba o modal
+      $('#modalPratoDetalhes').modal('show');
+  });
+});
+
   // Função para desativar o botão após o envio do formulário
   function disableButton() {
     document.getElementById("submitBtn").disabled = true;
@@ -604,4 +711,5 @@
   document.getElementById("novoPratoForm").addEventListener("submit", function () {
     disableButton();
   });
+
 </script>

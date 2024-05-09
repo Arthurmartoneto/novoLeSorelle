@@ -161,10 +161,12 @@ class dashboardView(LoginRequiredMixin, TemplateView):
 
         context['diferenca_meta'] = diferenca_meta
         context['meta_diaria'] = meta_diaria  # Passa o valor da meta para o contexto
+        
+        data_atual = date.today()
 
-        total_reservas = Reserva.objects.count()
+        vendas_por_dia = Reserva.objects.filter(date=data_atual).count()
         meta_diaria_reservas = 10  # Meta de 10 reservas por dia
-        diferenca_meta_reservas = total_reservas - meta_diaria_reservas
+        diferenca_meta_reservas = vendas_por_dia - meta_diaria_reservas
 
         context['diferenca_meta_reservas'] = diferenca_meta_reservas
         context['meta_diaria_reservas'] = meta_diaria_reservas
