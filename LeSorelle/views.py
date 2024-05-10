@@ -7,12 +7,15 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
+
 from django.utils import timezone
 from datetime import timedelta, date
 
 from decimal import Decimal
 
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 
 from django.http import JsonResponse, HttpResponseRedirect
@@ -68,7 +71,7 @@ class IndexView(TemplateView):
             reserva_instance.save()
             
             # Redireciona o usuário para a página inicial ou outra página, se desejado
-            return redirect('index')  # Substitua '/' pela URL desejada
+            return redirect('pedidos')  # Substitua '/' pela URL desejada
         else:
             print(form.errors)
             # Se o formulário não for válido, renderize novamente a página com o formulário e os erros
@@ -172,6 +175,29 @@ class dashboardView(LoginRequiredMixin, TemplateView):
         context['meta_diaria_reservas'] = meta_diaria_reservas
         
         return context
+
+def editar_prato(request, prato_id):  
+    if request.method == 'POST':
+        nome = request.POST.get('editNome')
+        descricao = request.POST.get('editDescricao')
+        valor = request.POST.get('editValor')
+
+        # Converte o valor para o formato correto
+        try:
+            valor_decimal = float(valor.replace(',', '.'))
+        except ValueError:
+            raise ValidationError(_('O valor deve ser um número decimal válido.'))
+
+        prato = get_object_or_404(Food, id=prato_id)
+
+        prato.name_food = nome
+        prato.descricao = descricao
+        prato.valor = valor_decimal  # Salva o valor convertido
+        prato.save()
+
+        return JsonResponse({'message': 'Prato editado com sucesso!'})
+
+    return JsonResponse({'error': 'Método não permitido'}, status=405)
             
 
 class tablesView(TemplateView):

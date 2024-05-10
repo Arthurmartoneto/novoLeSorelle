@@ -318,6 +318,7 @@
                     <div class="row">
                       <div class="col-12">
                         <div class="table-responsive">
+                          {% if foods_dashboard %}
                           <table class="table table-hover">
                             <thead>
                               <tr>
@@ -330,6 +331,7 @@
                             <tbody>
                               {% for food in foods_dashboard %}
                               <tr class="prato-link"
+                                  data-id="{{ food.id }}"
                                   data-nome="{{ food.name_food }}"
                                   data-descricao="{{ food.descricao }}"
                                   data-valor="{{ food.valor }}"
@@ -344,6 +346,9 @@
                               {% endfor %}
                           </tbody>
                           </table>
+                          {% else %}
+                          <div class="alert alert-info m-2" role="alert">Não há Pratos adicionados</div>
+                          {% endif %}
                         </div>
                       </div>
                     </div>
@@ -368,6 +373,7 @@
                               <table class="table table-hover">
                                   <thead>
                                       <tr>
+                                          <th>Numeração</th>
                                           <th>Cliente</th>
                                           <th>Email</th>
                                           <th>Telefone</th>
@@ -390,6 +396,7 @@
                                           data-preco-total="{{ reserva.preco_total | floatformat:"2" }}"
                                           data-data="{{ reserva.date }}"
                                           data-hora="{{ reserva.hora }}">
+                                          <td>{{ reserva.id }}</td>
                                           <td>{{ reserva.usuario.first_name }} {{ reserva.usuario.last_name }}</td>
                                           <td>{{ reserva.get_email }}</td>
                                           <td>{{ reserva.telefone }}</td>
@@ -403,7 +410,7 @@
                                   </tbody>
                               </table>
                               {% else %}
-                              <div class="alert alert-info" role="alert">Não há reservas para hoje.</div>
+                              <div class="alert alert-info m-2" role="alert">Não há reservas para hoje.</div>
                               {% endif %}
                           </div>
                       </div>
@@ -518,6 +525,7 @@
               <table class="table">
                 <thead>
                   <tr>
+                    <th>Numeração</th>
                     <th>Cliente</th>
                     <th>Email</th>
                     <th>Telefone</th>
@@ -531,6 +539,7 @@
                 <tbody>
                   {% for reserva in reservas_modal %}
                   <tr>
+                    <td>{{ reserva.id }}</td>
                     <td>{{ reserva.usuario.first_name }} {{ reserva.usuario.last_name }}</td>
                     <td>{{ reserva.get_email }}</td>
                     <td>{{ reserva.telefone }}</td>
@@ -602,14 +611,15 @@
                 <img id="modalImagem" src="" class="img-fluid">
               </div>
               <div class="col-md-8">
+                <p class="mt-3"><strong>Numeração:</strong> <span id="modalId"></span></p>
                 <p><strong>Nome:</strong> <span id="modalNome"></span></p>
                 <p><strong>Descrição:</strong> <span id="modalDescricao"></span></p>
                 <p><strong>Valor (Kg):</strong> <span id="modalValor"></span></p>
 
                 <div class="d-flex flex-column">
-                  <button type="button" class="col-1 btn btn-primary mb-3" id="editarPrato">Editar</button>
-                  <button type="button" class="col-1 btn btn-warning mb-3" id="inativarPrato">Inativar</button>
-                  <button type="button" class="col-1 btn btn-danger" id="excluirPrato">Excluir</button>
+                  <button type="button" class="col-3 btn btn-primary mb-3" id="editarPrato">Editar</button>
+                  <button type="button" class="col-3 btn btn-warning mb-3" id="inativarPrato">Inativar</button>
+                  <button type="button" class="col-3 btn btn-danger" id="excluirPrato">Excluir</button>
                 </div>
               </div>
             </div>
@@ -623,6 +633,41 @@
       </div>
     </div>
     <!-- Modal Detalhes do Prato -->
+
+    <!-- Modal para edição de prato -->
+    <div class="modal fade" id="editarPratoModal" tabindex="-1" role="dialog" aria-labelledby="editarPratoModalLabel">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Editar Prato</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <!-- Formulário de edição de prato -->
+            <form id="editarPratoForm" method="POST" enctype="multipart/form-data">
+              {% csrf_token %}
+              <input type="hidden" id="pratoId" name="pratoId">
+              <div class="form-group">
+                <label for="editNome">Nome:</label>
+                <input type="text" class="form-control" id="editNome" name="editNome">
+              </div>
+              <div class="form-group">
+                <label for="editDescricao">Descrição:</label>
+                <textarea class="form-control" id="editDescricao" name="editDescricao"></textarea>
+              </div>
+              <div class="form-group">
+                <label for="editValor">Valor (Kg):</label>
+                <input type="text" class="form-control" id="editValor" name="editValor">
+              </div>
+              <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Modal para edição de prato -->
 
   {% endif %}
 
@@ -653,53 +698,55 @@
 <script>
   $(document).ready(function() {
     // Adicione um evento de clique às linhas da tabela com a classe 'reserva-link'
-    $('.reserva-link').click(function() {
-        // Recupere os detalhes da reserva
-        var cliente = $(this).data('cliente');
-        var email = $(this).data('email');
-        var telefone = $(this).data('telefone');
-        var comida = $(this).data('comida');
-        var peso = $(this).data('peso');
-        var precoTotal = $(this).data('preco-total');
-        var data = $(this).data('data');
-        var hora = $(this).data('hora');
-        var fotoComida = $(this).data('foto-comida');
+      $('.reserva-link').click(function() {
+          // Recupere os detalhes da reserva
+          var cliente = $(this).data('cliente');
+          var email = $(this).data('email');
+          var telefone = $(this).data('telefone');
+          var comida = $(this).data('comida');
+          var peso = $(this).data('peso');
+          var precoTotal = $(this).data('preco-total');
+          var data = $(this).data('data');
+          var hora = $(this).data('hora');
+          var fotoComida = $(this).data('foto-comida');
 
-        // Preencha o modal com os detalhes da reserva
-        $('#modalCliente').text(cliente);
-        $('#modalEmail').text(email);
-        $('#modalTelefone').text(telefone);
-        $('#modalComida').text(comida);
-        $('#modalPeso').text(peso);
-        $('#modalPrecoTotal').text(precoTotal);
-        $('#modalData').text(data);
-        $('#modalHora').text(hora);
-        $('#modalFotoComida').attr('src', fotoComida);
+          // Preencha o modal com os detalhes da reserva
+          $('#modalCliente').text(cliente);
+          $('#modalEmail').text(email);
+          $('#modalTelefone').text(telefone);
+          $('#modalComida').text(comida);
+          $('#modalPeso').text(peso);
+          $('#modalPrecoTotal').text(precoTotal);
+          $('#modalData').text(data);
+          $('#modalHora').text(hora);
+          $('#modalFotoComida').attr('src', fotoComida);
+
+          // Exiba o modal
+          $('#detalhesReserva').modal('show');
+      });
+  });
+
+  $(document).ready(function() {
+    // Adicione um evento de clique às linhas da tabela com a classe 'prato-link'
+    $('.prato-link').click(function() {
+        // Recupere os detalhes do prato
+        var nome = $(this).data('nome');
+        var descricao = $(this).data('descricao');
+        var valor = $(this).data('valor');
+        var id = $(this).data('id');
+        var imagem = $(this).data('imagem'); // Recupera o URL da imagem
+
+        // Preencha o modal com os detalhes do prato
+        $('#modalNome').text(nome);
+        $('#modalDescricao').text(descricao);
+        $('#modalValor').text(valor);
+        $('#modalId').text(id);
+        $('#modalImagem').attr('src', imagem); // Define a imagem do prato
 
         // Exiba o modal
-        $('#detalhesReserva').modal('show');
+        $('#modalPratoDetalhes').modal('show');
     });
-});
-
-$(document).ready(function() {
-  // Adicione um evento de clique às linhas da tabela com a classe 'prato-link'
-  $('.prato-link').click(function() {
-      // Recupere os detalhes do prato
-      var nome = $(this).data('nome');
-      var descricao = $(this).data('descricao');
-      var valor = $(this).data('valor');
-      var imagem = $(this).data('imagem'); // Recupera o URL da imagem
-
-      // Preencha o modal com os detalhes do prato
-      $('#modalNome').text(nome);
-      $('#modalDescricao').text(descricao);
-      $('#modalValor').text(valor);
-      $('#modalImagem').attr('src', imagem); // Define a imagem do prato
-
-      // Exiba o modal
-      $('#modalPratoDetalhes').modal('show');
   });
-});
 
   // Função para desativar o botão após o envio do formulário
   function disableButton() {
@@ -712,4 +759,90 @@ $(document).ready(function() {
     disableButton();
   });
 
+  // Função para desativar o botão após o envio do formulário
+  function disableButton() {
+    $('#submitBtn').prop('disabled', true).text('Enviando...');
+  }
+
+  // Adicionando evento de clique ao botão de envio do formulário
+  $(document).on('submit', '#novoPratoForm', function() {
+    disableButton();
+  });
+
+</script>
+
+
+<script>
+// Quando o botão Editar é clicado, exiba o modal de edição de prato
+$(document).on('click', '#editarPrato', function() {
+  // Obtenha a ID do prato selecionado
+  var pratoId = $('#modalId').text();
+
+  // Preencher os campos do formulário com os detalhes do prato selecionado
+  var pratoNome = $('#modalNome').text();
+  var pratoDescricao = $('#modalDescricao').text();
+  var pratoValor = $('#modalValor').text();
+
+  $('#pratoId').val(pratoId);
+  $('#editNome').val(pratoNome);
+  $('#editDescricao').val(pratoDescricao);
+  $('#editValor').val(pratoValor);
+
+  // Exibir o modal de edição de prato
+  $('#editarPratoModal').modal('show');
+});
+
+// Manipulador de evento para o envio do formulário de edição de prato
+$(document).on('submit', '#editarPratoForm', function(event) {
+  event.preventDefault(); // Evita o envio padrão do formulário
+
+  // Obtenha a ID do prato diretamente do campo oculto
+  var pratoId = $('#pratoId').val();
+  var pratoNome = $('#editNome').val();
+  var pratoDescricao = $('#editDescricao').val();
+  var pratoValor = $('#editValor').val();
+
+  // Obtenha o token CSRF do cookie
+function getCookie(name) {
+  var cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+      var cookies = document.cookie.split(';');
+      for (var i = 0; i < cookies.length; i++) {
+          var cookie = cookies[i].trim();
+          // Verifica se o cookie começa com o nome que estamos procurando
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+          }
+      }
+  }
+  return cookieValue;
+}
+var csrftoken = getCookie('csrftoken');
+
+// Envie uma solicitação AJAX para o backend para processar as alterações
+  $.ajax({
+    url: '/editar_prato/' + pratoId + '/', // Use pratoId em vez de prato_id
+    method: 'POST',
+    headers: {
+        'X-CSRFToken': csrftoken  // Inclua o token CSRF nos cabeçalhos da solicitação
+    },
+    data: {
+        'editNome': pratoNome,
+        'editDescricao': pratoDescricao,
+        'editValor': pratoValor
+    },
+    success: function(response) {
+        // Exiba um alerta de sucesso
+        alert('Prato editado com sucesso!');
+        // Recarregue a página
+        location.reload();
+    },
+    error: function(xhr, status, error) {
+        console.error('Erro ao editar prato:', error);
+        // Exiba um alerta de erro
+        alert('Erro ao editar prato: ' + error);
+    }
+  });
+});
 </script>
