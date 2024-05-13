@@ -303,10 +303,9 @@
               </div>
             
             </div>
-
+            
+            <!-- Pratos Adicionados -->
             <div class="row">
-
-              <!-- Pratos Adicionados -->
               <div class="col-md-12 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">
@@ -326,6 +325,7 @@
                                 <th>Nome</th>
                                 <th>Descrição</th>
                                 <th>Valor Kg</th>
+                                <th>Status</th>
                               </tr>
                             </thead>
                             <tbody>
@@ -335,6 +335,7 @@
                                   data-nome="{{ food.name_food }}"
                                   data-descricao="{{ food.descricao }}"
                                   data-valor="{{ food.valor }}"
+                                  data-status="{{ food.status }}"
                                   data-imagem="{{ food.img.url }}"> <!-- Adiciona o atributo data-imagem -->
                                   <td>
                                       <img src="{{ food.img.url }}" class="rounded-sm" style="width: 100px; height: auto;" />
@@ -342,9 +343,11 @@
                                   <td>{{ food.name_food }}</td>
                                   <td>{{ food.descricao }}</td>
                                   <td>{{ food.valor }}Kg</td>
+                                  <td class="{% if food.status == 'ativo' %}text-success{% else %}text-danger{% endif %}">{{ food.status }}</td>
+
                               </tr>
                               {% endfor %}
-                          </tbody>
+                            </tbody>
                           </table>
                           {% else %}
                           <div class="alert alert-info m-2" role="alert">Não há Pratos adicionados</div>
@@ -355,9 +358,9 @@
                   </div>
                 </div>
               </div>
-              <!-- Pratos Adicionados -->
-
             </div>
+            <!-- Pratos Adicionados -->
+
 
             <!-- reserva table -->
             <div class="row">
@@ -452,7 +455,7 @@
               {% csrf_token %}
               {{ form.as_p }}
               <div class="modal-footer">
-                <button type="submit" id="submitBtn" class="btn btn-primary">Adicionar</button>
+                <button type="submit" id="adicionarbtn" class="btn btn-primary">Adicionar</button>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
               </div>
             </form>
@@ -462,9 +465,8 @@
     </div>
     <!-- Modal Adicionar -->
 
-    <!-- Modal Pratos -->
-    <div class="modal fade" id="modalPratos" tabindex="-1" role="dialog" aria-labelledby="modalPratosLabel"
-      aria-hidden="true">
+    <!-- Modal Todos Pratos -->
+    <div class="modal fade" id="modalPratos" tabindex="-1" role="dialog" aria-labelledby="modalPratosLabel" aria-hidden="true">
       <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -474,33 +476,43 @@
             </button>
           </div>
           <div class="modal-body">
+            {% if foods_modal %}
             <div class="table-responsive">
-              <table class="table">
+              <table class="table table-hover" id="modalPratosTable">
                 <thead>
                   <tr>
                     <th>Imagem</th>
                     <th>Nome</th>
                     <th>Descrição</th>
                     <th>Valor Kg</th>
+                    <th>status</th>
                   </tr>
                 </thead>
                 <tbody>
                   {% for food in foods_modal %}
-                  <tr>
+                  <tr class="prato-link"
+                      data-id="{{ food.id }}"
+                      data-nome="{{ food.name_food }}"
+                      data-descricao="{{ food.descricao }}"
+                      data-valor="{{ food.valor }}"
+                      data-imagem="{{ food.img.url }}"        
+                      data-status="{{ food.status }}">         
                     <td>
                       <img src="{{ food.img.url }}" class="rounded-sm" style="width: 100px; height: auto;" />
                     </td>
                     <td>{{ food.name_food }}</td>
                     <td>{{ food.descricao }}</td>
                     <td>{{ food.valor }}Kg</td>
-                    <th>
-                      
-                    </th>
+                    <td class="{% if food.status == 'ativo' %}text-success{% else %}text-danger{% endif %}">{{ food.status }}</td>
+
                   </tr>
                   {% endfor %}
                 </tbody>
               </table>
             </div>
+            {% else %}
+            <div class="alert alert-info m-2" role="alert">Não há pratos adicionados.</div>
+            {% endif %}
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
@@ -508,21 +520,24 @@
         </div>
       </div>
     </div>
-    <!-- Modal Pratos -->
+    <!-- Modal Todos Pratos -->
 
-    <!-- Modal de todas Reservas -->
+    <!-- Modal de Todas as Reservas -->
     <div class="modal fade" id="modalReservas" tabindex="-1" role="dialog" aria-labelledby="modalReservasLabel">
       <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
+          <!-- Cabeçalho do Modal -->
           <div class="modal-header">
             <h5 class="modal-title" id="modalReservasLabel">Todas as Reservas</h5>
             <button type="button" style="color: white;" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
+          <!-- Corpo do Modal -->
           <div class="modal-body">
             <div class="table-responsive">
-              <table class="table">
+              {% if reservas_modal %}
+              <table class="table table-hover">
                 <thead>
                   <tr>
                     <th>Numeração</th>
@@ -539,28 +554,42 @@
                 <tbody>
                   {% for reserva in reservas_modal %}
                   <tr>
-                    <td>{{ reserva.id }}</td>
-                    <td>{{ reserva.usuario.first_name }} {{ reserva.usuario.last_name }}</td>
-                    <td>{{ reserva.get_email }}</td>
-                    <td>{{ reserva.telefone }}</td>
-                    <td>{{ reserva.food.name_food }}</td>
-                    <td>{{ reserva.peso }}</td>
-                    <td>{{ reserva.preco_total |floatformat:"2" }}</td>
-                    <td>{{ reserva.date }}</td>
-                    <td>{{ reserva.hora }}</td>
+                    <tr class="reserva-link"
+                      data-foto-comida="{{ reserva.food.img.url }}"
+                      data-cliente="{{ reserva.usuario.first_name }} {{ reserva.usuario.last_name }}"
+                      data-email="{{ reserva.get_email }}"
+                      data-telefone="{{ reserva.telefone }}"
+                      data-comida="{{ reserva.food.name_food }}"
+                      data-peso="{{ reserva.peso }}"
+                      data-preco-total="{{ reserva.preco_total | floatformat:"2" }}"
+                      data-data="{{ reserva.date }}"
+                      data-hora="{{ reserva.hora }}">
+                      <td>{{ reserva.id }}</td>
+                      <td>{{ reserva.usuario.first_name }} {{ reserva.usuario.last_name }}</td>
+                      <td>{{ reserva.get_email }}</td>
+                      <td>{{ reserva.telefone }}</td>
+                      <td>{{ reserva.food.name_food }}</td>
+                      <td>{{ reserva.peso }}</td>
+                      <td>{{ reserva.preco_total | floatformat:"2" }}</td>
+                      <td>{{ reserva.date }}</td>
+                      <td>{{ reserva.hora }}</td>
                   </tr>
                   {% endfor %}
                 </tbody>
               </table>
+              {% else %}
+              <div class="alert alert-info m-2" role="alert">Não há reservas.</div>
+              {% endif %}
             </div>
           </div>
+          <!-- Rodapé do Modal -->
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
           </div>
         </div>
       </div>
     </div>
-    <!-- Modal de todas Reservas -->
+    <!-- Modal de Todas as Reservas -->
 
     <!-- Modal Detalhes Reserva -->
     <div class="modal fade" id="detalhesReserva">
@@ -576,7 +605,9 @@
               <!-- Corpo do Modal -->
               <div class="modal-body">
                   <img id="modalFotoComida" src="" class="img-fluid">
-                  <p><strong>Cliente:</strong> <span id="modalCliente"></span></p>
+                  <div class="mt-3">
+                    <p><strong>Cliente:</strong> <span id="modalCliente"></span></p>
+                  </div>
                   <p><strong>Email:</strong> <span id="modalEmail"></span></p>
                   <p><strong>Telefone:</strong> <span id="modalTelefone"></span></p>
                   <p><strong>Comida:</strong> <span id="modalComida"></span></p>
@@ -601,7 +632,9 @@
           <!-- Cabeçalho do Modal -->
           <div class="modal-header">
             <h5 class="modal-title">Detalhes do Prato</h5>
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <button type="button" style="color: white;" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
           </div>
 
           <!-- Corpo do Modal -->
@@ -610,22 +643,25 @@
               <div class="col-md-4">
                 <img id="modalImagem" src="" class="img-fluid">
               </div>
-              <div class="col-md-8">
+              <div class="col-md-4">
                 <p class="mt-3"><strong>Numeração:</strong> <span id="modalId"></span></p>
                 <p><strong>Nome:</strong> <span id="modalNome"></span></p>
                 <p><strong>Descrição:</strong> <span id="modalDescricao"></span></p>
                 <p><strong>Valor (Kg):</strong> <span id="modalValor"></span></p>
-
+                <p><strong>Status:</strong> <span id="modalStatus" class="prato-status" data-status="{{ prato.status }}"></span></p>
+              </div>
+              <div class="col-md-4">
                 <div class="d-flex flex-column">
-                  <button type="button" class="col-3 btn btn-primary mb-3" id="editarPrato">Editar</button>
-                  <button type="button" class="col-3 btn btn-warning mb-3" id="inativarPrato">Inativar</button>
-                  <button type="button" class="col-3 btn btn-danger" id="excluirPrato">Excluir</button>
+                  <button type="button" class="btn btn-primary mt-3 mb-3" id="editarPrato">Editar</button>
+                  <button type="button" class="btn btn-warning mb-3 inativar-prato" id="inativarPrato" data-id="">Inativar</button>
+                  <button type="button" class="btn btn-success mb-3 ativar-prato" id="ativarPrato" data-id="">Ativar</button>
+                  <div class="dropdown-divider"></div>
+                  <button type="button" class="btn btn-danger mt-3" id="excluirPrato">Excluir</button>
                 </div>
               </div>
             </div>
           </div>
-
-          <!-- Rodapé do Modal -->
+          <!-- Footer do Modal -->
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
           </div>
@@ -640,7 +676,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title">Editar Prato</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <button type="button" style="color: white;" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
@@ -660,6 +696,10 @@
               <div class="form-group">
                 <label for="editValor">Valor (Kg):</label>
                 <input type="text" class="form-control" id="editValor" name="editValor">
+              </div>
+              <div class="form-group">
+                <label for="editImagem">Imagem:</label>
+                <input type="file" class="form-control-file" id="editImagem" name="editImagem">
               </div>
               <button type="submit" class="btn btn-primary">Salvar Alterações</button>
             </form>
@@ -687,6 +727,7 @@
   <script src="{% static 'assets/js/misc.js' %}"></script>
   <script src="{% static 'assets/js/settings.js' %}"></script>
   <script src="{% static 'assets/js/todolist.js' %}"></script>
+  <script src="{% static 'js/sistema.js' %}"></script>
   <!-- endinject -->
   <!-- Custom js for this page -->
   <script src="{% static 'assets/js/dashboard.js' %}"></script>
@@ -696,153 +737,248 @@
 </html>
 
 <script>
-  $(document).ready(function() {
-    // Adicione um evento de clique às linhas da tabela com a classe 'reserva-link'
-      $('.reserva-link').click(function() {
-          // Recupere os detalhes da reserva
-          var cliente = $(this).data('cliente');
-          var email = $(this).data('email');
-          var telefone = $(this).data('telefone');
-          var comida = $(this).data('comida');
-          var peso = $(this).data('peso');
-          var precoTotal = $(this).data('preco-total');
-          var data = $(this).data('data');
-          var hora = $(this).data('hora');
-          var fotoComida = $(this).data('foto-comida');
-
-          // Preencha o modal com os detalhes da reserva
-          $('#modalCliente').text(cliente);
-          $('#modalEmail').text(email);
-          $('#modalTelefone').text(telefone);
-          $('#modalComida').text(comida);
-          $('#modalPeso').text(peso);
-          $('#modalPrecoTotal').text(precoTotal);
-          $('#modalData').text(data);
-          $('#modalHora').text(hora);
-          $('#modalFotoComida').attr('src', fotoComida);
-
-          // Exiba o modal
-          $('#detalhesReserva').modal('show');
-      });
-  });
-
-  $(document).ready(function() {
-    // Adicione um evento de clique às linhas da tabela com a classe 'prato-link'
-    $('.prato-link').click(function() {
-        // Recupere os detalhes do prato
-        var nome = $(this).data('nome');
-        var descricao = $(this).data('descricao');
-        var valor = $(this).data('valor');
-        var id = $(this).data('id');
-        var imagem = $(this).data('imagem'); // Recupera o URL da imagem
-
-        // Preencha o modal com os detalhes do prato
-        $('#modalNome').text(nome);
-        $('#modalDescricao').text(descricao);
-        $('#modalValor').text(valor);
-        $('#modalId').text(id);
-        $('#modalImagem').attr('src', imagem); // Define a imagem do prato
-
-        // Exiba o modal
-        $('#modalPratoDetalhes').modal('show');
+  // Quando o botão Editar é clicado, exiba o modal de edição de prato
+  $(document).on('click', '#editarPrato', function() {
+    // Obtenha a ID do prato selecionado
+    var pratoId = $('#modalId').text();
+    
+    // Preencher os campos do formulário com os detalhes do prato selecionado
+    var pratoNome = $('#modalNome').text();
+    var pratoDescricao = $('#modalDescricao').text();
+    var pratoValor = $('#modalValor').text();
+    
+    $('#pratoId').val(pratoId);
+    $('#editNome').val(pratoNome);
+    $('#editDescricao').val(pratoDescricao);
+    $('#editValor').val(pratoValor);
+    
+    // Exibir o modal de edição de prato
+    $('#editarPratoModal').modal('show');
+    });
+    
+    // Manipulador de evento para o envio do formulário de edição de prato
+    $(document).on('submit', '#editarPratoForm', function(event) {
+    event.preventDefault(); // Evita o envio padrão do formulário
+    
+    // Obtenha a ID do prato diretamente do campo oculto
+    var pratoId = $('#pratoId').val();
+    var pratoNome = $('#editNome').val();
+    var pratoDescricao = $('#editDescricao').val();
+    var pratoValor = $('#editValor').val();
+    
+    // Obtenha o token CSRF do cookie
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            // Verifica se o cookie começa com o nome que estamos procurando
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+            }
+        }
+        }
+        return cookieValue;
+    }
+    var csrftoken = getCookie('csrftoken');
+    
+    // Crie um objeto FormData para enviar os dados do formulário, incluindo a imagem
+    var formData = new FormData();
+    formData.append('pratoId', pratoId);
+    formData.append('editNome', pratoNome);
+    formData.append('editDescricao', pratoDescricao);
+    formData.append('editValor', pratoValor);
+    formData.append('editImagem', $('#editImagem')[0].files[0]); // Adicione a imagem ao FormData
+    
+    // Envie uma solicitação AJAX para o backend para processar as alterações
+    $.ajax({
+        url: '/editar_prato/' + pratoId + '/', // Use pratoId em vez de prato_id
+        method: 'POST',
+        headers: {
+        'X-CSRFToken': csrftoken // Inclua o token CSRF nos cabeçalhos da solicitação
+        },
+        data: formData, // Use o FormData em vez de um objeto simples
+        processData: false, // Não processe os dados
+        contentType: false, // Não defina o tipo de conteúdo
+        success: function(response) {
+        // Exiba um alerta de sucesso
+        alert('Prato editado com sucesso!');
+        // Recarregue a página
+        location.reload();
+        },
+        error: function(xhr, status, error) {
+        console.error('Erro ao editar prato:', error);
+        // Exiba um alerta de erro
+        alert('Erro ao editar prato: ' + error);
+        }
     });
   });
 
-  // Função para desativar o botão após o envio do formulário
-  function disableButton() {
-    document.getElementById("submitBtn").disabled = true;
-    document.getElementById("submitBtn").innerText = 'Enviando...';
-  }
+  // Quando o botão Excluir é clicado, exiba um modal de confirmação e, se confirmado, exclua o prato
+  $(document).on('click', '#excluirPrato', function() {
+    // Obtenha o ID do prato
+    var pratoId = $('#modalId').text();
+    var btn = $(this); // Referência ao botão clicado
 
-  // Adicionando evento de clique ao botão de envio do formulário
-  document.getElementById("novoPratoForm").addEventListener("submit", function () {
-    disableButton();
-  });
-
-  // Função para desativar o botão após o envio do formulário
-  function disableButton() {
-    $('#submitBtn').prop('disabled', true).text('Enviando...');
-  }
-
-  // Adicionando evento de clique ao botão de envio do formulário
-  $(document).on('submit', '#novoPratoForm', function() {
-    disableButton();
-  });
-
-</script>
+    // Desabilitar o botão e alterar seu texto para "Aguarde..."
+    btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Aguarde...');
 
 
-<script>
-// Quando o botão Editar é clicado, exiba o modal de edição de prato
-$(document).on('click', '#editarPrato', function() {
-  // Obtenha a ID do prato selecionado
-  var pratoId = $('#modalId').text();
-
-  // Preencher os campos do formulário com os detalhes do prato selecionado
-  var pratoNome = $('#modalNome').text();
-  var pratoDescricao = $('#modalDescricao').text();
-  var pratoValor = $('#modalValor').text();
-
-  $('#pratoId').val(pratoId);
-  $('#editNome').val(pratoNome);
-  $('#editDescricao').val(pratoDescricao);
-  $('#editValor').val(pratoValor);
-
-  // Exibir o modal de edição de prato
-  $('#editarPratoModal').modal('show');
-});
-
-// Manipulador de evento para o envio do formulário de edição de prato
-$(document).on('submit', '#editarPratoForm', function(event) {
-  event.preventDefault(); // Evita o envio padrão do formulário
-
-  // Obtenha a ID do prato diretamente do campo oculto
-  var pratoId = $('#pratoId').val();
-  var pratoNome = $('#editNome').val();
-  var pratoDescricao = $('#editDescricao').val();
-  var pratoValor = $('#editValor').val();
-
-  // Obtenha o token CSRF do cookie
-function getCookie(name) {
-  var cookieValue = null;
-  if (document.cookie && document.cookie !== '') {
+    // Obtenha o token CSRF do cookie
+    function getCookie(name) {
+      var cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
       var cookies = document.cookie.split(';');
       for (var i = 0; i < cookies.length; i++) {
           var cookie = cookies[i].trim();
           // Verifica se o cookie começa com o nome que estamos procurando
           if (cookie.substring(0, name.length + 1) === (name + '=')) {
-              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-              break;
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
           }
       }
-  }
-  return cookieValue;
-}
-var csrftoken = getCookie('csrftoken');
+      }
+      return cookieValue;
+    }
+    var csrftoken = getCookie('csrftoken');
 
-// Envie uma solicitação AJAX para o backend para processar as alterações
-  $.ajax({
-    url: '/editar_prato/' + pratoId + '/', // Use pratoId em vez de prato_id
-    method: 'POST',
-    headers: {
-        'X-CSRFToken': csrftoken  // Inclua o token CSRF nos cabeçalhos da solicitação
-    },
-    data: {
-        'editNome': pratoNome,
-        'editDescricao': pratoDescricao,
-        'editValor': pratoValor
-    },
-    success: function(response) {
-        // Exiba um alerta de sucesso
-        alert('Prato editado com sucesso!');
-        // Recarregue a página
-        location.reload();
-    },
-    error: function(xhr, status, error) {
-        console.error('Erro ao editar prato:', error);
-        // Exiba um alerta de erro
-        alert('Erro ao editar prato: ' + error);
+    // Exiba um modal de confirmação
+    if (confirm("Tem certeza de que deseja excluir este prato?")) {
+      // Se confirmado, envie uma solicitação AJAX para excluir o prato
+      $.ajax({
+        url: '/excluir_prato/' + pratoId + '/', // Rota para excluir o prato
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': csrftoken // Certifique-se de incluir o token CSRF
+        },
+        success: function(response) {
+          if (response.success) {
+              // Exibe um alerta de sucesso
+              alert('Prato excluído com sucesso!');
+              // Recarrega a página
+              location.reload();
+          }
+        },
+        error: function(xhr, status, error) {
+          // Se houver um erro ao excluir o prato, exiba uma mensagem de erro
+          console.error('Erro ao excluir prato:', error);
+          alert('Erro ao excluir prato: ' + error);
+        }
+      });
     }
   });
-});
+
+  // Script para lidar com os botões de inativar e ativar prato
+  $(document).ready(function() {
+
+    // Lidar com o clique no botão de inativar prato
+    $('#inativarPrato').click(function() {
+        var pratoId = $('#modalId').text(); // Obter o ID do prato
+        var btn = $(this); // Referência ao botão clicado
+
+        // Desabilitar o botão e alterar seu texto para "Aguarde..."
+        btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Aguarde...');
+
+        // Obtenha o token CSRF do cookie
+        function getCookie(name) {
+          var cookieValue = null;
+          if (document.cookie && document.cookie !== '') {
+          var cookies = document.cookie.split(';');
+          for (var i = 0; i < cookies.length; i++) {
+              var cookie = cookies[i].trim();
+              // Verifica se o cookie começa com o nome que estamos procurando
+              if (cookie.substring(0, name.length + 1) === (name + '=')) {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+              }
+          }
+          }
+          return cookieValue;
+        }
+        var csrftoken = getCookie('csrftoken');
+        // Enviar uma solicitação AJAX para inativar o prato
+        $.ajax({
+            url: '/inativar_prato/' + pratoId + '/', // URL para a view que inativa o prato
+            type: 'POST',
+            headers: {
+              'X-CSRFToken': csrftoken // Inclua o token CSRF nos cabeçalhos da solicitação
+              },
+            success: function(response) {
+                // Atualizar o status do prato no modal
+                $('#modalStatus').text('Inativo');
+                $('#modalStatus').removeClass('text-success').addClass('text-danger');
+                // Desabilitar o botão de inativar e habilitar o botão de ativar
+                $('#inativarPrato').prop('disabled', true);
+                $('#ativarPrato').prop('disabled', false);
+
+                // Exibir mensagem de sucesso usando um alert
+                alert('Prato inativado com sucesso!');
+
+                // Recarregar a página
+                location.reload();
+                
+            },
+            error: function(xhr, status, error) {
+                // Lidar com erros
+                console.error(xhr.responseText);
+            }
+        });
+    });
+
+    // Lidar com o clique no botão de ativar prato
+    $('#ativarPrato').click(function() {
+        var pratoId = $('#modalId').text(); // Obter o ID do prato
+        var btn = $(this); // Referência ao botão clicado
+
+        // Desabilitar o botão e alterar seu texto para "Aguarde..."
+        btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Aguarde...');
+
+        // Obtenha o token CSRF do cookie
+        function getCookie(name) {
+          var cookieValue = null;
+          if (document.cookie && document.cookie !== '') {
+          var cookies = document.cookie.split(';');
+          for (var i = 0; i < cookies.length; i++) {
+              var cookie = cookies[i].trim();
+              // Verifica se o cookie começa com o nome que estamos procurando
+              if (cookie.substring(0, name.length + 1) === (name + '=')) {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+              }
+          }
+          }
+          return cookieValue;
+        }
+        var csrftoken = getCookie('csrftoken');
+
+        // Enviar uma solicitação AJAX para ativar o prato
+        $.ajax({
+            url: '/ativar_prato/' + pratoId + '/', // URL para a view que ativa o prato
+            type: 'POST',
+            headers: {
+              'X-CSRFToken': csrftoken // Inclua o token CSRF nos cabeçalhos da solicitação
+              },
+            success: function(response) {
+                // Atualizar o status do prato no modal
+                $('#modalStatus').text('Ativo');
+                $('#modalStatus').removeClass('text-danger').addClass('text-success');
+                // Desabilitar o botão de ativar e habilitar o botão de inativar
+                $('#ativarPrato').prop('disabled', true);
+                $('#inativarPrato').prop('disabled', false);
+
+                // Exibir mensagem de sucesso usando um alert
+                alert('Prato ativado com sucesso!');
+
+                location.reload();
+            },
+            error: function(xhr, status, error) {
+                // Lidar com erros
+                console.error(xhr.responseText);
+            }
+        });
+    });
+  });
 </script>
+

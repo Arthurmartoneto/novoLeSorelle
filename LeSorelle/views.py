@@ -9,6 +9,7 @@ from django.contrib import messages
 
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
+from django.core.paginator import Paginator, EmptyPage
 
 from django.utils import timezone
 from datetime import timedelta, date
@@ -93,11 +94,12 @@ class dashboardView(LoginRequiredMixin, TemplateView):
         context['reservas'] = Reserva.objects.filter(date__gte=date.today()).order_by('date')
         context['reservas_modal'] = Reserva.objects.all()
         # Obtém os quatro últimos pratos para a página de dashboard
-        context['foods_dashboard'] = reversed(Food.objects.all().order_by('-id')[:4])
+        foods_dashboard_reversed = reversed(Food.objects.all().order_by('-id')[:4])
+        context['foods_dashboard'] = list(foods_dashboard_reversed)
         # Passa todos os pratos para o modal
         context['foods_modal'] = Food.objects.all()
         context['form'] = FoodForm()  # Inicialize o formulário
-
+        
         # Calcular a média de vendas
         total_vendas = Reserva.objects.aggregate(total_vendas=Sum('food__valor'))
         total_reservas = Reserva.objects.count()
@@ -176,29 +178,75 @@ class dashboardView(LoginRequiredMixin, TemplateView):
         
         return context
 
-def editar_prato(request, prato_id):  
+    def post(self, request, *args, **kwargs):
+        form = FoodForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            # Redirecionar para a mesma página após a adição do prato
+            return redirect('dashboard')
+        else:
+            # Se o formulário não for válido, recarregar a página com os erros do formulário
+            context = self.get_context_data()
+            context['form'] = form
+            return render(request, self.template_name, context)
+
+def editar_prato(request, prato_id):
     if request.method == 'POST':
         nome = request.POST.get('editNome')
         descricao = request.POST.get('editDescricao')
         valor = request.POST.get('editValor')
 
+        # Obtenha a imagem do formulário, se estiver presente
+        imagem = request.FILES.get('editImagem')
+
         # Converte o valor para o formato correto
         try:
             valor_decimal = float(valor.replace(',', '.'))
         except ValueError:
-            raise ValidationError(_('O valor deve ser um número decimal válido.'))
+            return JsonResponse({'error': 'O valor deve ser um número decimal válido.'}, status=400)
 
         prato = get_object_or_404(Food, id=prato_id)
 
         prato.name_food = nome
         prato.descricao = descricao
         prato.valor = valor_decimal  # Salva o valor convertido
+
+        # Se houver uma nova imagem, salve-a
+        if imagem:
+            prato.img = imagem  # Atualize a imagem do prato
+
         prato.save()
 
         return JsonResponse({'message': 'Prato editado com sucesso!'})
 
     return JsonResponse({'error': 'Método não permitido'}, status=405)
-            
+    
+def excluir_prato(request, prato_id):
+    if request.method == 'POST':
+        # Obtenha o objeto do prato a ser excluído
+        prato = get_object_or_404(Food, id=prato_id)
+
+        # Exclua o prato
+        prato.delete()
+
+        # Retorna uma resposta JSON indicando a exclusão bem-sucedida
+        return JsonResponse({'success': True})
+
+    # Se a solicitação não for POST, retorne uma resposta de erro
+    return JsonResponse({'error': 'Método não permitido'}, status=405)
+
+def inativar_prato(request, prato_id):
+    prato = get_object_or_404(Food, id=prato_id)
+    prato.status = 'inativo'
+    prato.save()
+    return JsonResponse({'message': 'Prato inativado com sucesso.'})
+
+def ativar_prato(request, prato_id):
+    prato = get_object_or_404(Food, id=prato_id)
+    prato.status = 'ativo'
+    prato.save()
+    return JsonResponse({'message': 'Prato ativado com sucesso.'})
+
 
 class tablesView(TemplateView):
     template_name = "tables/tables.html"
