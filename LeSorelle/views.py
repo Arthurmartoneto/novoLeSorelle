@@ -23,7 +23,7 @@ from django.http import JsonResponse, HttpResponseRedirect
 
 from .forms import ReservaForm, FoodForm
 
-from .models import Food, Reserva
+from .models import Food, Reserva, PratoAdicional
 
 from django.db.models.signals import post_save
 from django.db.models import Sum, F
@@ -39,6 +39,7 @@ class IndexView(TemplateView):
         context = super().get_context_data(**kwargs)
         context['user'] = self.request.user
         context['foods'] = Food.objects.all()  # Passe todos os alimentos para o contexto
+        context['pratos'] = Food.objects.filter(status='ativo')
         initial_data = {}
         if self.request.user.is_authenticated:
             initial_data['name_completo'] = self.request.user.get_full_name()
@@ -52,31 +53,42 @@ class IndexView(TemplateView):
         return context
     
     def post(self, request, *args, **kwargs):
-        if not request.user.is_authenticated:
-            # Se o usuário não estiver autenticado, redirecione-o para a página de login
-            return redirect(reverse('login'))
-
         form = ReservaForm(request.POST)
         if form.is_valid():
+            telefone = request.POST.get('telefone')
+            date = request.POST.get('date')
             hora = request.POST.get('hora')
-            print("hora:", hora)  # Verifica o valor do campo de hora
-            # Salva o formulário e retorna uma instância do modelo preenchida com os dados do formulário
-            reserva_instance = form.save(commit=False)
-            # O parâmetro commit=False evita que o objeto seja salvo no banco de dados imediatamente
-
-            # Agora, podemos manipular a instância se necessário
-            # Por exemplo, se quisermos adicionar algum dado extra antes de salvar
-            reserva_instance.usuario = request.user  # Supondo que você tenha um campo "usuario" na sua reserva
-
-            # Salva a instância no banco de dados
-            reserva_instance.save()
+            food_id = request.POST.get('food')
+            peso = request.POST.get('peso')
             
-            # Redireciona o usuário para a página inicial ou outra página, se desejado
-            return redirect('pedidos')  # Substitua '/' pela URL desejada
+            # Imprimir valores da reserva principal
+            print(f"Telefone: {telefone}")
+            print(f"Data: {date}")
+            print(f"Hora: {hora}")
+            print(f"ID do Alimento: {food_id}")
+            print(f"Peso: {peso}")
+            
+            # Cria a reserva principal
+            reserva_instance = Reserva.objects.create(usuario=request.user, telefone=telefone, date=date, hora=hora, food_id=food_id, peso=peso)
+            
+            num_pratos_adicionais = int(request.POST.get('num_pratos_adicionais'))
+            
+            for i in range(num_pratos_adicionais):
+                nome_prato = request.POST.get('nome_prato_' + str(i))
+                peso_prato = request.POST.get('peso_prato_' + str(i))
+                
+                # Imprimir valores dos pratos adicionais
+                print(f"Nome do Prato Adicional {i}: {nome_prato}")
+                print(f"Peso do Prato Adicional {i}: {peso_prato}")
+                
+                # Cria um prato adicional associado à reserva principal
+                PratoAdicional.objects.create(reserva=reserva_instance, nome=nome_prato, peso=peso_prato)
+            
+            return redirect('pedidos')
         else:
             print(form.errors)
-            # Se o formulário não for válido, renderize novamente a página com o formulário e os erros
             return super().get(request, *args, **kwargs)
+
 
 
 class dashboardView(LoginRequiredMixin, TemplateView):

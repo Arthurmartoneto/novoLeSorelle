@@ -74,11 +74,32 @@ document.getElementById("submitBtn").innerText = 'Enviando...';
 
 $(document).ready(function() {
     $('#adicionarbtn').on('click', function() {
-      var btn = $(this);
-      btn.button('loading'); // Exibir "Aguarde..." no botão
+        var btn = $(this);
+        btn.button('loading'); // Exibir "Aguarde..." no botão
 
-      // Submeter o formulário
-      $('#addPratoForm').submit();
+        // Submeter o formulário
+        $('#addPratoForm').submit();
     });
-  });
+});
 
+function adicionarPrato() {
+    var pratoModel = document.querySelector(".prato");
+    var pratoContainer = document.getElementById("pratoContainer");
+    
+    // Clone o modelo de prato sempre que precisarmos adicionar um novo
+    var novoPrato = pratoModel.cloneNode(true);
+    novoPrato.style.display = "block";
+    
+    // Atualiza o número de pratos adicionais
+    var numPratosAdicionaisInput = document.getElementById("num_pratos_adicionais");
+    var numPratosAdicionais = parseInt(numPratosAdicionaisInput.value) + 1;
+    numPratosAdicionaisInput.value = numPratosAdicionais;
+    
+    // Adiciona botão "Remover" ao lado do novo campo de prato
+    pratoContainer.appendChild(novoPrato);
+}
+
+function removerPrato(botaoRemover) {
+    var prato = botaoRemover.closest('.prato');
+    prato.parentNode.removeChild(prato);
+}

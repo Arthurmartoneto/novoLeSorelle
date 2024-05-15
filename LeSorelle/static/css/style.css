@@ -1086,8 +1086,8 @@ html, body{ height: 100%; }
 }
 .gal-container .description{
 	position: relative;
-	height: 40px;
-	top: -40px;
+	height: 60px;
+	top: -60px;
 	padding: 10px 25px;
 	background-color: rgba(0,0,0,0.5);
 	color: #fff;
@@ -1861,4 +1861,8 @@ textarea:focus, input:focus, select:focus, .bootstrap-select .dropdown-toggle:fo
 
 .dropdown-menu-dark .dropdown-link::before {
     display: none; /* Remova o pseudo-elemento ::after */
+}
+
+.prato-margin-left {
+    margin-left: 20px; /* Ajuste a margem conforme necessário */
 }

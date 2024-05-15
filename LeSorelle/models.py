@@ -27,14 +27,20 @@ class Reserva(models.Model):
     
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
     telefone = models.CharField(max_length=20)
-    food = models.ForeignKey(Food, on_delete=models.CASCADE)  # Certifique-se de que o modelo Food esteja importado corretamente
+    food = models.ForeignKey(Food, on_delete=models.CASCADE)
     peso = models.CharField(max_length=10, null=True)
-    date = models.DateField(null=True, max_length=10)
-    hora = models.CharField(null=True, max_length=10)
+    date = models.DateField(null=True)
+    hora = models.CharField(null=True, max_length=10)    
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pendente')
 
     def __str__(self):
-        return f"{self.user.username} - {self.food.name_food} - {self.date} {self.hora}"
+        return f"{self.usuario.username} - {self.food.name_food} - {self.date} {self.hora}"
 
     def get_email(self):
         return self.usuario.email
+    
+class PratoAdicional(models.Model):
+    reserva = models.ForeignKey(Reserva, on_delete=models.CASCADE)
+    nome = models.CharField(max_length=100, null=True)
+    peso = models.CharField(max_length=100, null=True)
+    

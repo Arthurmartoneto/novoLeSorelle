@@ -11,7 +11,6 @@ class ReservaForm(forms.ModelForm):
     
     HORARIOS_CHOICES = [
     ('', 'Horario de Retirada'),
-    ('08:00', '08:00'),
     ('09:00', '09:00'),
     ('10:00', '10:00'),
     ('11:00', '11:00'),
@@ -23,7 +22,6 @@ class ReservaForm(forms.ModelForm):
     ('17:00', '17:00'),
     ('18:00', '18:00'),
     ('19:00', '19:00'),
-    ('20:00', '20:00'),
 ]
     
     peso = forms.ChoiceField(choices=PESO_CHOICES, widget=forms.Select(attrs={'class': 'selectpicker form-control'}))
