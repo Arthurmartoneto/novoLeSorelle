@@ -48,8 +48,7 @@
           <!-- Nav alto -->
           <nav class="navbar p-0 fixed-top d-flex flex-row">
             <div class="navbar-brand-wrapper d-flex d-lg-none align-items-center justify-content-center">
-              <a class="navbar-brand brand-logo-mini" href="{% url 'index' %}"><img style="width: 50px; height: auto;" src="{% static 'images/logo.png' %}"
-                alt="logo" /></a>
+              <a class="navbar-brand brand-logo-mini" href="{% url 'index' %}"><img style="width: 50px; height: auto;" src="{% static 'images/logo.png' %}" alt="logo" /></a>
             </div>
 
             <div class="navbar-menu-wrapper flex-grow d-flex align-items-stretch">
@@ -66,7 +65,6 @@
 
               <!-- Nav Direita -->
               <ul class="navbar-nav navbar-nav-right">
-                
                 <!-- links -->
                 <li class="nav-item nav-settings d-none d-lg-block">
                   <a class="nav-link" href="#"><i class="mdi mdi-view-grid"></i></a>
@@ -158,7 +156,6 @@
                   </div>
                 </li>
                 <!-- Profile -->
-
               </ul>
               <!-- Nav Direita -->
 
@@ -167,116 +164,60 @@
           </nav>
           <!-- Nav alto -->
 
-          <div class="main-panel">
-            <div class="content-wrapper">
-              <div class="page-header">
-                <h3 class="page-title">Minhas Reservas</h3>
-              </div>
-              <div class="row">
-                
-                <div class="col-lg-12 grid-margin stretch-card">
-                  <div class="card">
-                      <div class="card-body">
-                          <h4 class="card-title">Minhas Reservas</h4>
-                          {% if reservas_usuario %}
-                          <div class="table-responsive">
-                              <table class="table table-hover">
-                                  <thead>
-                                      <tr>
-                                          <th>Imagem</th>
-                                          <th>Produto</th>
-                                          <th>Peso (kg)</th>
-                                          <th>Preço Total</th>
-                                          <th>Data</th>
-                                          <th>Hora</th>
-                                      </tr>
-                                  </thead>
-                                  <tbody>
-                                    {% for reserva in reservas_usuario %}
-                                        <tr class="reserva-link"
-                                            data-img-src="{{ reserva.food.img.url }}"
-                                            data-nome-produto="{{ reserva.food.name_food }}"
-                                            data-peso="{{ reserva.peso }}"
-                                            data-preco-total="{{ reserva.preco_total | floatformat:"2" }}"
-                                            data-data="{{ reserva.date }}"
-                                            data-hora="{{ reserva.hora }}">
-                                            <td>
-                                                <img src="{{ reserva.food.img.url }}" class="rounded-sm" style="width: 100px; height: auto;">
-                                            </td>
-                                            <td>{{ reserva.food.name_food }}</td>
-                                            <td>{{ reserva.peso }}</td>
-                                            <td>R${{ reserva.preco_total | floatformat:"2" }}</td>
-                                            <td>{{ reserva.date }}</td>
-                                            <td>{{ reserva.hora }}</td>
-                                        </tr>
-                                    {% endfor %}
-                                  </tbody>
-                              </table>
+          {% if reservas_usuario %}
+            <div class="main-panel">
+              <div class="content-wrapper">
+                <div class="row">
+                  {% for reserva in reservas_usuario %}
+                    <div class="col-12 grid-margin stretch-card">
+                      <div class="card">
+                        <div class="card-body">
+                          <h4 class="card-title">Reserva #{{ forloop.counter }}</h4>
+                          <div class="row">
+                            <div class="col-6">
+                              <!-- Prato Principal -->
+                              <p>Produto: {{ reserva.food.name_food }}</p>
+                              <p>Peso (kg): {{ reserva.peso }}</p>
+                              <p>Valor do prato: R${{ reserva.preco_principal|floatformat:'2' }}</p>
+                              <!-- Prato Principal -->
+                              {% if reserva.pratos_adicionais_reserva.all %}
+                                {% for prato_adicional in reserva.pratos_adicionais_reserva.all %}
+                                  <div class="dropdown-divider"></div>
+                                  <p>Produto: {{ prato_adicional.food.name_food }}</p>
+                                  <p>Peso (kg): {{ prato_adicional.peso }}</p>
+                                  <p>Valor do prato: R${{ prato_adicional.preco_total|floatformat:'2' }}</p>
+                                {% endfor %}
+                              {% endif %}
+                            </div>
+                            <!-- Exibir pratos adicionais -->
+                            <div class="col-3">
+                              <h6>Dia e Horario para Retirada:</h6>
+                              <br />
+                              <p>Data: {{ reserva.date }}</p>
+                              <p>Horario: {{ reserva.hora }}</p>
+                            </div>
+                            <div class=""></div>
+                            <div class="col-3">
+                              <!-- Soma dos preços convertidos -->
+                              <p>Total da Reserva: R${{ reserva.preco_total|floatformat:'2' }}</p>
+                              <br />
+                              <!-- Botão para confirmar o pedido -->
+                              <button type="button" class="btn btn-primary">Confirmar Pedido</button>
+                            </div>
                           </div>
-                          {% else %}
-                          <p class="alert alert-info" role="alert">Nenhum pedido feito.</p>
-                          {% endif %}
+                        </div>
                       </div>
-                  </div>
+                    </div>
+                  {% endfor %}
                 </div>
-              
               </div>
             </div>
-            <!-- content-wrapper ends -->
-            <!-- partial:../../partials/_footer.html -->
-            <footer class="footer">
-              <div class="d-sm-flex justify-content-center justify-content-sm-between">
-                <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright © bootstrapdash.com 2020</span>
-                <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Free <a href="https://www.bootstrapdash.com/bootstrap-admin-template/" target="_blank">Bootstrap admin templates</a> from Bootstrapdash.com</span>
-              </div>
-            </footer>
-            <!-- partial -->
-          </div>
-          <!-- main-panel ends -->
+          {% else %}
+            <p class="alert alert-info" role="alert">Nenhum pedido feito.</p>
+          {% endif %}
         </div>
         <!-- page-body-wrapper ends -->
       </div>
-
-      <!-- Modal Detalhes Reserva -->
-      <div class="modal fade" id="myModal">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <!-- Cabeçalho do Modal -->
-                <div class="modal-header">
-                  <h4 class="modal-title">Detalhes da Reserva</h4>
-                  <button type="button" style="color: white;" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                </div>
-
-                <!-- Corpo do Modal -->
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <img id="modalImagem" src="" class="img-fluid">
-                        </div>
-                        <div class="col-md-8">
-                            <p><strong>Produto:</strong> <span id="modalNomeProduto"></span></p>
-                            <p><strong>Peso (kg):</strong> <span id="modalPeso"></span></p>
-                            <p><strong>Preço Total:</strong> <span id="modalPrecoTotal"></span></p>
-                            <p><strong>Data:</strong> <span id="modalData"></span></p>
-                            <p><strong>Hora:</strong> <span id="modalHora"></span></p>
-                            <div class="mt-3">
-                              <button type="button" class="btn btn-danger" id="cancelarEntrega">Cancelar Entrega</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Footer Modal -->
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-                </div>
-            </div>
-        </div>
-      </div>
-      <!-- Modal Detalhes Reserva -->
-
     {% endif %}
     <!-- container-scroller -->
     <!-- plugins:js -->
@@ -287,49 +228,11 @@
     <!-- inject:js -->
     <script src="{% static 'assets/js/off-canvas.js' %}"></script>
     <script src="{% static 'assets/js/hoverable-collapse.js' %}"></script>
-    <script src="{% static 'assets/js/misc.js' %}"></script>
     <script src="{% static 'assets/js/settings.js' %}"></script>
     <script src="{% static 'assets/js/todolist.js' %}"></script>
+    <script src="{% static 'js/sistema.js' %}"></script>
     <!-- endinject -->
     <!-- Custom js for this page -->
     <!-- End custom js for this page -->
   </body>
 </html>
-
-
-<script>
-  $(document).ready(function() {
-      // Adicione um evento de clique aos elementos da tabela com a classe 'reserva-link'
-      $('.reserva-link').click(function() {
-          // Recupere os detalhes da reserva
-          var imgSrc = $(this).data('img-src');
-          var nomeProduto = $(this).data('nome-produto');
-          var peso = $(this).data('peso');
-          var precoTotal = $(this).data('preco-total');
-          var data = $(this).data('data');
-          var hora = $(this).data('hora');
-
-          // Preencha o modal com os detalhes da reserva
-          $('#modalImagem').attr('src', imgSrc);
-          $('#modalNomeProduto').text(nomeProduto);
-          $('#modalPeso').text(peso);
-          $('#modalPrecoTotal').text(precoTotal);
-          $('#modalData').text(data);
-          $('#modalHora').text(hora);
-
-          // Exiba o modal
-          $('#myModal').modal('show');
-      });
-  });
-
-  $(document).ready(function() {
-      // Evento de clique para o botão de cancelar entrega
-      $('#cancelarEntrega').click(function() {
-          // Coloque aqui o código para cancelar a entrega
-          // Por exemplo, você pode enviar uma requisição AJAX para o servidor para cancelar a entrega
-          // Ou exibir uma mensagem de confirmação ao usuário e tomar a ação apropriada
-          // Neste exemplo, apenas fecharemos o modal
-          $('#myModal').modal('hide');
-      });
-  });
-</script>

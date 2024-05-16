@@ -756,7 +756,7 @@
                   <div class="prato" style="display: none;">
                     <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
                       <div class="form-box">
-                        <select name="nome_prato[]">
+                        <select name="nome_prato">
                           <option value="" selected disabled>Prato(Campo extra)</option>
                           {% for food_option in foods %}
                             <option value="{{ food_option.id }}">{{ food_option.name_food }}</option>
@@ -767,7 +767,7 @@
                     <!-- end col -->
                     <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                       <div class="form-box">
-                        <select name="peso_prato[]">
+                        <select name="peso_prato">
                           <option value="" selected disabled>Peso(Campo extra)</option>
                           <option value="400g">400g</option>
                           <option value="500g">500g</option>
@@ -782,13 +782,9 @@
                       </div>
                     </div>
                     <!-- end col -->
-                    <input type="hidden" name="num_pratos_adicionais" id="num_pratos_adicionais" value="0" />
-                    <!-- Campo oculto para nome do prato adicional -->
-                    <input type="hidden" name="nome_prato_oculto[]" value="" />
-                    <!-- Campo oculto para peso do prato adicional -->
-                    <input type="hidden" name="peso_prato_oculto[]" value="" />
                   </div>
                 </div>
+                <!-- Campos Adicionais -->
 
                 <!-- Botão para adicionar prato -->
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">

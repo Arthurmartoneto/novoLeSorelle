@@ -27,12 +27,12 @@ class Reserva(models.Model):
     
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
     telefone = models.CharField(max_length=20)
-    food = models.ForeignKey(Food, on_delete=models.CASCADE)
+    food = models.ForeignKey(Food, on_delete=models.CASCADE, related_name='reservas_principal')
     peso = models.CharField(max_length=10, null=True)
     date = models.DateField(null=True)
     hora = models.CharField(null=True, max_length=10)    
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pendente')
-
+    
     def __str__(self):
         return f"{self.usuario.username} - {self.food.name_food} - {self.date} {self.hora}"
 
@@ -40,7 +40,8 @@ class Reserva(models.Model):
         return self.usuario.email
     
 class PratoAdicional(models.Model):
-    reserva = models.ForeignKey(Reserva, on_delete=models.CASCADE)
-    nome = models.CharField(max_length=100, null=True)
-    peso = models.CharField(max_length=100, null=True)
+    reserva = models.ForeignKey(Reserva, on_delete=models.CASCADE, related_name='pratos_adicionais_reserva')
+    food = models.ForeignKey(Food, on_delete=models.CASCADE, related_name='pratos_adicionais_food')
+    peso = models.CharField(max_length=10, null=True)
+
     

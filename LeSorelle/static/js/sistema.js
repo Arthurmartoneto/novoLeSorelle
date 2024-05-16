@@ -66,6 +66,42 @@ $(document).ready(function() {
     });
 });
 
+$(document).ready(function() {
+    // Adicione um evento de clique aos elementos da tabela com a classe 'reserva-link'
+    $('.reserva-link').click(function() {
+        // Recupere os detalhes da reserva
+        var imgSrc = $(this).data('img-src');
+        var nomeProduto = $(this).data('nome-produto');
+        var peso = $(this).data('peso');
+        var precoTotal = $(this).data('preco-total');
+        var data = $(this).data('data');
+        var hora = $(this).data('hora');
+
+        // Preencha o modal com os detalhes da reserva
+        $('#modalImagem').attr('src', imgSrc);
+        $('#modalNomeProduto').text(nomeProduto);
+        $('#modalPeso').text(peso);
+        $('#modalPrecoTotal').text(precoTotal);
+        $('#modalData').text(data);
+        $('#modalHora').text(hora);
+
+        // Exiba o modal
+        $('#myModal').modal('show');
+    });
+  });
+
+  $(document).ready(function() {
+      // Evento de clique para o botão de cancelar entrega
+      $('#cancelarEntrega').click(function() {
+          // Coloque aqui o código para cancelar a entrega
+          // Por exemplo, você pode enviar uma requisição AJAX para o servidor para cancelar a entrega
+          // Ou exibir uma mensagem de confirmação ao usuário e tomar a ação apropriada
+          // Neste exemplo, apenas fecharemos o modal
+          $('#myModal').modal('hide');
+      });
+  });
+
+
 // Função para desativar o botão após o envio do formulário
 function disableButton() {
 document.getElementById("submitBtn").disabled = true;
@@ -89,12 +125,7 @@ function adicionarPrato() {
     // Clone o modelo de prato sempre que precisarmos adicionar um novo
     var novoPrato = pratoModel.cloneNode(true);
     novoPrato.style.display = "block";
-    
-    // Atualiza o número de pratos adicionais
-    var numPratosAdicionaisInput = document.getElementById("num_pratos_adicionais");
-    var numPratosAdicionais = parseInt(numPratosAdicionaisInput.value) + 1;
-    numPratosAdicionaisInput.value = numPratosAdicionais;
-    
+        
     // Adiciona botão "Remover" ao lado do novo campo de prato
     pratoContainer.appendChild(novoPrato);
 }

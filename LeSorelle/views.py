@@ -28,6 +28,8 @@ from .models import Food, Reserva, PratoAdicional
 from django.db.models.signals import post_save
 from django.db.models import Sum, F
 
+from itertools import groupby
+
 import pdb
 # Create your views here.
 
@@ -38,7 +40,7 @@ class IndexView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['user'] = self.request.user
-        context['foods'] = Food.objects.all()  # Passe todos os alimentos para o contexto
+        context['foods'] = Food.objects.filter(status='ativo')  # Passe todos os alimentos para o contexto
         context['pratos'] = Food.objects.filter(status='ativo')
         initial_data = {}
         if self.request.user.is_authenticated:
@@ -55,11 +57,11 @@ class IndexView(TemplateView):
     def post(self, request, *args, **kwargs):
         form = ReservaForm(request.POST)
         if form.is_valid():
-            telefone = request.POST.get('telefone')
-            date = request.POST.get('date')
-            hora = request.POST.get('hora')
-            food_id = request.POST.get('food')
-            peso = request.POST.get('peso')
+            telefone = form.cleaned_data['telefone']
+            date = form.cleaned_data['date']
+            hora = form.cleaned_data['hora']
+            food_id = form.cleaned_data['food']
+            peso = form.cleaned_data['peso']
             
             # Imprimir valores da reserva principal
             print(f"Telefone: {telefone}")
@@ -69,20 +71,24 @@ class IndexView(TemplateView):
             print(f"Peso: {peso}")
             
             # Cria a reserva principal
-            reserva_instance = Reserva.objects.create(usuario=request.user, telefone=telefone, date=date, hora=hora, food_id=food_id, peso=peso)
+            reserva_instance = form.save(commit=False)
+            reserva_instance.usuario = request.user
+            reserva_instance.save()
             
-            num_pratos_adicionais = int(request.POST.get('num_pratos_adicionais'))
+            # Salva os pratos adicionais
+            pratos_adicionais = request.POST.getlist('nome_prato')
+            pesos_pratos_adicionais = request.POST.getlist('peso_prato')
             
-            for i in range(num_pratos_adicionais):
-                nome_prato = request.POST.get('nome_prato_' + str(i))
-                peso_prato = request.POST.get('peso_prato_' + str(i))
+            for i in range(len(pratos_adicionais)):
+                nome_prato = pratos_adicionais[i]
+                peso_prato = pesos_pratos_adicionais[i]
                 
                 # Imprimir valores dos pratos adicionais
-                print(f"Nome do Prato Adicional {i}: {nome_prato}")
+                print(f"ID Prato Adicional {i}: {nome_prato}")
                 print(f"Peso do Prato Adicional {i}: {peso_prato}")
                 
                 # Cria um prato adicional associado à reserva principal
-                PratoAdicional.objects.create(reserva=reserva_instance, nome=nome_prato, peso=peso_prato)
+                PratoAdicional.objects.create(reserva=reserva_instance, food_id=nome_prato, peso=peso_prato)
             
             return redirect('pedidos')
         else:
@@ -273,22 +279,30 @@ class pedidosView(TemplateView):
         reservas_usuario = Reserva.objects.filter(usuario=self.request.user)
         context['reservas_usuario'] = reservas_usuario
         
-        # Calcular o preço total de cada reserva no modal
-        soma_total_preco = 0
-        for reserva in context['reservas_usuario']:
-            # Remover "g" do peso e converter para um número decimal
-            peso_sem_g = reserva.peso.replace('g', '')
+        # Definir função para calcular o preço total de um prato
+        def calcular_preco_convertido(valor, peso):
+            peso_sem_g = peso.replace('g', '')
             peso_decimal = Decimal(peso_sem_g) / 1000 if peso_sem_g.endswith('kg') else Decimal(peso_sem_g) / 1000
-            # Calcular o preço total multiplicando o valor por kg do alimento pelo peso
-            reserva.preco_total = reserva.food.valor * peso_decimal
-            soma_total_preco += reserva.preco_total
+            return valor * peso_decimal
 
-        # Arredondar a soma total do preço para duas casas decimais
-        soma_total_preco = round(soma_total_preco, 2)
+        # Calcular o preço convertido individual de cada prato
+        for reserva in context['reservas_usuario']:
+            # Calcular o preço convertido do prato principal
+            reserva.preco_principal = calcular_preco_convertido(reserva.food.valor, reserva.peso)
+            
+            # Calcular o preço convertido dos pratos adicionais, se houver
+            reserva.preco_adicionais = sum(calcular_preco_convertido(prato_adicional.food.valor, prato_adicional.peso) for prato_adicional in reserva.pratos_adicionais_reserva.all())
 
-        context['soma_total_preco'] = soma_total_preco
-        
+            # Somar o preço do prato principal com o preço dos pratos adicionais
+            reserva.preco_total = reserva.preco_principal + reserva.preco_adicionais
+
+            # Calcular o preço total individual de cada prato adicional
+            for prato_adicional in reserva.pratos_adicionais_reserva.all():
+                prato_adicional.preco_total = calcular_preco_convertido(prato_adicional.food.valor, prato_adicional.peso)
+
         return context
+
+
 
 class loginView(TemplateView):
     template_name = "login/login.html"
