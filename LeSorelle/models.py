@@ -43,5 +43,6 @@ class PratoAdicional(models.Model):
     reserva = models.ForeignKey(Reserva, on_delete=models.CASCADE, related_name='pratos_adicionais_reserva')
     food = models.ForeignKey(Food, on_delete=models.CASCADE, related_name='pratos_adicionais_food')
     peso = models.CharField(max_length=10, null=True)
+    valor = models.DecimalField(max_digits=10, decimal_places=2, null=True)  # Adicionando campo valor
 
     

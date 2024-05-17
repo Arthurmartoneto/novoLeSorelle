@@ -164,6 +164,7 @@
           </nav>
           <!-- Nav alto -->
 
+
           {% if reservas_usuario %}
             <div class="main-panel">
               <div class="content-wrapper">
@@ -178,31 +179,34 @@
                               <!-- Prato Principal -->
                               <p>Produto: {{ reserva.food.name_food }}</p>
                               <p>Peso (kg): {{ reserva.peso }}</p>
-                              <p>Valor do prato: R${{ reserva.preco_principal|floatformat:'2' }}</p>
+                              <p>Valor (kg): R${{ reserva.food.valor|floatformat:'2' }}</p>
                               <!-- Prato Principal -->
                               {% if reserva.pratos_adicionais_reserva.all %}
                                 {% for prato_adicional in reserva.pratos_adicionais_reserva.all %}
                                   <div class="dropdown-divider"></div>
-                                  <p>Produto: {{ prato_adicional.food.name_food }}</p>
+                                  <p>Produto adicional: {{ prato_adicional.food.name_food }}</p>
                                   <p>Peso (kg): {{ prato_adicional.peso }}</p>
-                                  <p>Valor do prato: R${{ prato_adicional.preco_total|floatformat:'2' }}</p>
+                                  <p>Valor (kg): R${{ prato_adicional.valor|floatformat:'2' }}</p>
                                 {% endfor %}
                               {% endif %}
                             </div>
                             <!-- Exibir pratos adicionais -->
                             <div class="col-3">
-                              <h6>Dia e Horario para Retirada:</h6>
+                              <h6>Dia e Horário para Retirada:</h6>
                               <br />
                               <p>Data: {{ reserva.date }}</p>
-                              <p>Horario: {{ reserva.hora }}</p>
+                              <p>Horário: {{ reserva.hora }}</p>
                             </div>
-                            <div class=""></div>
                             <div class="col-3">
                               <!-- Soma dos preços convertidos -->
-                              <p>Total da Reserva: R${{ reserva.preco_total|floatformat:'2' }}</p>
-                              <br />
-                              <!-- Botão para confirmar o pedido -->
-                              <button type="button" class="btn btn-primary">Confirmar Pedido</button>
+                              <p>Total da Reserva:</p>
+                              <h3>R${{ reserva.preco_total|floatformat:'2' }}</h3>
+                              <br>
+                              <label style="font-size: 17px;" class="badge badge-warning">{{ reserva.status }}</label>
+                              <br>
+                              <div class="mt-3">
+                                <button style="font-size: 17px;" type="button" class="btn btn-danger btn-sm mr-2" onclick="marcarCancelado({{ reserva.id }})">Cancelar</button>
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -213,7 +217,7 @@
               </div>
             </div>
           {% else %}
-            <p class="alert alert-info" role="alert">Nenhum pedido feito.</p>
+            <h3>Nenhuma reserva feita.</h3>
           {% endif %}
         </div>
         <!-- page-body-wrapper ends -->

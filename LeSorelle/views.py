@@ -78,23 +78,30 @@ class IndexView(TemplateView):
             # Salva os pratos adicionais
             pratos_adicionais = request.POST.getlist('nome_prato')
             pesos_pratos_adicionais = request.POST.getlist('peso_prato')
-            
+
             for i in range(len(pratos_adicionais)):
-                nome_prato = pratos_adicionais[i]
+                nome_prato_id = pratos_adicionais[i]  # ID do alimento
                 peso_prato = pesos_pratos_adicionais[i]
                 
+                # Recupera o objeto Food a partir do ID
+                nome_prato = Food.objects.get(pk=nome_prato_id)
+                
+                # Recupera o valor do prato adicional
+                valor_prato = nome_prato.valor
+                
                 # Imprimir valores dos pratos adicionais
-                print(f"ID Prato Adicional {i}: {nome_prato}")
+                print(f"ID Prato Adicional {i}: {nome_prato_id}")
                 print(f"Peso do Prato Adicional {i}: {peso_prato}")
+                print(f"Valor do Prato Adicional {i}: {valor_prato}")
                 
                 # Cria um prato adicional associado à reserva principal
-                PratoAdicional.objects.create(reserva=reserva_instance, food_id=nome_prato, peso=peso_prato)
+                PratoAdicional.objects.create(reserva=reserva_instance, food=nome_prato, peso=peso_prato, valor=valor_prato)
+
             
             return redirect('pedidos')
         else:
             print(form.errors)
             return super().get(request, *args, **kwargs)
-
 
 
 class dashboardView(LoginRequiredMixin, TemplateView):
@@ -109,24 +116,33 @@ class dashboardView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['reservas'] = Reserva.objects.filter(date__gte=date.today()).order_by('date')
-        context['reservas_modal'] = Reserva.objects.all()
-        # Obtém os quatro últimos pratos para a página de dashboard
-        foods_dashboard_reversed = reversed(Food.objects.all().order_by('-id')[:4])
-        context['foods_dashboard'] = list(foods_dashboard_reversed)
-        # Passa todos os pratos para o modal
-        context['foods_modal'] = Food.objects.all()
-        context['form'] = FoodForm()  # Inicialize o formulário
         
+        # Filtrar as reservas para hoje e ordená-las por data
+        reservas = Reserva.objects.filter(date__gte=date.today()).order_by('date')
+        
+        # Adicionar as reservas ao contexto
+        context['reservas'] = reservas
+        
+        # Calcular o preço total de cada reserva
+        for reserva in reservas:
+            # Calcular o preço total do prato principal
+            peso_principal = Decimal(reserva.peso.replace('kg', '').replace('g', '').strip()) / 1000 if reserva.peso else 0
+            reserva.preco_principal = reserva.food.valor * peso_principal
+
+            # Calcular o preço total dos pratos adicionais, se houver
+            preco_adicionais = sum(prato_adicional.food.valor * Decimal(prato_adicional.peso.replace('kg', '').replace('g', '').strip()) / 1000 for prato_adicional in reserva.pratos_adicionais_reserva.all())
+            reserva.preco_adicionais = preco_adicionais
+
+            # Calcular o preço total da reserva
+            reserva.preco_total = reserva.preco_principal + reserva.preco_adicionais
+
+        # Calcular a soma total do valor das reservas
+        context['soma_total_preco'] = sum(reserva.preco_total for reserva in reservas)
+
         # Calcular a média de vendas
         total_vendas = Reserva.objects.aggregate(total_vendas=Sum('food__valor'))
         total_reservas = Reserva.objects.count()
-        if total_reservas > 0:
-            media_vendas = total_vendas['total_vendas'] / total_reservas
-        else:
-            media_vendas = 0
-
-        context['media_vendas'] = media_vendas
+        context['media_vendas'] = total_vendas['total_vendas'] / total_reservas if total_reservas > 0 else 0
 
         # Adicionar contagem de vendas por dia
         vendas_por_dia = {}
@@ -142,58 +158,24 @@ class dashboardView(LoginRequiredMixin, TemplateView):
         context['vendas_por_dia'] = vendas_por_dia
 
         # Calcular a soma total do valor das vendas
-        soma_total_vendas = sum(vendas_por_dia.values())
-        context['soma_total_vendas'] = soma_total_vendas
-        
+        context['soma_total_vendas'] = sum(vendas_por_dia.values())
 
-        # Calcular o preço total de cada reserva no modal
-        soma_total_preco_modal = 0
-        for reserva_modal in context['reservas_modal']:
-            # Remover "g" do peso e converter para um número decimal
-            peso_sem_g = reserva_modal.peso.replace('g', '')
-            peso_decimal = Decimal(peso_sem_g) / 1000 if peso_sem_g.endswith('kg') else Decimal(peso_sem_g) / 1000
-            # Calcular o preço total multiplicando o valor por kg do alimento pelo peso
-            reserva_modal.preco_total = reserva_modal.food.valor * peso_decimal
-            soma_total_preco_modal += reserva_modal.preco_total
-
-        # Arredondar a soma total do preço para duas casas decimais
-        soma_total_preco_modal = round(soma_total_preco_modal, 2)
-
-        context['soma_total_preco_modal'] = soma_total_preco_modal
-        
-        
-        # Calcular o preço total de cada reserva no modal
-        soma_total_preco = 0
-        for reserva in context['reservas']:
-            # Remover "g" do peso e converter para um número decimal
-            peso_sem_g = reserva.peso.replace('g', '')
-            peso_decimal = Decimal(peso_sem_g) / 1000 if peso_sem_g.endswith('kg') else Decimal(peso_sem_g) / 1000
-            # Calcular o preço total multiplicando o valor por kg do alimento pelo peso
-            reserva.preco_total = reserva.food.valor * peso_decimal
-            soma_total_preco += reserva.preco_total
-
-        # Arredondar a soma total do preço para duas casas decimais
-        soma_total_preco = round(soma_total_preco, 2)
-
-        context['soma_total_preco'] = soma_total_preco
-        
-        # Calcula a diferença entre a soma total do preço e a meta de 500 reais por dia
+        # Calcular a diferença entre a soma total do preço e a meta de 500 reais por dia
         meta_diaria = 100  # Meta de 100 reais por dia
-        total_vendido = soma_total_preco
-        diferenca_meta = total_vendido - meta_diaria  # Calcula a diferença entre o total vendido e a meta
-
-        context['diferenca_meta'] = diferenca_meta
+        context['diferenca_meta'] = context['soma_total_preco'] - meta_diaria  # Calcula a diferença entre o total vendido e a meta
         context['meta_diaria'] = meta_diaria  # Passa o valor da meta para o contexto
         
         data_atual = date.today()
+        vendas_por_dia_atual = Reserva.objects.filter(date=data_atual).count()
+        context['diferenca_meta_reservas'] = vendas_por_dia_atual - 10  # Meta de 10 reservas por dia
+        context['meta_diaria_reservas'] = 10  # Passa o valor da meta de reservas para o contexto
 
-        vendas_por_dia = Reserva.objects.filter(date=data_atual).count()
-        meta_diaria_reservas = 10  # Meta de 10 reservas por dia
-        diferenca_meta_reservas = vendas_por_dia - meta_diaria_reservas
+        # Adicionar os pratos adicionais ao contexto
+        context['foods_dashboard'] = Food.objects.all()  # Aqui você deve selecionar os pratos adicionais de acordo com sua lógica
 
-        context['diferenca_meta_reservas'] = diferenca_meta_reservas
-        context['meta_diaria_reservas'] = meta_diaria_reservas
-        
+        # Adicionar o formulário de adição de pratos ao contexto
+        context['form'] = FoodForm()
+
         return context
 
     def post(self, request, *args, **kwargs):
@@ -207,7 +189,8 @@ class dashboardView(LoginRequiredMixin, TemplateView):
             context = self.get_context_data()
             context['form'] = form
             return render(request, self.template_name, context)
-
+        
+        
 def editar_prato(request, prato_id):
     if request.method == 'POST':
         nome = request.POST.get('editNome')
@@ -269,7 +252,7 @@ def ativar_prato(request, prato_id):
 class tablesView(TemplateView):
     template_name = "tables/tables.html"
     
-    
+
 class pedidosView(TemplateView):
     template_name = "pedidos.html"
 
@@ -277,31 +260,34 @@ class pedidosView(TemplateView):
         context = super().get_context_data(**kwargs)
         # Recupera as reservas do usuário atual
         reservas_usuario = Reserva.objects.filter(usuario=self.request.user)
-        context['reservas_usuario'] = reservas_usuario
-        
+
         # Definir função para calcular o preço total de um prato
         def calcular_preco_convertido(valor, peso):
+            peso_sem_kg = peso.replace('kg', '')
             peso_sem_g = peso.replace('g', '')
-            peso_decimal = Decimal(peso_sem_g) / 1000 if peso_sem_g.endswith('kg') else Decimal(peso_sem_g) / 1000
+
+            if peso.endswith('kg'):
+                peso_decimal = Decimal(peso_sem_kg)
+            else:
+                peso_decimal = Decimal(peso_sem_g) / 1000
+
             return valor * peso_decimal
 
-        # Calcular o preço convertido individual de cada prato
-        for reserva in context['reservas_usuario']:
+        # Adicione as reservas ao contexto
+        context['reservas_usuario'] = reservas_usuario
+        
+        # Calcular o preço convertido individual de cada prato e adicionar ao contexto
+        for reserva in reservas_usuario:
             # Calcular o preço convertido do prato principal
             reserva.preco_principal = calcular_preco_convertido(reserva.food.valor, reserva.peso)
             
             # Calcular o preço convertido dos pratos adicionais, se houver
-            reserva.preco_adicionais = sum(calcular_preco_convertido(prato_adicional.food.valor, prato_adicional.peso) for prato_adicional in reserva.pratos_adicionais_reserva.all())
+            reserva.preco_adicionais = sum(calcular_preco_convertido(prato_adicional.valor, prato_adicional.peso) for prato_adicional in reserva.pratos_adicionais_reserva.all())
 
             # Somar o preço do prato principal com o preço dos pratos adicionais
             reserva.preco_total = reserva.preco_principal + reserva.preco_adicionais
 
-            # Calcular o preço total individual de cada prato adicional
-            for prato_adicional in reserva.pratos_adicionais_reserva.all():
-                prato_adicional.preco_total = calcular_preco_convertido(prato_adicional.food.valor, prato_adicional.peso)
-
         return context
-
 
 
 class loginView(TemplateView):

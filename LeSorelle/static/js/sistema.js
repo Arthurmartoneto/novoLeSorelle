@@ -1,34 +1,4 @@
 $(document).ready(function() {
-    // Adicione um evento de clique às linhas da tabela com a classe 'reserva-link'
-      $('.reserva-link').click(function() {
-          // Recupere os detalhes da reserva
-          var cliente = $(this).data('cliente');
-          var email = $(this).data('email');
-          var telefone = $(this).data('telefone');
-          var comida = $(this).data('comida');
-          var peso = $(this).data('peso');
-          var precoTotal = $(this).data('preco-total');
-          var data = $(this).data('data');
-          var hora = $(this).data('hora');
-          var fotoComida = $(this).data('foto-comida');
-
-          // Preencha o modal com os detalhes da reserva
-          $('#modalCliente').text(cliente);
-          $('#modalEmail').text(email);
-          $('#modalTelefone').text(telefone);
-          $('#modalComida').text(comida);
-          $('#modalPeso').text(peso);
-          $('#modalPrecoTotal').text(precoTotal);
-          $('#modalData').text(data);
-          $('#modalHora').text(hora);
-          $('#modalFotoComida').attr('src', fotoComida);
-
-          // Exiba o modal
-          $('#detalhesReserva').modal('show');
-      });
-  });
-
-$(document).ready(function() {
     $('.prato-link').click(function() {
         var nome = $(this).data('nome');
         var descricao = $(this).data('descricao');
