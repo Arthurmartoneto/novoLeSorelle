@@ -12,7 +12,7 @@ from django.utils.translation import gettext_lazy as _
 from django.core.paginator import Paginator, EmptyPage
 
 from django.utils import timezone
-from datetime import timedelta, date
+from datetime import timedelta, date, datetime
 
 from decimal import Decimal
 
@@ -106,25 +106,29 @@ class IndexView(TemplateView):
 
 class dashboardView(LoginRequiredMixin, TemplateView):
     template_name = "dashboards.html"
-    login_url = '/login/'  # URL de login padrão, pode ser alterada conforme necessário
+    login_url = '/login/'  
 
     def dispatch(self, request, *args, **kwargs):
         if not request.user.groups.filter(name='Dashboard').exists():
-            # Se o usuário não pertence ao grupo "Dashboard", redireciona para a página de login
             return redirect_to_login(request.get_full_path(), self.login_url)
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         
+        # Adicionar os pratos adicionais ao contexto
+        context['foods_modal'] = Food.objects.all()
+        
         # Filtrar as reservas para hoje e ordená-las por data
-        reservas = Reserva.objects.filter(date__gte=date.today()).order_by('date')
+        reservas_abertas = Reserva.objects.filter(date__gte=date.today(), status__in=['pendente', 'em_preparo', 'pronto']).order_by('date')
+        reservas_finalizadas = Reserva.objects.filter(status='finalizado').order_by('date')
         
         # Adicionar as reservas ao contexto
-        context['reservas'] = reservas
+        context['reservas_abertas'] = reservas_abertas
+        context['reservas_finalizadas'] = reservas_finalizadas
         
         # Calcular o preço total de cada reserva
-        for reserva in reservas:
+        for reserva in reservas_abertas:
             # Calcular o preço total do prato principal
             peso_principal = Decimal(reserva.peso.replace('kg', '').replace('g', '').strip()) / 1000 if reserva.peso else 0
             reserva.preco_principal = reserva.food.valor * peso_principal
@@ -135,9 +139,17 @@ class dashboardView(LoginRequiredMixin, TemplateView):
 
             # Calcular o preço total da reserva
             reserva.preco_total = reserva.preco_principal + reserva.preco_adicionais
+        
+        # Calcular o preço total de cada reserva finalizada
+        for reserva_finalizada in reservas_finalizadas:
+            peso_principal = Decimal(reserva_finalizada.peso.replace('kg', '').replace('g', '').strip()) / 1000 if reserva_finalizada.peso else 0
+            reserva_finalizada.preco_principal = reserva_finalizada.food.valor * peso_principal
+            preco_adicionais = sum(prato_adicional.food.valor * Decimal(prato_adicional.peso.replace('kg', '').replace('g', '').strip()) / 1000 for prato_adicional in reserva_finalizada.pratos_adicionais_reserva.all())
+            reserva_finalizada.preco_adicionais = preco_adicionais
+            reserva_finalizada.preco_total = reserva_finalizada.preco_principal + reserva_finalizada.preco_adicionais
 
         # Calcular a soma total do valor das reservas
-        context['soma_total_preco'] = sum(reserva.preco_total for reserva in reservas)
+        context['soma_total_preco'] = sum(reserva.preco_total for reserva in reservas_abertas) + sum(reserva_finalizada.preco_total for reserva_finalizada in reservas_finalizadas)
 
         # Calcular a média de vendas
         total_vendas = Reserva.objects.aggregate(total_vendas=Sum('food__valor'))
@@ -150,6 +162,7 @@ class dashboardView(LoginRequiredMixin, TemplateView):
         for reserva in reservas_por_dia:
             data_reserva = reserva['date']
             vendas_por_dia[data_reserva] = reserva['total_vendas']
+        
         # Se não houver reservas para um determinado dia, definimos a contagem de vendas como 0
         dias_sem_vendas = [day for day in (date.today() - timedelta(n) for n in range(7)) if day not in vendas_por_dia]
         for dia in dias_sem_vendas:
@@ -162,8 +175,8 @@ class dashboardView(LoginRequiredMixin, TemplateView):
 
         # Calcular a diferença entre a soma total do preço e a meta de 500 reais por dia
         meta_diaria = 100  # Meta de 100 reais por dia
-        context['diferenca_meta'] = context['soma_total_preco'] - meta_diaria  # Calcula a diferença entre o total vendido e a meta
-        context['meta_diaria'] = meta_diaria  # Passa o valor da meta para o contexto
+        context['diferenca_meta'] = context['soma_total_preco'] - meta_diaria
+        context['meta_diaria'] = meta_diaria
         
         data_atual = date.today()
         vendas_por_dia_atual = Reserva.objects.filter(date=data_atual).count()
@@ -171,7 +184,7 @@ class dashboardView(LoginRequiredMixin, TemplateView):
         context['meta_diaria_reservas'] = 10  # Passa o valor da meta de reservas para o contexto
 
         # Adicionar os pratos adicionais ao contexto
-        context['foods_dashboard'] = Food.objects.all()  # Aqui você deve selecionar os pratos adicionais de acordo com sua lógica
+        context['foods_dashboard'] = Food.objects.all()
 
         # Adicionar o formulário de adição de pratos ao contexto
         context['form'] = FoodForm()
@@ -182,15 +195,14 @@ class dashboardView(LoginRequiredMixin, TemplateView):
         form = FoodForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            # Redirecionar para a mesma página após a adição do prato
             return redirect('dashboard')
         else:
-            # Se o formulário não for válido, recarregar a página com os erros do formulário
             context = self.get_context_data()
             context['form'] = form
             return render(request, self.template_name, context)
         
-        
+
+@login_required        
 def editar_prato(request, prato_id):
     if request.method == 'POST':
         nome = request.POST.get('editNome')
@@ -221,7 +233,8 @@ def editar_prato(request, prato_id):
         return JsonResponse({'message': 'Prato editado com sucesso!'})
 
     return JsonResponse({'error': 'Método não permitido'}, status=405)
-    
+
+@login_required    
 def excluir_prato(request, prato_id):
     if request.method == 'POST':
         # Obtenha o objeto do prato a ser excluído
@@ -236,17 +249,46 @@ def excluir_prato(request, prato_id):
     # Se a solicitação não for POST, retorne uma resposta de erro
     return JsonResponse({'error': 'Método não permitido'}, status=405)
 
+@login_required
 def inativar_prato(request, prato_id):
     prato = get_object_or_404(Food, id=prato_id)
     prato.status = 'inativo'
     prato.save()
     return JsonResponse({'message': 'Prato inativado com sucesso.'})
 
+@login_required
 def ativar_prato(request, prato_id):
     prato = get_object_or_404(Food, id=prato_id)
     prato.status = 'ativo'
     prato.save()
     return JsonResponse({'message': 'Prato ativado com sucesso.'})
+
+@login_required
+def marcar_em_preparo(request, reserva_id):
+    if request.method == 'POST':
+        reserva = get_object_or_404(Reserva, id=reserva_id)
+        reserva.status = 'em_preparo'
+        reserva.save()
+        return JsonResponse({'success': True})
+    return JsonResponse({'success': False})
+
+@login_required
+def marcar_pronto(request, reserva_id):
+    if request.method == 'POST':
+        reserva = get_object_or_404(Reserva, id=reserva_id)
+        reserva.status = 'pronto'
+        reserva.save()
+        return JsonResponse({'success': True})
+    return JsonResponse({'success': False})
+
+@login_required
+def marcar_finalizado(request, reserva_id):
+    if request.method == 'POST':
+        reserva = get_object_or_404(Reserva, id=reserva_id)
+        reserva.status = 'finalizado'
+        reserva.save()
+        return JsonResponse({'success': True})
+    return JsonResponse({'success': False})
 
 
 class tablesView(TemplateView):
@@ -258,9 +300,21 @@ class pedidosView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        
         # Recupera as reservas do usuário atual
         reservas_usuario = Reserva.objects.filter(usuario=self.request.user)
 
+        # Defina a data atual
+        data_atual = datetime.now().date()
+
+        # Separe as reservas em reservas antes e depois da data atual
+        reservas_passadas = reservas_usuario.filter(date__lt=data_atual)
+        reservas_futuras = reservas_usuario.filter(date__gte=data_atual)
+
+        # Adicione as reservas passadas e futuras ao contexto
+        context['reservas_passadas'] = reservas_passadas
+        context['reservas_futuras'] = reservas_futuras
+        
         # Definir função para calcular o preço total de um prato
         def calcular_preco_convertido(valor, peso):
             peso_sem_kg = peso.replace('kg', '')
@@ -273,11 +327,19 @@ class pedidosView(TemplateView):
 
             return valor * peso_decimal
 
-        # Adicione as reservas ao contexto
-        context['reservas_usuario'] = reservas_usuario
-        
-        # Calcular o preço convertido individual de cada prato e adicionar ao contexto
-        for reserva in reservas_usuario:
+        # Calcular o preço convertido individual de cada prato e adicionar ao contexto para reservas passadas
+        for reserva in reservas_passadas:
+            # Calcular o preço convertido do prato principal
+            reserva.preco_principal = calcular_preco_convertido(reserva.food.valor, reserva.peso)
+            
+            # Calcular o preço convertido dos pratos adicionais, se houver
+            reserva.preco_adicionais = sum(calcular_preco_convertido(prato_adicional.valor, prato_adicional.peso) for prato_adicional in reserva.pratos_adicionais_reserva.all())
+
+            # Somar o preço do prato principal com o preço dos pratos adicionais
+            reserva.preco_total = reserva.preco_principal + reserva.preco_adicionais
+
+        # Calcular o preço convertido individual de cada prato e adicionar ao contexto para reservas futuras
+        for reserva in reservas_futuras:
             # Calcular o preço convertido do prato principal
             reserva.preco_principal = calcular_preco_convertido(reserva.food.valor, reserva.peso)
             
@@ -289,6 +351,14 @@ class pedidosView(TemplateView):
 
         return context
 
+@login_required
+def cancelar_reserva(request, reserva_id):
+    if request.method == 'POST':
+        reserva = get_object_or_404(Reserva, id=reserva_id, usuario=request.user)
+        reserva.status = 'cancelado'
+        reserva.save()
+        return JsonResponse({'success': True})
+    return JsonResponse({'success': False})
 
 class loginView(TemplateView):
     template_name = "login/login.html"

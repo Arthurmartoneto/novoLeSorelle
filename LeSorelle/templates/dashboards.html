@@ -32,7 +32,7 @@
         <nav class="sidebar sidebar-offcanvas" id="sidebar">
           <div class="sidebar-brand-wrapper d-none d-lg-flex align-items-center justify-content-center fixed-top">
             <a class="sidebar-brand brand-logo" href="{% url 'index' %}"><img style="width: 80px; height: auto;" src="{% static 'images/logo.png' %}" alt="" /></a>
-            <a class="sidebar-brand brand-logo-mini" href="{% url 'index' %}"><img src="{% static 'images/logo.png' %}" alt="logo" /></a>
+            <a class="sidebar-brand brand-logo-mini" href="{% url 'index' %}"><img style="width: 30px; height: auto;" src="{% static 'images/logo.png' %}" alt="logo" /></a>
           </div>
 
           <ul class="nav">
@@ -93,12 +93,6 @@
                   <button type="button" class="nav-link btn btn-success create-new-button" data-toggle="modal" data-target="#novoPratoModal">+ Adicionar Novo Prato</button>
                 </li>
                 <!-- Adicionar -->
-
-                <!-- links -->
-                <li class="nav-item nav-settings d-none d-lg-block">
-                  <a class="nav-link" href="#"><i class="mdi mdi-view-grid"></i></a>
-                </li>
-                <!-- links -->
 
                 <!-- Notifications -->
                 <li class="nav-item dropdown border-left">
@@ -197,6 +191,7 @@
           <div class="main-panel">
             <div class="content-wrapper">
               <div class="row">
+
                 <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
                   <div class="card">
                     <div class="card-body">
@@ -204,9 +199,9 @@
                         <div class="col-9">
                           <div class="d-flex align-items-center align-self-start">
                             {% if soma_total_preco %}
-                              <h3 class="mb-0">R${{ soma_total_preco }}</h3>
+                              <h3 class="mb-0">R${{ soma_total_preco|floatformat:'2' }}</h3>
                             {% else %}
-                              <p class="mb-0">Nenhuma soma por hoje</p>
+                              <p class="mb-0">Nenhuma reserva por hoje</p>
                             {% endif %}
                           </div>
                         </div>
@@ -226,7 +221,7 @@
                             {% if diferenca_meta >= 0 %}
                               <p class="text-success ml-2 mb-0 font-weight-medium">R$ +{{ diferenca_meta }}</p>
                             {% else %}
-                              <p class="text-danger ml-2 mb-0 font-weight-medium">R$ {{ diferenca_meta }}</p>
+                              <p class="text-danger ml-2 mb-0 font-weight-medium">R$ {{ diferenca_meta|floatformat:'2' }}</p>
                             {% endif %}
                           </div>
                         </div>
@@ -284,6 +279,7 @@
                     </div>
                   </div>
                 </div>
+
               </div>
 
               <!-- Pratos Adicionados -->
@@ -319,7 +315,7 @@
                                       <td>{{ food.name_food }}</td>
                                       <td>{{ food.descricao }}</td>
                                       <td>{{ food.valor }}Kg</td>
-                                      <td class="{% if food.status == 'ativo' %}{% endif %}">{{ food.status }}</td>
+                                      <td class="{% if food.status == 'ativo' %}text-success{% else %}text-danger{% endif %}">{{ food.status }}</td>
                                     </tr>
                                   {% endfor %}
                                 </tbody>
@@ -336,24 +332,24 @@
               </div>
               <!-- Pratos Adicionados -->
 
-              <!-- reserva section -->
+              <!-- Reservas Abertas -->
+              <h3>Reservas Abertas</h3>
               <div class="row">
-                {% if reservas %}
-                  {% for reserva in reservas %}
-                    <div class="col-12 grid-margin stretch-card">
+                {% if reservas_abertas %}
+                  {% for reserva in reservas_abertas %}
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 grid-margin stretch-card">
                       <div class="card">
                         <div class="card-body">
                           <h4 class="card-title">Reserva #{{ forloop.counter }}</h4>
                           <div class="row">
-                            <div class="col-3">
+                            <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
                               <!-- Dados do solicitante -->
                               <p>Solicitante: {{ reserva.usuario.get_full_name }}</p>
                               <p>Email: {{ reserva.usuario.email }}</p>
                               <p>Telefone: {{ reserva.telefone }}</p>
                               <!-- Fim dos dados do solicitante -->
                             </div>
-                            <div class="col-3">
-
+                            <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
                               <!-- Prato Principal -->
                               <p>Produto: {{ reserva.food.name_food }}</p>
                               <p>Peso (kg): {{ reserva.peso }}</p>
@@ -370,21 +366,43 @@
                               {% endif %}
                             </div>
                             <!-- Exibir pratos adicionais -->
-                            <div class="col-3">
+                            <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
                               <h6>Dia e Horário para Retirada:</h6>
                               <br />
                               <p>Data: {{ reserva.date }}</p>
                               <p>Horário: {{ reserva.hora }}</p>
                             </div>
-                            <div class="col-3">
+                            <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
                               <!-- Soma dos preços convertidos -->
                               <p>Total da Reserva:</p>
                               <h3>R${{ reserva.preco_total|floatformat:'2' }}</h3>
                               <br />
-                              <label style="font-size: 17px;" class="badge badge-warning">{{ reserva.status }}</label>
+                              <label style="font-size: 17px;"
+                                class="badge {% if reserva.status == 'em_preparo' %} badge-info
+
+                                {% elif reserva.status == 'pendente' %} badge-warning
+
+                                {% elif reserva.status == 'pronto' %} badge-success
+
+                                {% elif reserva.status == 'cancelado' %} badge-danger
+
+                                {% endif %}">
+                                {% if reserva.status == 'em_preparo' %}
+                                  Em Preparo
+                                {% else %}
+                                  {{ reserva.get_status_display }}
+                                {% endif %}
+                              </label>
                               <div class="mt-3">
-                                <button type="button" class="btn btn-primary btn-sm mr-2" onclick="marcarEmPreparo({{ reserva.id }})">Em Preparo</button><br />
-                                <button type="button" class="btn btn-success btn-sm" onclick="marcarConcluido({{ reserva.id }})">Concluir</button>
+                                {% if reserva.status == 'pendente' %}
+                                  <button type="button" style="font-size: 16px;" class="btn btn-primary btn-sm mr-2" onclick="marcarEmPreparo({{ reserva.id }})">Em Preparo</button>
+                                {% endif %}
+                                {% if reserva.status == 'em_preparo' %}
+                                  <button type="button" style="font-size: 16px;" class="btn btn-success btn-sm" onclick="marcarPronto({{ reserva.id }})">Pronto</button>
+                                {% endif %}
+                                {% if reserva.status == 'pronto' %}
+                                  <button type="button" style="font-size: 16px;" class="btn btn-primary btn-sm" onclick="marcarFinalizado({{ reserva.id }})">Finalizar</button>
+                                {% endif %}
                               </div>
                             </div>
                           </div>
@@ -394,11 +412,71 @@
                   {% endfor %}
                 {% else %}
                   <div class="col-12">
-                    <div class="alert alert-info" role="alert">Nenhuma reserva feita.</div>
+                    <div class="alert alert-info" role="alert">Nenhuma reserva aberta.</div>
                   </div>
                 {% endif %}
               </div>
-              <!-- reserva section -->
+              <!-- Reservas Abertas -->
+
+              <!-- Reservas Finalizadas -->
+              <h3>Reservas Finalizadas</h3>
+              <div class="row">
+                {% if reservas_finalizadas %}
+                  {% for reserva in reservas_finalizadas %}
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 grid-margin stretch-card">
+                      <div class="card">
+                        <div class="card-body">
+                          <h4 class="card-title">Reserva #{{ forloop.counter }}</h4>
+                          <div class="row">
+                            <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                              <!-- Dados do solicitante -->
+                              <p>Solicitante: {{ reserva.usuario.get_full_name }}</p>
+                              <p>Email: {{ reserva.usuario.email }}</p>
+                              <p>Telefone: {{ reserva.telefone }}</p>
+                              <!-- Fim dos dados do solicitante -->
+                            </div>
+                            <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                              <!-- Prato Principal -->
+                              <p>Produto: {{ reserva.food.name_food }}</p>
+                              <p>Peso (kg): {{ reserva.peso }}</p>
+                              <p>Valor (kg): R${{ reserva.food.valor|floatformat:'2' }}</p>
+                              <!-- Prato Principal -->
+
+                              {% if reserva.pratos_adicionais_reserva.all %}
+                                {% for prato_adicional in reserva.pratos_adicionais_reserva.all %}
+                                  <div class="dropdown-divider"></div>
+                                  <p>Produto adicional: {{ prato_adicional.food.name_food }}</p>
+                                  <p>Peso (kg): {{ prato_adicional.peso }}</p>
+                                  <p>Valor (kg): R${{ prato_adicional.valor|floatformat:'2' }}</p>
+                                {% endfor %}
+                              {% endif %}
+                            </div>
+                            <!-- Exibir pratos adicionais -->
+                            <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                              <h6>Dia e Horário para Retirada:</h6>
+                              <br />
+                              <p>Data: {{ reserva.date }}</p>
+                              <p>Horário: {{ reserva.hora }}</p>
+                            </div>
+                            <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                              <!-- Soma dos preços convertidos -->
+                              <p>Total da Reserva:</p>
+                              <h3>R${{ reserva.preco_total|floatformat:'2' }}</h3>
+                              <br />
+                              <label style="font-size: 17px;" class="badge badge-info">Finalizado</label>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  {% endfor %}
+                {% else %}
+                  <div class="col-12">
+                    <div class="alert alert-info" role="alert">Nenhuma reserva finalizada.</div>
+                  </div>
+                {% endif %}
+              </div>
+              <!-- Reservas Finalizadas -->
             </div>
             <!-- content-wrapper ends -->
             <!-- partial:partials/_footer.html -->
@@ -468,7 +546,7 @@
                           <td>{{ food.name_food }}</td>
                           <td>{{ food.descricao }}</td>
                           <td>{{ food.valor }}Kg</td>
-                          <td class="{% if food.status == 'ativo' %}{% endif %}">{{ food.status }}</td>
+                          <td class="{% if food.status == 'ativo' %}text-success{% else %}text-danger{% endif %}">{{ food.status }}</td>
                         </tr>
                       {% endfor %}
                     </tbody>

@@ -23,6 +23,8 @@ class Reserva(models.Model):
         ('pendente', 'Pendente'),
         ('em_preparo', 'Em Preparo'),
         ('pronto', 'Pronto'),
+        ('finalizado', 'Finalizado'),
+        ('cancelado', 'Cancelado'),
     )
     
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)

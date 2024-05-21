@@ -78,6 +78,7 @@ document.getElementById("submitBtn").disabled = true;
 document.getElementById("submitBtn").innerText = 'Enviando...';
 }
 
+
 $(document).ready(function() {
     $('#adicionarbtn').on('click', function() {
         var btn = $(this);
@@ -87,6 +88,7 @@ $(document).ready(function() {
         $('#addPratoForm').submit();
     });
 });
+
 
 function adicionarPrato() {
     var pratoModel = document.querySelector(".prato");
@@ -100,7 +102,181 @@ function adicionarPrato() {
     pratoContainer.appendChild(novoPrato);
 }
 
+
 function removerPrato(botaoRemover) {
     var prato = botaoRemover.closest('.prato');
     prato.parentNode.removeChild(prato);
+}
+
+
+// Função para obter o token CSRF do cookie
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+var csrftoken = getCookie('csrftoken');
+
+// Função para marcar uma reserva como cancelada
+function marcarCancelado(reservaId) {
+    if (confirm('Tem certeza que deseja cancelar esta reserva?')) {
+        fetch(`/cancelar_reserva/${reservaId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrftoken,
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Reserva cancelada com sucesso.');
+                location.reload();  // Recarrega a página para atualizar o status da reserva
+            } else {
+                alert('Falha ao cancelar a reserva. Tente novamente.');
+            }
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            alert('Ocorreu um erro ao cancelar a reserva. Tente novamente.');
+        });
+    }
+}
+
+
+// Função para obter o token CSRF do cookie
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+var csrftoken = getCookie('csrftoken');
+
+function marcarEmPreparo(reservaId) {
+    if (confirm('Marcar esta reserva como Em Preparo?')) {
+        fetch(`/marcar_em_preparo/${reservaId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrftoken,
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Reserva marcada como Em Preparo.');
+                location.reload();  // Recarrega a página para atualizar o status da reserva
+            } else {
+                alert('Falha ao marcar a reserva como Em Preparo. Tente novamente.');
+            }
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            alert('Ocorreu um erro ao marcar a reserva como Em Preparo. Tente novamente.');
+        });
+    }
+}
+
+
+// Função para obter o token CSRF do cookie
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+var csrftoken = getCookie('csrftoken');
+
+function marcarPronto(reservaId) {
+    if (confirm('Marcar esta reserva como Pronto?')) {
+        fetch(`/marcar_pronto/${reservaId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrftoken,
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Reserva marcada como Pronto.');
+                location.reload();  // Recarrega a página para atualizar o status da reserva
+            } else {
+                alert('Falha ao marcar a reserva como Pronto. Tente novamente.');
+            }
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            alert('Ocorreu um erro ao marcar a reserva como Pronto. Tente novamente.');
+        });
+    }
+}
+
+
+// Função para obter o token CSRF do cookie
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+var csrftoken = getCookie('csrftoken');
+
+function marcarFinalizado(reservaId) {
+    if (confirm('Marcar esta reserva como Finalizada?')) {
+        fetch(`/marcar_finalizado/${reservaId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrftoken,
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Reserva marcada como Finalizada.');
+                location.reload();  // Recarrega a página para atualizar o status da reserva
+            } else {
+                alert('Falha ao marcar a reserva como Finalizada. Tente novamente.');
+            }
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            alert('Ocorreu um erro ao marcar a reserva como Finalizada. Tente novamente.');
+        });
+    }
 }
