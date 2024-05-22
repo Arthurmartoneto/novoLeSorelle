@@ -1,23 +1,18 @@
 from django.views.generic import TemplateView
 from django.contrib.auth.views import redirect_to_login
 
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib import messages
 
-from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
-from django.core.paginator import Paginator, EmptyPage
 
-from django.utils import timezone
 from datetime import timedelta, date, datetime
 
 from decimal import Decimal
 
 from django.shortcuts import render, redirect, get_object_or_404
-from django.urls import reverse
 
 from django.http import JsonResponse, HttpResponseRedirect
 
@@ -26,11 +21,11 @@ from .forms import ReservaForm, FoodForm
 from .models import Food, Reserva, PratoAdicional
 
 from django.db.models.signals import post_save
-from django.db.models import Sum, F
+from django.db.models import Sum
 
-from itertools import groupby
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 
-import pdb
 # Create your views here.
 
 
@@ -75,6 +70,16 @@ class IndexView(TemplateView):
             reserva_instance.usuario = request.user
             reserva_instance.save()
             
+            # Enviar notificação para o operador via WebSocket
+            channel_layer = get_channel_layer()
+            async_to_sync(channel_layer.group_send)(
+                'notificacoes_operador',
+                {
+                    'type': 'enviar_notificacao',
+                    'message': 'Uma nova reserva foi criada.'
+                }
+            )
+            
             # Salva os pratos adicionais
             pratos_adicionais = request.POST.getlist('nome_prato')
             pesos_pratos_adicionais = request.POST.getlist('peso_prato')
@@ -98,7 +103,7 @@ class IndexView(TemplateView):
                 PratoAdicional.objects.create(reserva=reserva_instance, food=nome_prato, peso=peso_prato, valor=valor_prato)
 
             
-            return redirect('pedidos')
+            return redirect('minhasreservas')
         else:
             print(form.errors)
             return super().get(request, *args, **kwargs)
@@ -121,7 +126,7 @@ class dashboardView(LoginRequiredMixin, TemplateView):
         
         # Filtrar as reservas para hoje e ordená-las por data
         reservas_abertas = Reserva.objects.filter(date__gte=date.today(), status__in=['pendente', 'em_preparo', 'pronto']).order_by('date')
-        reservas_finalizadas = Reserva.objects.filter(status='finalizado').order_by('date')
+        reservas_finalizadas = Reserva.objects.filter(status='finalizado', date__gte=date.today()).order_by('date')
         
         # Adicionar as reservas ao contexto
         context['reservas_abertas'] = reservas_abertas
@@ -291,12 +296,57 @@ def marcar_finalizado(request, reserva_id):
     return JsonResponse({'success': False})
 
 
+class finalizadasView(TemplateView):
+    template_name = "finalizadas.html"
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        # Adicionar os pratos adicionais ao contexto
+        context['foods_modal'] = Food.objects.all()
+        
+        # Filtrar as reservas finalizadas e ordená-las por data
+        reservas_finalizadas = Reserva.objects.filter(status='finalizado').order_by('date')
+        context['reservas_finalizadas'] = reservas_finalizadas
+        
+        # Calcular o preço total de cada reserva finalizada
+        valor_total = Decimal(0)
+        for reserva_finalizada in reservas_finalizadas:
+            if reserva_finalizada.peso:
+                peso_principal_str = reserva_finalizada.peso.replace('kg', '').replace('g', '').strip()
+                peso_principal = Decimal(peso_principal_str) / (1000 if 'g' in reserva_finalizada.peso else 1)
+            else:
+                peso_principal = Decimal(0)
+
+            reserva_finalizada.preco_principal = reserva_finalizada.food.valor * peso_principal
+
+            preco_adicionais = Decimal(0)
+            for prato_adicional in reserva_finalizada.pratos_adicionais_reserva.all():
+                peso_adicional_str = prato_adicional.peso.replace('kg', '').replace('g', '').strip()
+                peso_adicional = Decimal(peso_adicional_str) / (1000 if 'g' in prato_adicional.peso else 1)
+                preco_adicionais += prato_adicional.food.valor * peso_adicional
+
+            reserva_finalizada.preco_adicionais = preco_adicionais
+            reserva_finalizada.preco_total = reserva_finalizada.preco_principal + preco_adicionais
+
+            valor_total += reserva_finalizada.preco_total
+
+        # Adicionar a soma total ao contexto
+        context['valor_total'] = valor_total
+        
+        # Adicionar o número total de reservas finalizadas ao contexto
+        total_reservas_finalizadas = reservas_finalizadas.count()
+        context['total_reservas'] = total_reservas_finalizadas
+
+        return context
+
+    
 class tablesView(TemplateView):
     template_name = "tables/tables.html"
     
 
-class pedidosView(TemplateView):
-    template_name = "pedidos.html"
+class reservasView(TemplateView):
+    template_name = "minhasreservas.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

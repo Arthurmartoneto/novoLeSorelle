@@ -5,12 +5,17 @@
     <!-- Required meta tags -->
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <title>LeSorelle</title>
+    <title>Minhas Reservas</title>
     <!-- plugins:css -->
     <link rel="stylesheet" href="{% static 'assets/vendors/mdi/css/materialdesignicons.min.css' %}" />
     <link rel="stylesheet" href="{% static 'assets/vendors/css/vendor.bundle.base.css' %}" />
     <!-- endinject -->
+
     <!-- Plugin css for this page -->
+    <link rel="stylesheet" href="{% static 'assets/vendors/jvectormap/jquery-jvectormap.css' %}" />
+    <link rel="stylesheet" href="{% static 'assets/vendors/flag-icon-css/css/flag-icon.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'assets/vendors/owl-carousel-2/owl.carousel.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'assets/vendors/owl-carousel-2/owl.theme.default.min.css' %}" />
     <!-- End plugin css for this page -->
     <!-- inject:css -->
     <!-- endinject -->
@@ -19,7 +24,6 @@
     <!-- End layout styles -->
     <link rel="shortcut icon" href="{% static 'assets/images/favicon.png' %}" />
   </head>
-
   <body>
     {% if user.is_authenticated %}
       <div class="container-scroller">
@@ -37,7 +41,7 @@
             <li class="nav-item menu-items active">
               <a class="nav-link">
                 <span class="menu-icon"><i class="mdi mdi-table-large"></i></span>
-                <span class="menu-title">Meus Pedidos</span>
+                <span class="menu-title">Minhas Reservas</span>
               </a>
             </li>
           </ul>
@@ -65,12 +69,7 @@
 
               <!-- Nav Direita -->
               <ul class="navbar-nav navbar-nav-right">
-                <!-- links -->
-                <li class="nav-item nav-settings d-none d-lg-block">
-                  <a class="nav-link" href="#"><i class="mdi mdi-view-grid"></i></a>
-                </li>
-                <!-- links -->
-
+              
                 <!-- Notifications -->
                 <li class="nav-item dropdown border-left">
                   <a class="nav-link count-indicator dropdown-toggle" id="notificationDropdown" href="#" data-toggle="dropdown">

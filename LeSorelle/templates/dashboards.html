@@ -46,6 +46,12 @@
               </a>
             </li>
             <li class="nav-item menu-items">
+              <a class="nav-link" href="{% url 'finalizadas' %}">
+                <span class="menu-icon"><i class="mdi mdi-alert-circle"></i></span>
+                <span class="menu-title">Finalizados</span>
+              </a>
+            </li>
+            <li class="nav-item menu-items">
               <a class="nav-link" data-toggle="collapse" href="#auth" aria-expanded="false" aria-controls="auth">
                 <span class="menu-icon"><i class="mdi mdi-security"></i></span>
                 <span class="menu-title">Página de usuários</span>
@@ -103,43 +109,21 @@
                   <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="notificationDropdown">
                     <h6 class="p-3 mb-0">Notifications</h6>
                     <div class="dropdown-divider"></div>
+                    <!-- Loop through notifications received from the server -->
+                    {% for notification in notifications %}
                     <a class="dropdown-item preview-item">
-                      <div class="preview-thumbnail">
-                        <div class="preview-icon bg-dark rounded-circle">
-                          <i class="mdi mdi-calendar text-success"></i>
+                        <div class="preview-thumbnail">
+                            <div class="preview-icon bg-dark rounded-circle">
+                                <i class="mdi mdi-calendar text-success"></i>
+                            </div>
                         </div>
-                      </div>
-                      <div class="preview-item-content">
-                        <p class="preview-subject mb-1">Event today</p>
-                        <p class="text-muted ellipsis mb-0">Just a reminder that you have an event today</p>
-                      </div>
+                        <div class="preview-item-content">
+                            <p class="preview-subject mb-1">{{ notification.subject }}</p>
+                            <p class="text-muted ellipsis mb-0">{{ notification.message }}</p>
+                        </div>
                     </a>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item preview-item">
-                      <div class="preview-thumbnail">
-                        <div class="preview-icon bg-dark rounded-circle">
-                          <i class="mdi mdi-settings text-danger"></i>
-                        </div>
-                      </div>
-                      <div class="preview-item-content">
-                        <p class="preview-subject mb-1">Settings</p>
-                        <p class="text-muted ellipsis mb-0">Update dashboard</p>
-                      </div>
-                    </a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item preview-item">
-                      <div class="preview-thumbnail">
-                        <div class="preview-icon bg-dark rounded-circle">
-                          <i class="mdi mdi-link-variant text-warning"></i>
-                        </div>
-                      </div>
-                      <div class="preview-item-content">
-                        <p class="preview-subject mb-1">Launch Admin</p>
-                        <p class="text-muted ellipsis mb-0">New admin wow!</p>
-                      </div>
-                    </a>
-                    <div class="dropdown-divider"></div>
-                    <p class="p-3 mb-0 text-center">See all notifications</p>
+                    {% endfor %}
                   </div>
                 </li>
                 <!-- Notifications -->
@@ -242,10 +226,10 @@
                       <div class="row">
                         <div class="col-9">
                           <div class="d-flex align-items-center align-self-start">
-                            {% if reservas %}
-                              <h3 class="mb-0">{{ reservas|length }}</h3>
+                            {% if reservas_abertas %}
+                              <h3 class="mb-0">{{ reservas_abertas|length }}</h3>
                             {% else %}
-                              <p class="mb-0">Nenhuma reserva por hoje</p>
+                              <p class="mb-0">Nenhuma reserva aberta</p>
                             {% endif %}
                           </div>
                         </div>
