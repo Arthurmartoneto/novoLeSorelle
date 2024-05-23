@@ -9,6 +9,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.translation import gettext_lazy as _
 
 from datetime import timedelta, date, datetime
+from django.utils import timezone
 
 from decimal import Decimal
 
@@ -18,13 +19,12 @@ from django.http import JsonResponse, HttpResponseRedirect
 
 from .forms import ReservaForm, FoodForm
 
-from .models import Food, Reserva, PratoAdicional
+from .models import Food, Reserva, PratoAdicional, Notification
 
 from django.db.models.signals import post_save
 from django.db.models import Sum
 
-from channels.layers import get_channel_layer
-from asgiref.sync import async_to_sync
+from django.contrib import messages
 
 # Create your views here.
 
@@ -69,17 +69,7 @@ class IndexView(TemplateView):
             reserva_instance = form.save(commit=False)
             reserva_instance.usuario = request.user
             reserva_instance.save()
-            
-            # Enviar notificação para o operador via WebSocket
-            channel_layer = get_channel_layer()
-            async_to_sync(channel_layer.group_send)(
-                'notificacoes_operador',
-                {
-                    'type': 'enviar_notificacao',
-                    'message': 'Uma nova reserva foi criada.'
-                }
-            )
-            
+                        
             # Salva os pratos adicionais
             pratos_adicionais = request.POST.getlist('nome_prato')
             pesos_pratos_adicionais = request.POST.getlist('peso_prato')
@@ -101,14 +91,50 @@ class IndexView(TemplateView):
                 
                 # Cria um prato adicional associado à reserva principal
                 PratoAdicional.objects.create(reserva=reserva_instance, food=nome_prato, peso=peso_prato, valor=valor_prato)
+                
+                # Verifica se a reserva atende aos critérios para gerar uma notificação
+            if request.user.groups.filter(name='Dashboard').exists() and reserva_instance.status in ['pendente']:
+                # Cria a mensagem da notificação
+                notification_message = f"{reserva_instance.food.name_food} está {reserva_instance.status}."
 
-            
+                # Salva a notificação no banco de dados
+                Notification.objects.create(subject='Reserva Pendente', message=notification_message)
+
+            messages.success(request, 'Sua reserva foi realizada com sucesso!')
+
             return redirect('minhasreservas')
         else:
             print(form.errors)
             return super().get(request, *args, **kwargs)
+        
 
+@login_required
+def get_notifications(request):
+    notifications = Notification.objects.all()
 
+    notifications_data = []
+    for notification in notifications:
+        notifications_data.append({
+            'subject': notification.subject,
+            'message': notification.message,
+            'created_at': timezone.localtime(notification.created_at).strftime("%d/%m/%Y %H:%M"),  # Formatando o created_at
+            # Adicione mais campos, se necessário
+        })
+
+    return JsonResponse({'notifications': notifications_data})
+
+@login_required
+def clear_notifications(request):
+    try:
+        # Limpar todas as notificações do banco de dados
+        Notification.objects.all().delete()
+        # Responder com uma mensagem de sucesso
+        return JsonResponse({'message': 'Notificações limpas com sucesso.'})
+    except Exception as e:
+        # Se ocorrer um erro, responder com uma mensagem de erro
+        return JsonResponse({'error': str(e)}, status=500)
+    
+    
 class dashboardView(LoginRequiredMixin, TemplateView):
     template_name = "dashboards.html"
     login_url = '/login/'  

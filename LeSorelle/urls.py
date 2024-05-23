@@ -1,6 +1,6 @@
 from django.urls import path
 from django.contrib.auth.decorators import login_required
-from .views import IndexView, dashboardView, registerView, loginView, tablesView, reservasView, finalizadasView, editar_prato, excluir_prato, inativar_prato, ativar_prato, cancelar_reserva, marcar_em_preparo, marcar_pronto, marcar_finalizado
+from .views import IndexView, dashboardView, registerView, loginView, tablesView, reservasView, finalizadasView, editar_prato, excluir_prato, inativar_prato, ativar_prato, cancelar_reserva, marcar_em_preparo, marcar_pronto, marcar_finalizado, get_notifications, clear_notifications
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -26,6 +26,8 @@ urlpatterns = [
     path('marcar_em_preparo/<int:reserva_id>/', marcar_em_preparo, name='marcar_em_preparo'),
     path('marcar_pronto/<int:reserva_id>/', marcar_pronto, name='marcar_pronto'),
     path('marcar_finalizado/<int:reserva_id>/', marcar_finalizado, name='marcar_finalizado'),
+    path('get-notifications/', get_notifications, name='get_notifications'),
+    path('clear-notifications/', clear_notifications, name='clear_notifications'),
 
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

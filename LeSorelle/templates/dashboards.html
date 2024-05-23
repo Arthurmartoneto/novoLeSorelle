@@ -99,34 +99,42 @@
                   <button type="button" class="nav-link btn btn-success create-new-button" data-toggle="modal" data-target="#novoPratoModal">+ Adicionar Novo Prato</button>
                 </li>
                 <!-- Adicionar -->
-
+                
                 <!-- Notifications -->
+                <audio id="notificationSound" src="{% static 'songs/ifood.mp3' %}" preload="auto"></audio>
                 <li class="nav-item dropdown border-left">
                   <a class="nav-link count-indicator dropdown-toggle" id="notificationDropdown" href="#" data-toggle="dropdown">
-                    <i class="mdi mdi-bell"></i>
-                    <span class="count bg-danger"></span>
+                      <i class="mdi mdi-bell"></i>
+                      <span id="notificationCount" class="count bg-danger"></span>
                   </a>
-                  <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="notificationDropdown">
-                    <h6 class="p-3 mb-0">Notifications</h6>
-                    <div class="dropdown-divider"></div>
-                    <!-- Loop through notifications received from the server -->
-                    {% for notification in notifications %}
-                    <a class="dropdown-item preview-item">
-                        <div class="preview-thumbnail">
-                            <div class="preview-icon bg-dark rounded-circle">
-                                <i class="mdi mdi-calendar text-success"></i>
-                            </div>
-                        </div>
-                        <div class="preview-item-content">
-                            <p class="preview-subject mb-1">{{ notification.subject }}</p>
-                            <p class="text-muted ellipsis mb-0">{{ notification.message }}</p>
-                        </div>
-                    </a>
-                    <div class="dropdown-divider"></div>
-                    {% endfor %}
+                  <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="notificationDropdown" id="notificationList" style="width: 400px; max-height: 300px; overflow-y: auto;">
+                      <h6 class="p-3 mb-0 text-light">Notifications</h6>
+                      <div class="dropdown-divider"></div>
+                      <!-- Notifications will be dynamically added here -->
+                      <ul id="notificationItems" class="list-group bg-dark">
+                          <!-- Each notification item -->
+                          <li class="bg-dark list-group-item border-0">
+                              <div class="d-flex align-items-center">
+                                  <div class="mr-3">
+                                      <i class="mdi mdi-bell-ring mdi-24px text-danger"></i>
+                                  </div>
+                                  <div>
+                                      <p class="mb-2 text-muted">Assunto: <strong class="text-light mb-3" id="notificationSubject"></strong></p>
+                                      <p class="mb-0">Produto: <span id="notificationMessage"></span></p>
+                                  </div>
+                                  <div class="ml-auto text-right">
+                                      <p class="mb-0 text-muted small" id="notificationCreatedAt"></p>
+                                  </div>
+                              </div>
+                          </li>
+                          <!-- End of each notification item -->
+                      </ul>
+                      <!-- Botão Limpar Notificações -->
+                      <div class="dropdown-divider"></div>
+                      <button class="btn btn-danger text-center m-3" id="clearNotificationsBtn">Limpar Notificações</button>
                   </div>
                 </li>
-                <!-- Notifications -->
+                <!-- End of Notifications -->
 
                 <!-- Profile -->
                 <li class="nav-item dropdown">

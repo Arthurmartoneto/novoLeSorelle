@@ -280,3 +280,119 @@ function marcarFinalizado(reservaId) {
         });
     }
 }
+
+// notifications --------------------
+
+// Script JavaScript para atualizar dinamicamente a lista de notificações e limpar as notificações
+$(document).ready(function() {
+
+    // Elemento de áudio
+    var notificationSound = document.getElementById("notificationSound");
+
+    // Definir evento para o áudio quando ele estiver pronto para ser reproduzido
+    notificationSound.oncanplaythrough = function() {
+        // Obter notificações quando o áudio estiver pronto para ser reproduzido
+        getNotifications();
+    };
+
+    function getNotifications() {
+        $.ajax({
+            url: "/get-notifications/",
+            type: "GET",
+            success: function(response) {
+                $("#notificationItems").empty();
+                // Contador de notificações
+                var notificationCount = response.notifications.length;
+                $("#notificationCount").text(notificationCount); // Atualiza o contador
+                $.each(response.notifications, function(index, notification) {
+                    // Cria um novo item de lista para a notificação
+                    var listItem = $("<li>").addClass("bg-dark list-group-item border-0");
+                    // Cria os elementos HTML para exibir os detalhes da notificação
+                    var notificationDetails = $("<div>").addClass("d-flex align-items-center");
+                    var notificationIcon = $("<div>").addClass("mr-3").append('<i class="mdi mdi-bell-ring mdi-24px text-danger"></i>');
+                    var notificationContent = $("<div>");
+                    var subjectParagraph = $("<p>").addClass("mb-2 text-muted").text("Assunto: ");
+                    var subjectStrong = $("<strong>").addClass("text-light mb-3").text(notification.subject);
+                    var messageParagraph = $("<p>").addClass("mb-0").text("Produto: " + notification.message);
+                    var createdAtParagraph = $("<p>").addClass("mb-0 text-muted small").text(notification.created_at); // Adicionando o horário
+                    // Adiciona os elementos HTML ao conteúdo da notificação
+                    subjectParagraph.append(subjectStrong);
+                    notificationContent.append(subjectParagraph, messageParagraph);
+                    // Adiciona o conteúdo da notificação ao item de lista
+                    notificationDetails.append(notificationIcon, notificationContent, createdAtParagraph);
+                    listItem.append(notificationDetails);
+                    // Adiciona o item de lista à lista de notificações
+                    $("#notificationItems").append(listItem);
+                    // Reproduzir som de notificação
+                    notificationSound.play();
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error("Erro ao obter notificações:", error);
+            }
+        });
+    }
+
+    // Função para limpar as notificações
+    function clearNotifications() {
+        // Altera o texto do botão para "Limpando..."
+        $("#clearNotificationsButton").text("Limpando...");
+        // Realiza a requisição AJAX para limpar as notificações
+        $.ajax({
+            url: "/clear-notifications/",
+            type: "POST",
+            beforeSend: function(xhr, settings) {
+                // Obtenha o token CSRF do cookie
+                var csrftoken = getCookie('csrftoken');
+                // Defina o cabeçalho CSRFToken na solicitação
+                xhr.setRequestHeader('X-CSRFToken', csrftoken);
+            },
+            success: function(response) {
+                // Limpar a lista de notificações
+                $("#notificationItems").empty();
+                // Definir o contador de notificações como zero
+                $("#notificationCount").text("0");
+                // Retorna o texto original do botão após a conclusão da limpeza
+                $("#clearNotificationsButton").text("Limpar Notificações");
+            },
+            error: function(xhr, status, error) {
+                console.error("Erro ao limpar notificações:", error);
+                // Retorna o texto original do botão em caso de erro
+                $("#clearNotificationsButton").text("Limpar Notificações");
+            }
+        });
+    }
+
+    // Função auxiliar para obter o valor do cookie CSRF
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // Chamar a função para obter notificações quando a página é carregada
+    getNotifications();
+
+    // Atualizar a lista de notificações a cada 30 segundos
+    setInterval(getNotifications, 30000);
+
+    // Adicionar evento de clique para o botão "Limpar Notificações"
+    $("#clearNotificationsButton").click(function() {
+        clearNotifications();
+    });
+});
+
+
+// Impedir que o dropdown desapareça ao clicar nele
+$(document).on('click', '#notificationList', function (e) {
+    e.stopPropagation();
+});

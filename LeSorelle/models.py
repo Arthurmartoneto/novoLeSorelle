@@ -47,4 +47,14 @@ class PratoAdicional(models.Model):
     peso = models.CharField(max_length=10, null=True)
     valor = models.DecimalField(max_digits=10, decimal_places=2, null=True)  # Adicionando campo valor
 
-    
+
+class Notification(models.Model):
+    subject = models.CharField(max_length=100)
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return self.subject   

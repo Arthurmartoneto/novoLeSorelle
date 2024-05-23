@@ -20471,15 +20471,15 @@ div.tagsinput {
         display: none; }
       .navbar .navbar-menu-wrapper .count-indicator .count {
         position: absolute;
-        left: 66%;
-        width: 7px;
-        height: 7px;
+        left: 58%;
+        width: 15px;
+        height: 15px;
         color: #ffffff;
         border-radius: 100%;
         text-align: center;
-        font-size: .625rem;
+        font-size: 12px;
         line-height: 1.5;
-        top: 7px; }
+        top: 4px; }
     .navbar .navbar-menu-wrapper .navbar-nav {
       flex-direction: row;
       align-items: center; }
