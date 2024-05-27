@@ -1,7 +1,7 @@
 from django.views.generic import TemplateView
 from django.contrib.auth.views import redirect_to_login
 
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Permission
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -93,7 +93,7 @@ class IndexView(TemplateView):
                 PratoAdicional.objects.create(reserva=reserva_instance, food=nome_prato, peso=peso_prato, valor=valor_prato)
                 
                 # Verifica se a reserva atende aos critérios para gerar uma notificação
-            if request.user.groups.filter(name='Dashboard').exists() and reserva_instance.status in ['pendente']:
+            if reserva_instance.status == 'pendente':
                 # Cria a mensagem da notificação
                 notification_message = f"{reserva_instance.food.name_food} está {reserva_instance.status}."
 
@@ -476,6 +476,10 @@ class registerView(TemplateView):
 
         # Cria um novo usuário com os detalhes fornecidos
         user = User.objects.create_user(username=username, email=email, password=password, first_name=first_name, last_name=last_name)
+
+        # Concede a permissão de adicionar notificação ao novo usuário
+        permission = Permission.objects.get(codename='add_notification')
+        user.user_permissions.add(permission)
 
         # Redireciona para a página de login após o registro
         return redirect('login')

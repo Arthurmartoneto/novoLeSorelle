@@ -2,730 +2,769 @@
 
 <!DOCTYPE html>
 <html lang="pt-br">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <title>Dashboard</title>
-    <!-- plugins:css -->
-    <link rel="stylesheet" href="{% static 'assets/vendors/mdi/css/materialdesignicons.min.css' %}" />
-    <link rel="stylesheet" href="{% static 'assets/vendors/css/vendor.bundle.base.css' %}" />
-    <!-- endinject -->
-    <!-- Plugin css for this page -->
-    <link rel="stylesheet" href="{% static 'assets/vendors/jvectormap/jquery-jvectormap.css' %}" />
-    <link rel="stylesheet" href="{% static 'assets/vendors/flag-icon-css/css/flag-icon.min.css' %}" />
-    <link rel="stylesheet" href="{% static 'assets/vendors/owl-carousel-2/owl.carousel.min.css' %}" />
-    <link rel="stylesheet" href="{% static 'assets/vendors/owl-carousel-2/owl.theme.default.min.css' %}" />
-    <!-- End plugin css for this page -->
-    <!-- inject:css -->
-    <!-- endinject -->
-    <!-- Layout styles -->
-    <link rel="stylesheet" href="{% static 'assets/css/style.css' %}" />
-    <!-- End layout styles -->
-    <link rel="shortcut icon" href="{% static 'assets/images/favicon.png' %}" />
-  </head>
 
-  <body>
-    {% if user.is_authenticated %}
-      <div class="container-scroller">
-        <!-- Nav esquerda -->
-        <nav class="sidebar sidebar-offcanvas" id="sidebar">
-          <div class="sidebar-brand-wrapper d-none d-lg-flex align-items-center justify-content-center fixed-top">
-            <a class="sidebar-brand brand-logo" href="{% url 'index' %}"><img style="width: 80px; height: auto;" src="{% static 'images/logo.png' %}" alt="" /></a>
-            <a class="sidebar-brand brand-logo-mini" href="{% url 'index' %}"><img style="width: 30px; height: auto;" src="{% static 'images/logo.png' %}" alt="logo" /></a>
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <title>Dashboard</title>
+  <!-- plugins:css -->
+  <link rel="stylesheet" href="{% static 'assets/vendors/mdi/css/materialdesignicons.min.css' %}" />
+  <link rel="stylesheet" href="{% static 'assets/vendors/css/vendor.bundle.base.css' %}" />
+  <!-- endinject -->
+  <!-- Plugin css for this page -->
+  <link rel="stylesheet" href="{% static 'assets/vendors/jvectormap/jquery-jvectormap.css' %}" />
+  <link rel="stylesheet" href="{% static 'assets/vendors/flag-icon-css/css/flag-icon.min.css' %}" />
+  <link rel="stylesheet" href="{% static 'assets/vendors/owl-carousel-2/owl.carousel.min.css' %}" />
+  <link rel="stylesheet" href="{% static 'assets/vendors/owl-carousel-2/owl.theme.default.min.css' %}" />
+  <!-- End plugin css for this page -->
+  <!-- inject:css -->
+  <!-- endinject -->
+  <!-- Layout styles -->
+  <link rel="stylesheet" href="{% static 'assets/css/style.css' %}" />
+  <!-- End layout styles -->
+  <link rel="shortcut icon" href="{% static 'assets/images/favicon.png' %}" />
+</head>
+
+<body>
+  {% if user.is_authenticated %}
+    <div class="container-scroller">
+      <!-- Nav esquerda -->
+      <nav class="sidebar sidebar-offcanvas" id="sidebar">
+        <div class="sidebar-brand-wrapper d-none d-lg-flex align-items-center justify-content-center fixed-top">
+          <a class="sidebar-brand brand-logo" href="{% url 'index' %}"><img style="width: 80px; height: auto;"
+              src="{% static 'images/logo.png' %}" alt="" /></a>
+          <a class="sidebar-brand brand-logo-mini" href="{% url 'index' %}"><img style="width: 30px; height: auto;"
+              src="{% static 'images/logo.png' %}" alt="logo" /></a>
+        </div>
+
+        <ul class="nav">
+          <li class="nav-item nav-category">
+            <span class="nav-link">Navigation</span>
+          </li>
+          <li class="nav-item menu-items active">
+            <a class="nav-link" href="{% url 'dashboard' %}">
+              <span class="menu-icon"><i class="mdi mdi-table-large"></i></span>
+              <span class="menu-title">Dashboard</span>
+            </a>
+          </li>
+          <li class="nav-item menu-items">
+            <a class="nav-link" href="{% url 'finalizadas' %}">
+              <span class="menu-icon"><i class="mdi mdi-alert-circle"></i></span>
+              <span class="menu-title">Finalizados</span>
+            </a>
+          </li>
+          <li class="nav-item menu-items">
+            <a class="nav-link" data-toggle="collapse" href="#auth" aria-expanded="false" aria-controls="auth">
+              <span class="menu-icon"><i class="mdi mdi-security"></i></span>
+              <span class="menu-title">Página de usuários</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="auth">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item">
+                  <a class="nav-link" href="pages/samples/blank-page.html">Usuários</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="pages/samples/blank-page.html">Gerentes</a>
+                </li>
+              </ul>
+            </div>
+          </li>
+        </ul>
+      </nav>
+      <!-- Nav esquerda -->
+
+      <!-- Direita -->
+      <div class="container-fluid page-body-wrapper">
+        <!-- Nav alto -->
+        <nav class="navbar p-0 fixed-top d-flex flex-row">
+          <div class="navbar-brand-wrapper d-flex d-lg-none align-items-center justify-content-center">
+            <a class="navbar-brand brand-logo-mini" href="{% url 'index' %}"><img style="width: 50px; height: auto;"
+                src="{% static 'images/logo.png' %}" alt="logo" /></a>
           </div>
 
-          <ul class="nav">
-            <li class="nav-item nav-category">
-              <span class="nav-link">Navigation</span>
-            </li>
-            <li class="nav-item menu-items active">
-              <a class="nav-link" href="{% url 'dashboard' %}">
-                <span class="menu-icon"><i class="mdi mdi-table-large"></i></span>
-                <span class="menu-title">Dashboard</span>
-              </a>
-            </li>
-            <li class="nav-item menu-items">
-              <a class="nav-link" href="{% url 'finalizadas' %}">
-                <span class="menu-icon"><i class="mdi mdi-alert-circle"></i></span>
-                <span class="menu-title">Finalizados</span>
-              </a>
-            </li>
-            <li class="nav-item menu-items">
-              <a class="nav-link" data-toggle="collapse" href="#auth" aria-expanded="false" aria-controls="auth">
-                <span class="menu-icon"><i class="mdi mdi-security"></i></span>
-                <span class="menu-title">Página de usuários</span>
-                <i class="menu-arrow"></i>
-              </a>
-              <div class="collapse" id="auth">
-                <ul class="nav flex-column sub-menu">
-                  <li class="nav-item">
-                    <a class="nav-link" href="pages/samples/blank-page.html">Usuários</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="pages/samples/blank-page.html">Gerentes</a>
-                  </li>
-                </ul>
-              </div>
-            </li>
-          </ul>
+          <div class="navbar-menu-wrapper flex-grow d-flex align-items-stretch">
+            <!-- Pesquisa -->
+            <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize"><span
+                class="mdi mdi-menu"></span></button>
+            <ul class="navbar-nav w-100">
+              <li class="nav-item w-100">
+                <form class="nav-link mt-2 mt-md-0 d-none d-lg-flex search">
+                  <input type="text" class="form-control" placeholder="Search products" />
+                </form>
+              </li>
+            </ul>
+            <!-- Pesquisa -->
+
+            <!-- Nav Direita -->
+            <ul class="navbar-nav navbar-nav-right">
+              <!-- Adicionar -->
+              <li class="nav-item dropdown d-none d-lg-block">
+                <button type="button" class="nav-link btn btn-success create-new-button" data-toggle="modal"
+                  data-target="#novoPratoModal">+ Adicionar Novo Prato</button>
+              </li>
+              <!-- Adicionar -->
+
+              <!-- Notifications -->
+              <audio id="notificationSound" src="{% static 'songs/ifood.mp3' %}" preload="auto"></audio>
+              <li class="nav-item dropdown border-left">
+                <a class="nav-link count-indicator dropdown-toggle" id="notificationDropdown" href="#"
+                  data-toggle="dropdown">
+                  <i class="mdi mdi-bell"></i>
+                  <span id="notificationCount" class="count bg-danger"></span>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list"
+                  aria-labelledby="notificationDropdown" id="notificationList"
+                  style="width: 400px; max-height: 300px; overflow-y: auto;">
+                  <h6 class="p-3 mb-0 text-light">Notifications</h6>
+                  <div class="dropdown-divider"></div>
+                  <!-- Notifications will be dynamically added here -->
+                  <ul id="notificationItems" class="list-group bg-dark">
+                    <!-- Each notification item -->
+                    <li class="bg-dark list-group-item border-0">
+                      <div class="d-flex align-items-center">
+                        <div class="mr-3">
+                          <i class="mdi mdi-bell-ring mdi-24px text-danger"></i>
+                        </div>
+                        <div>
+                          <p class="mb-2 text-muted">Assunto: <strong class="text-light mb-3"
+                              id="notificationSubject"></strong></p>
+                          <p class="mb-0">Produto: <span id="notificationMessage"></span></p>
+                        </div>
+                        <div class="ml-auto text-right">
+                          <p class="mb-0 text-muted small" id="notificationCreatedAt"></p>
+                        </div>
+                      </div>
+                    </li>
+                    <!-- End of each notification item -->
+                  </ul>
+                  <!-- Botão Limpar Notificações -->
+                  <div class="dropdown-divider"></div>
+                  <button class="btn btn-danger" id="clearNotificationsBtn">Limpar Notificações</button>
+                </div>
+              </li>
+              <!-- End of Notifications -->
+
+              <!-- Profile -->
+              <li class="nav-item dropdown">
+                <a class="nav-link" id="profileDropdown" href="#" data-toggle="dropdown">
+                  <div class="navbar-profile">
+                    <p class="mb-0 d-none d-sm-block navbar-profile-name">{{ user.first_name }} {{ user.last_name }}</p>
+                    <i class="mdi mdi-menu-down d-none d-sm-block"></i>
+                  </div>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list"
+                  aria-labelledby="profileDropdown">
+                  <h6 class="p-3 mb-0">Perfil</h6>
+                  <div class="dropdown-divider"></div>
+                  <a href="{% url 'index' %}" class="dropdown-item preview-item">
+                    <div class="preview-thumbnail">
+                      <div class="preview-icon bg-dark rounded-circle">
+                        <i class="mdi mdi-table text-success"></i>
+                      </div>
+                    </div>
+                    <div class="preview-item-content">
+                      <p class="preview-subject mb-1">Inicio</p>
+                    </div>
+                  </a>
+                  <div class="dropdown-divider"></div>
+                  <a href="{% url 'login' %}" class="dropdown-item preview-item">
+                    <div class="preview-thumbnail">
+                      <div class="preview-icon bg-dark rounded-circle">
+                        <i class="mdi mdi-logout text-danger"></i>
+                      </div>
+                    </div>
+                    <div class="preview-item-content">
+                      <p class="preview-subject mb-1">Sair</p>
+                    </div>
+                  </a>
+                </div>
+              </li>
+              <!-- Profile -->
+            </ul>
+            <!-- Nav Direita -->
+
+            <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button"
+              data-toggle="offcanvas"><span class="mdi mdi-format-line-spacing"></span></button>
+          </div>
         </nav>
-        <!-- Nav esquerda -->
+        <!-- Nav alto -->
 
-        <!-- Direita -->
-        <div class="container-fluid page-body-wrapper">
-          <!-- Nav alto -->
-          <nav class="navbar p-0 fixed-top d-flex flex-row">
-            <div class="navbar-brand-wrapper d-flex d-lg-none align-items-center justify-content-center">
-              <a class="navbar-brand brand-logo-mini" href="{% url 'index' %}"><img style="width: 50px; height: auto;" src="{% static 'images/logo.png' %}" alt="logo" /></a>
-            </div>
+        <!-- paineis -->
+        <div class="main-panel">
+          <div class="content-wrapper">
+            <div class="row">
 
-            <div class="navbar-menu-wrapper flex-grow d-flex align-items-stretch">
-              <!-- Pesquisa -->
-              <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize"><span class="mdi mdi-menu"></span></button>
-              <ul class="navbar-nav w-100">
-                <li class="nav-item w-100">
-                  <form class="nav-link mt-2 mt-md-0 d-none d-lg-flex search">
-                    <input type="text" class="form-control" placeholder="Search products" />
-                  </form>
-                </li>
-              </ul>
-              <!-- Pesquisa -->
-
-              <!-- Nav Direita -->
-              <ul class="navbar-nav navbar-nav-right">
-                <!-- Adicionar -->
-                <li class="nav-item dropdown d-none d-lg-block">
-                  <button type="button" class="nav-link btn btn-success create-new-button" data-toggle="modal" data-target="#novoPratoModal">+ Adicionar Novo Prato</button>
-                </li>
-                <!-- Adicionar -->
-                
-                <!-- Notifications -->
-                <audio id="notificationSound" src="{% static 'songs/ifood.mp3' %}" preload="auto"></audio>
-                <li class="nav-item dropdown border-left">
-                  <a class="nav-link count-indicator dropdown-toggle" id="notificationDropdown" href="#" data-toggle="dropdown">
-                      <i class="mdi mdi-bell"></i>
-                      <span id="notificationCount" class="count bg-danger"></span>
-                  </a>
-                  <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="notificationDropdown" id="notificationList" style="width: 400px; max-height: 300px; overflow-y: auto;">
-                      <h6 class="p-3 mb-0 text-light">Notifications</h6>
-                      <div class="dropdown-divider"></div>
-                      <!-- Notifications will be dynamically added here -->
-                      <ul id="notificationItems" class="list-group bg-dark">
-                          <!-- Each notification item -->
-                          <li class="bg-dark list-group-item border-0">
-                              <div class="d-flex align-items-center">
-                                  <div class="mr-3">
-                                      <i class="mdi mdi-bell-ring mdi-24px text-danger"></i>
-                                  </div>
-                                  <div>
-                                      <p class="mb-2 text-muted">Assunto: <strong class="text-light mb-3" id="notificationSubject"></strong></p>
-                                      <p class="mb-0">Produto: <span id="notificationMessage"></span></p>
-                                  </div>
-                                  <div class="ml-auto text-right">
-                                      <p class="mb-0 text-muted small" id="notificationCreatedAt"></p>
-                                  </div>
-                              </div>
-                          </li>
-                          <!-- End of each notification item -->
-                      </ul>
-                      <!-- Botão Limpar Notificações -->
-                      <div class="dropdown-divider"></div>
-                      <button class="btn btn-danger text-center m-3" id="clearNotificationsBtn">Limpar Notificações</button>
-                  </div>
-                </li>
-                <!-- End of Notifications -->
-
-                <!-- Profile -->
-                <li class="nav-item dropdown">
-                  <a class="nav-link" id="profileDropdown" href="#" data-toggle="dropdown">
-                    <div class="navbar-profile">
-                      <p class="mb-0 d-none d-sm-block navbar-profile-name">{{ user.first_name }} {{ user.last_name }}</p>
-                      <i class="mdi mdi-menu-down d-none d-sm-block"></i>
+              <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col-9">
+                        <div class="d-flex align-items-center align-self-start">
+                          {% if soma_total_preco %}
+                          <h3 class="mb-0">R${{ soma_total_preco|floatformat:'2' }}</h3>
+                          {% else %}
+                          <p class="mb-0">Nenhuma reserva por hoje</p>
+                          {% endif %}
+                        </div>
+                      </div>
                     </div>
-                  </a>
-                  <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="profileDropdown">
-                    <h6 class="p-3 mb-0">Perfil</h6>
-                    <div class="dropdown-divider"></div>
-                    <a href="{% url 'index' %}" class="dropdown-item preview-item">
-                      <div class="preview-thumbnail">
-                        <div class="preview-icon bg-dark rounded-circle">
-                          <i class="mdi mdi-table text-success"></i>
-                        </div>
-                      </div>
-                      <div class="preview-item-content">
-                        <p class="preview-subject mb-1">Inicio</p>
-                      </div>
-                    </a>
-                    <div class="dropdown-divider"></div>
-                    <a href="{% url 'login' %}" class="dropdown-item preview-item">
-                      <div class="preview-thumbnail">
-                        <div class="preview-icon bg-dark rounded-circle">
-                          <i class="mdi mdi-logout text-danger"></i>
-                        </div>
-                      </div>
-                      <div class="preview-item-content">
-                        <p class="preview-subject mb-1">Sair</p>
-                      </div>
-                    </a>
-                  </div>
-                </li>
-                <!-- Profile -->
-              </ul>
-              <!-- Nav Direita -->
-
-              <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas"><span class="mdi mdi-format-line-spacing"></span></button>
-            </div>
-          </nav>
-          <!-- Nav alto -->
-
-          <!-- paineis -->
-          <div class="main-panel">
-            <div class="content-wrapper">
-              <div class="row">
-
-                <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
-                  <div class="card">
-                    <div class="card-body">
-                      <div class="row">
-                        <div class="col-9">
-                          <div class="d-flex align-items-center align-self-start">
-                            {% if soma_total_preco %}
-                              <h3 class="mb-0">R${{ soma_total_preco|floatformat:'2' }}</h3>
-                            {% else %}
-                              <p class="mb-0">Nenhuma reserva por hoje</p>
-                            {% endif %}
-                          </div>
-                        </div>
-                      </div>
-                      <h6 class="text-muted font-weight-normal">Recebido em Reservas</h6>
-                    </div>
+                    <h6 class="text-muted font-weight-normal">Recebido em Reservas</h6>
                   </div>
                 </div>
-
-                <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
-                  <div class="card">
-                    <div class="card-body">
-                      <div class="row">
-                        <div class="col-9">
-                          <div class="d-flex align-items-center align-self-start">
-                            <h3 class="mb-0">R${{ meta_diaria }}</h3>
-                            {% if diferenca_meta >= 0 %}
-                              <p class="text-success ml-2 mb-0 font-weight-medium">R$ +{{ diferenca_meta }}</p>
-                            {% else %}
-                              <p class="text-danger ml-2 mb-0 font-weight-medium">R$ {{ diferenca_meta|floatformat:'2' }}</p>
-                            {% endif %}
-                          </div>
-                        </div>
-                        <div class="col-3">
-                          <div class="icon {% if diferenca_meta >= 0 %}{% endif %}">
-                            <span class="mdi {% if diferenca_meta >= 0 %}{% endif %} icon-item"></span>
-                          </div>
-                        </div>
-                      </div>
-                      <h6 class="text-muted font-weight-normal">Meta de Venda</h6>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
-                  <div class="card">
-                    <div class="card-body">
-                      <div class="row">
-                        <div class="col-9">
-                          <div class="d-flex align-items-center align-self-start">
-                            {% if reservas_abertas %}
-                              <h3 class="mb-0">{{ reservas_abertas|length }}</h3>
-                            {% else %}
-                              <p class="mb-0">Nenhuma reserva aberta</p>
-                            {% endif %}
-                          </div>
-                        </div>
-                      </div>
-                      <h6 class="text-muted font-weight-normal">Reservas Abertas</h6>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
-                  <div class="card">
-                    <div class="card-body">
-                      <div class="row">
-                        <div class="col-9">
-                          <div class="d-flex align-items-center align-self-start">
-                            <h3 class="mb-0">{{ meta_diaria_reservas }}</h3> <!-- Alterado para exibir o total de reservas -->
-                            {% if diferenca_meta_reservas >= 0 %}
-                              <p class="text-success ml-2 mb-0 font-weight-medium">+{{ diferenca_meta_reservas }}</p>
-                            {% else %}
-                              <p class="text-danger ml-2 mb-0 font-weight-medium">{{ diferenca_meta_reservas }}</p>
-                            {% endif %}
-                          </div>
-                        </div>
-                        <div class="col-3">
-                          <div class="icon {% if diferenca_meta_reservas >= 0 %}{% endif %}">
-                            <span class="mdi {% if diferenca_meta_reservas >= 0 %}{% endif %} icon-item"></span>
-                          </div>
-                        </div>
-                      </div>
-                      <h6 class="text-muted font-weight-normal">Meta de Reservas</h6> <!-- Alterado para refletir reservas diárias -->
-                    </div>
-                  </div>
-                </div>
-
               </div>
 
-              <!-- Pratos Adicionados -->
-              <div class="row">
-                <div class="col-md-12 grid-margin stretch-card">
-                  <div class="card">
-                    <div class="card-body">
-                      <div class="d-flex flex-row justify-content-between">
-                        <h4 class="card-title mb-1">Pratos Adicionados</h4>
-                        <button type="button" class="nav-link btn btn-primary create-new-button m-1" data-toggle="modal" data-target="#modalPratos">Todos os Pratos</button>
+              <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col-9">
+                        <div class="d-flex align-items-center align-self-start">
+                          <h3 class="mb-0">R${{ meta_diaria }}</h3>
+                          {% if diferenca_meta >= 0 %}
+                          <p class="text-success ml-2 mb-0 font-weight-medium">R$ +{{ diferenca_meta }}</p>
+                          {% else %}
+                          <p class="text-danger ml-2 mb-0 font-weight-medium">R$ {{ diferenca_meta|floatformat:'2' }}</p>
+                          {% endif %}
+                        </div>
                       </div>
-                      <div class="row">
-                        <div class="col-12">
-                          <div class="table-responsive">
-                            {% if foods_dashboard %}
-                              <table class="table table-hover">
-                                <thead>
-                                  <tr>
-                                    <th>Imagem</th>
-                                    <th>Nome</th>
-                                    <th>Descrição</th>
-                                    <th>Valor Kg</th>
-                                    <th>Status</th>
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                  {% for food in foods_dashboard %}
-                                    <tr class="prato-link" data-id="{{ food.id }}" data-nome="{{ food.name_food }}" data-descricao="{{ food.descricao }}" data-valor="{{ food.valor }}" data-status="{{ food.status }}" data-imagem="{{ food.img.url }}">
-                                      <!-- Adiciona o atributo data-imagem -->
-                                      <td>
-                                        <img src="{{ food.img.url }}" class="rounded-sm" style="width: 100px; height: auto;" />
-                                      </td>
-                                      <td>{{ food.name_food }}</td>
-                                      <td>{{ food.descricao }}</td>
-                                      <td>{{ food.valor }}Kg</td>
-                                      <td class="{% if food.status == 'ativo' %}text-success{% else %}text-danger{% endif %}">{{ food.status }}</td>
-                                    </tr>
-                                  {% endfor %}
-                                </tbody>
-                              </table>
-                            {% else %}
-                              <div class="alert alert-info m-2" role="alert">Não há Pratos adicionados</div>
-                            {% endif %}
-                          </div>
+                      <div class="col-3">
+                        <div class="icon {% if diferenca_meta >= 0 %}{% endif %}">
+                          <span class="mdi {% if diferenca_meta >= 0 %}{% endif %} icon-item"></span>
+                        </div>
+                      </div>
+                    </div>
+                    <h6 class="text-muted font-weight-normal">Meta de Venda</h6>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col-9">
+                        <div class="d-flex align-items-center align-self-start">
+                          {% if reservas_abertas %}
+                          <h3 class="mb-0">{{ reservas_abertas|length }}</h3>
+                          {% else %}
+                          <p class="mb-0">Nenhuma reserva aberta</p>
+                          {% endif %}
+                        </div>
+                      </div>
+                    </div>
+                    <h6 class="text-muted font-weight-normal">Reservas Abertas</h6>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col-9">
+                        <div class="d-flex align-items-center align-self-start">
+                          <h3 class="mb-0">{{ meta_diaria_reservas }}</h3>
+                          <!-- Alterado para exibir o total de reservas -->
+                          {% if diferenca_meta_reservas >= 0 %}
+                          <p class="text-success ml-2 mb-0 font-weight-medium">+{{ diferenca_meta_reservas }}</p>
+                          {% else %}
+                          <p class="text-danger ml-2 mb-0 font-weight-medium">{{ diferenca_meta_reservas }}</p>
+                          {% endif %}
+                        </div>
+                      </div>
+                      <div class="col-3">
+                        <div class="icon {% if diferenca_meta_reservas >= 0 %}{% endif %}">
+                          <span class="mdi {% if diferenca_meta_reservas >= 0 %}{% endif %} icon-item"></span>
+                        </div>
+                      </div>
+                    </div>
+                    <h6 class="text-muted font-weight-normal">Meta de Reservas</h6>
+                    <!-- Alterado para refletir reservas diárias -->
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Pratos Adicionados -->
+            <div class="row">
+              <div class="col-md-12 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="d-flex flex-row justify-content-between">
+                      <h4 class="card-title mb-1">Pratos Adicionados</h4>
+                      <button type="button" class="nav-link btn btn-primary create-new-button m-1" data-toggle="modal"
+                        data-target="#modalPratos">Todos os Pratos</button>
+                    </div>
+                    <div class="row">
+                      <div class="col-12">
+                        <div class="table-responsive">
+                          {% if foods_dashboard %}
+                          <table class="table table-hover">
+                            <thead>
+                              <tr>
+                                <th>Imagem</th>
+                                <th>Nome</th>
+                                <th>Descrição</th>
+                                <th>Valor Kg</th>
+                                <th>Status</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {% for food in foods_dashboard %}
+                              <tr class="prato-link" data-id="{{ food.id }}" data-nome="{{ food.name_food }}"
+                                data-descricao="{{ food.descricao }}" data-valor="{{ food.valor }}"
+                                data-status="{{ food.status }}" data-imagem="{{ food.img.url }}">
+                                <!-- Adiciona o atributo data-imagem -->
+                                <td>
+                                  <img src="{{ food.img.url }}" class="rounded-sm" style="width: 100px; height: auto;" />
+                                </td>
+                                <td>{{ food.name_food }}</td>
+                                <td>{{ food.descricao }}</td>
+                                <td>{{ food.valor }}Kg</td>
+                                <td class="{% if food.status == 'ativo' %}text-success{% else %}text-danger{% endif %}">{{ food.status }}</td>
+                              </tr>
+                              {% endfor %}
+                            </tbody>
+                          </table>
+                          {% else %}
+                          <div class="alert alert-info m-2" role="alert">Não há Pratos adicionados</div>
+                          {% endif %}
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-              <!-- Pratos Adicionados -->
+            </div>
+            <!-- Pratos Adicionados -->
 
-              <!-- Reservas Abertas -->
-              <h3>Reservas Abertas</h3>
-              <div class="row">
-                {% if reservas_abertas %}
-                  {% for reserva in reservas_abertas %}
-                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 grid-margin stretch-card">
-                      <div class="card">
-                        <div class="card-body">
-                          <h4 class="card-title">Reserva #{{ forloop.counter }}</h4>
-                          <div class="row">
-                            <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
-                              <!-- Dados do solicitante -->
-                              <p>Solicitante: {{ reserva.usuario.get_full_name }}</p>
-                              <p>Email: {{ reserva.usuario.email }}</p>
-                              <p>Telefone: {{ reserva.telefone }}</p>
-                              <!-- Fim dos dados do solicitante -->
-                            </div>
-                            <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
-                              <!-- Prato Principal -->
-                              <p>Produto: {{ reserva.food.name_food }}</p>
-                              <p>Peso (kg): {{ reserva.peso }}</p>
-                              <p>Valor (kg): R${{ reserva.food.valor|floatformat:'2' }}</p>
-                              <!-- Prato Principal -->
+            <!-- Reservas Abertas -->
+            <h3>Reservas Abertas</h3>
+            <div class="row">
+              {% if reservas_abertas %}
+              {% for reserva in reservas_abertas %}
+              <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                    <h4 class="card-title">Reserva #{{ forloop.counter }}</h4>
+                    <div class="row">
+                      <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                        <!-- Dados do solicitante -->
+                        <p>Solicitante: {{ reserva.usuario.get_full_name }}</p>
+                        <p>Email: {{ reserva.usuario.email }}</p>
+                        <p>Telefone: {{ reserva.telefone }}</p>
+                        <!-- Fim dos dados do solicitante -->
+                      </div>
+                      <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                        <!-- Prato Principal -->
+                        <p>Produto: {{ reserva.food.name_food }}</p>
+                        <p>Peso (kg): {{ reserva.peso }}</p>
+                        <p>Valor (kg): R${{ reserva.food.valor|floatformat:'2' }}</p>
+                        <!-- Prato Principal -->
 
-                              {% if reserva.pratos_adicionais_reserva.all %}
-                                {% for prato_adicional in reserva.pratos_adicionais_reserva.all %}
-                                  <div class="dropdown-divider"></div>
-                                  <p>Produto adicional: {{ prato_adicional.food.name_food }}</p>
-                                  <p>Peso (kg): {{ prato_adicional.peso }}</p>
-                                  <p>Valor (kg): R${{ prato_adicional.valor|floatformat:'2' }}</p>
-                                {% endfor %}
-                              {% endif %}
-                            </div>
-                            <!-- Exibir pratos adicionais -->
-                            <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
-                              <h6>Dia e Horário para Retirada:</h6>
-                              <br />
-                              <p>Data: {{ reserva.date }}</p>
-                              <p>Horário: {{ reserva.hora }}</p>
-                            </div>
-                            <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
-                              <!-- Soma dos preços convertidos -->
-                              <p>Total da Reserva:</p>
-                              <h3>R${{ reserva.preco_total|floatformat:'2' }}</h3>
-                              <br />
-                              <label style="font-size: 17px;"
-                                class="badge {% if reserva.status == 'em_preparo' %} badge-info
+                        {% if reserva.pratos_adicionais_reserva.all %}
+                        {% for prato_adicional in reserva.pratos_adicionais_reserva.all %}
+                        <div class="dropdown-divider"></div>
+                        <p>Produto adicional: {{ prato_adicional.food.name_food }}</p>
+                        <p>Peso (kg): {{ prato_adicional.peso }}</p>
+                        <p>Valor (kg): R${{ prato_adicional.valor|floatformat:'2' }}</p>
+                        {% endfor %}
+                        {% endif %}
+                      </div>
+                      <!-- Exibir pratos adicionais -->
+                      <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                        <h6>Dia e Horário para Retirada:</h6>
+                        <br />
+                        <p>Data: {{ reserva.date }}</p>
+                        <p>Horário: {{ reserva.hora }}</p>
+                      </div>
+                      <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                        <!-- Soma dos preços convertidos -->
+                        <p>Total da Reserva:</p>
+                        <h3>R${{ reserva.preco_total|floatformat:'2' }}</h3>
+                        <br />
+                        <label style="font-size: 17px;" class="badge {% if reserva.status == 'em_preparo' %} badge-info
 
-                                {% elif reserva.status == 'pendente' %} badge-warning
+                                  {% elif reserva.status == 'pendente' %} badge-warning
 
-                                {% elif reserva.status == 'pronto' %} badge-success
+                                  {% elif reserva.status == 'pronto' %} badge-success
 
-                                {% elif reserva.status == 'cancelado' %} badge-danger
+                                  {% elif reserva.status == 'cancelado' %} badge-danger
 
-                                {% endif %}">
-                                {% if reserva.status == 'em_preparo' %}
-                                  Em Preparo
-                                {% else %}
-                                  {{ reserva.get_status_display }}
-                                {% endif %}
-                              </label>
-                              <div class="mt-3">
-                                {% if reserva.status == 'pendente' %}
-                                  <button type="button" style="font-size: 16px;" class="btn btn-primary btn-sm mr-2" onclick="marcarEmPreparo({{ reserva.id }})">Em Preparo</button>
-                                {% endif %}
-                                {% if reserva.status == 'em_preparo' %}
-                                  <button type="button" style="font-size: 16px;" class="btn btn-success btn-sm" onclick="marcarPronto({{ reserva.id }})">Pronto</button>
-                                {% endif %}
-                                {% if reserva.status == 'pronto' %}
-                                  <button type="button" style="font-size: 16px;" class="btn btn-primary btn-sm" onclick="marcarFinalizado({{ reserva.id }})">Finalizar</button>
-                                {% endif %}
-                              </div>
-                            </div>
-                          </div>
+                                  {% endif %}">
+                          {% if reserva.status == 'em_preparo' %}
+                          Em Preparo
+                          {% else %}
+                          {{ reserva.get_status_display }}
+                          {% endif %}
+                        </label>
+                        <div class="mt-3">
+                          {% if reserva.status == 'pendente' %}
+                          <button type="button" style="font-size: 16px;" class="btn btn-primary btn-sm mr-2"
+                            onclick="marcarEmPreparo({{ reserva.id }})">Em Preparo</button>
+                          {% endif %}
+                          {% if reserva.status == 'em_preparo' %}
+                          <button type="button" style="font-size: 16px;" class="btn btn-success btn-sm"
+                            onclick="marcarPronto({{ reserva.id }})">Pronto</button>
+                          {% endif %}
+                          {% if reserva.status == 'pronto' %}
+                          <button type="button" style="font-size: 16px;" class="btn btn-primary btn-sm"
+                            onclick="marcarFinalizado({{ reserva.id }})">Finalizar</button>
+                          {% endif %}
                         </div>
                       </div>
                     </div>
-                  {% endfor %}
-                {% else %}
-                  <div class="col-12">
-                    <div class="alert alert-info" role="alert">Nenhuma reserva aberta.</div>
                   </div>
-                {% endif %}
-              </div>
-              <!-- Reservas Abertas -->
-
-              <!-- Reservas Finalizadas -->
-              <h3>Reservas Finalizadas</h3>
-              <div class="row">
-                {% if reservas_finalizadas %}
-                  {% for reserva in reservas_finalizadas %}
-                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 grid-margin stretch-card">
-                      <div class="card">
-                        <div class="card-body">
-                          <h4 class="card-title">Reserva #{{ forloop.counter }}</h4>
-                          <div class="row">
-                            <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
-                              <!-- Dados do solicitante -->
-                              <p>Solicitante: {{ reserva.usuario.get_full_name }}</p>
-                              <p>Email: {{ reserva.usuario.email }}</p>
-                              <p>Telefone: {{ reserva.telefone }}</p>
-                              <!-- Fim dos dados do solicitante -->
-                            </div>
-                            <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
-                              <!-- Prato Principal -->
-                              <p>Produto: {{ reserva.food.name_food }}</p>
-                              <p>Peso (kg): {{ reserva.peso }}</p>
-                              <p>Valor (kg): R${{ reserva.food.valor|floatformat:'2' }}</p>
-                              <!-- Prato Principal -->
-
-                              {% if reserva.pratos_adicionais_reserva.all %}
-                                {% for prato_adicional in reserva.pratos_adicionais_reserva.all %}
-                                  <div class="dropdown-divider"></div>
-                                  <p>Produto adicional: {{ prato_adicional.food.name_food }}</p>
-                                  <p>Peso (kg): {{ prato_adicional.peso }}</p>
-                                  <p>Valor (kg): R${{ prato_adicional.valor|floatformat:'2' }}</p>
-                                {% endfor %}
-                              {% endif %}
-                            </div>
-                            <!-- Exibir pratos adicionais -->
-                            <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
-                              <h6>Dia e Horário para Retirada:</h6>
-                              <br />
-                              <p>Data: {{ reserva.date }}</p>
-                              <p>Horário: {{ reserva.hora }}</p>
-                            </div>
-                            <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
-                              <!-- Soma dos preços convertidos -->
-                              <p>Total da Reserva:</p>
-                              <h3>R${{ reserva.preco_total|floatformat:'2' }}</h3>
-                              <br />
-                              <label style="font-size: 17px;" class="badge badge-info">Finalizado</label>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  {% endfor %}
-                {% else %}
-                  <div class="col-12">
-                    <div class="alert alert-info" role="alert">Nenhuma reserva finalizada.</div>
-                  </div>
-                {% endif %}
-              </div>
-              <!-- Reservas Finalizadas -->
-            </div>
-            <!-- content-wrapper ends -->
-            <!-- partial:partials/_footer.html -->
-            <footer class="footer">
-              <div class="d-sm-flex justify-content-center justify-content-sm-between">
-                <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Direitos Autorais &copy; 2024 Le Sorelle Desenvolvido por <a href="https://www.instagram.com/a.calorio/?next=%2F" target="_blank">Arthur Calorio</a></span>
-              </div>
-            </footer>
-            <!-- partial -->
-          </div>
-          <!-- paineis -->
-        </div>
-        <!-- Direita -->
-      </div>
-
-      <!-- Modal Adicionar -->
-      <div class="modal fade" id="novoPratoModal" tabindex="-1" role="dialog" aria-labelledby="novoPratoModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="novoPratoModalLabel">Adicionar Novo Prato</h5>
-              <button type="button" style="color: white;" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            </div>
-            <div class="modal-body">
-              <!-- Formulário para adicionar novo prato -->
-              <form method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <div class="modal-footer">
-                  <button type="submit" id="adicionarbtn" class="btn btn-primary">Adicionar</button>
-                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
                 </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- Modal Adicionar -->
-
-      <!-- Modal Todos Pratos -->
-      <div class="modal fade" id="modalPratos" tabindex="-1" role="dialog" aria-labelledby="modalPratosLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="modalPratosLabel">Pratos Adicionados</h5>
-              <button type="button" style="color: white;" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            </div>
-            <div class="modal-body">
-              {% if foods_modal %}
-                <div class="table-responsive">
-                  <table class="table table-hover" id="modalPratosTable">
-                    <thead>
-                      <tr>
-                        <th>Imagem</th>
-                        <th>Nome</th>
-                        <th>Descrição</th>
-                        <th>Valor Kg</th>
-                        <th>status</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {% for food in foods_modal %}
-                        <tr class="prato-link" data-id="{{ food.id }}" data-nome="{{ food.name_food }}" data-descricao="{{ food.descricao }}" data-valor="{{ food.valor }}" data-imagem="{{ food.img.url }}" data-status="{{ food.status }}">
-                          <td>
-                            <img src="{{ food.img.url }}" class="rounded-sm" style="width: 100px; height: auto;" />
-                          </td>
-                          <td>{{ food.name_food }}</td>
-                          <td>{{ food.descricao }}</td>
-                          <td>{{ food.valor }}Kg</td>
-                          <td class="{% if food.status == 'ativo' %}text-success{% else %}text-danger{% endif %}">{{ food.status }}</td>
-                        </tr>
-                      {% endfor %}
-                    </tbody>
-                  </table>
-                </div>
+              </div>
+              {% endfor %}
               {% else %}
-                <div class="alert alert-info m-2" role="alert">Não há pratos adicionados.</div>
+              <div class="col-12">
+                <div class="alert alert-info" role="alert">Nenhuma reserva aberta.</div>
+              </div>
               {% endif %}
             </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- Modal Todos Pratos -->
+            <!-- Reservas Abertas -->
 
-      <!-- Modal de Todas as Reservas -->
-      <div class="modal fade" id="modalReservas" tabindex="-1" role="dialog" aria-labelledby="modalReservasLabel">
-        <div class="modal-dialog modal-lg" role="document">
-          <div class="modal-content">
-            <!-- Cabeçalho do Modal -->
-            <div class="modal-header">
-              <h5 class="modal-title" id="modalReservasLabel">Todas as Reservas</h5>
-              <button type="button" style="color: white;" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            </div>
-            <!-- Corpo do Modal -->
-            <div class="modal-body">
-              <div class="table-responsive">
-                {% if reservas_modal %}
-                  <table class="table table-hover">
-                    <thead>
-                      <tr>
-                        <th>Numeração</th>
-                        <th>Cliente</th>
-                        <th>Email</th>
-                        <th>Telefone</th>
-                        <th>Comida</th>
-                        <th>Peso (kg)</th>
-                        <th>Preço Total</th>
-                        <th>Data</th>
-                        <th>Hora</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {% for reserva in reservas_modal %}
-                        <tr class="reserva-link" data-foto-comida="{{ reserva.food.img.url }}" data-cliente="{{ reserva.usuario.first_name }} {{ reserva.usuario.last_name }}" data-email="{{ reserva.get_email }}" data-telefone="{{ reserva.telefone }}" data-comida="{{ reserva.food.name_food }}" data-peso="{{ reserva.peso }}" data-preco-total="{{ reserva.preco_total|floatformat:'2' }}" data-data="{{ reserva.date }}" data-hora="{{ reserva.hora }}">
-                          <td>{{ reserva.id }}</td>
-                          <td>{{ reserva.usuario.first_name }} {{ reserva.usuario.last_name }}</td>
-                          <td>{{ reserva.get_email }}</td>
-                          <td>{{ reserva.telefone }}</td>
-                          <td>{{ reserva.food.name_food }}</td>
-                          <td>{{ reserva.peso }}</td>
-                          <td>{{ reserva.preco_total|floatformat:'2' }}</td>
-                          <td>{{ reserva.date }}</td>
-                          <td>{{ reserva.hora }}</td>
-                        </tr>
-                      {% endfor %}
-                    </tbody>
-                  </table>
-                {% else %}
-                  <div class="alert alert-info m-2" role="alert">Não há reservas.</div>
-                {% endif %}
-              </div>
-            </div>
-            <!-- Rodapé do Modal -->
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- Modal de Todas as Reservas -->
+            <!-- Reservas Finalizadas -->
+            <h3>Reservas Finalizadas</h3>
+            <div class="row">
+              {% if reservas_finalizadas %}
+              {% for reserva in reservas_finalizadas %}
+              <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                    <h4 class="card-title">Reserva #{{ forloop.counter }}</h4>
+                    <div class="row">
+                      <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                        <!-- Dados do solicitante -->
+                        <p>Solicitante: {{ reserva.usuario.get_full_name }}</p>
+                        <p>Email: {{ reserva.usuario.email }}</p>
+                        <p>Telefone: {{ reserva.telefone }}</p>
+                        <!-- Fim dos dados do solicitante -->
+                      </div>
+                      <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                        <!-- Prato Principal -->
+                        <p>Produto: {{ reserva.food.name_food }}</p>
+                        <p>Peso (kg): {{ reserva.peso }}</p>
+                        <p>Valor (kg): R${{ reserva.food.valor|floatformat:'2' }}</p>
+                        <!-- Prato Principal -->
 
-      <!-- Modal Detalhes do Prato -->
-      <div class="modal fade" id="modalPratoDetalhes">
-        <div class="modal-dialog modal-lg">
-          <div class="modal-content">
-            <!-- Cabeçalho do Modal -->
-            <div class="modal-header">
-              <h5 class="modal-title">Detalhes do Prato</h5>
-              <button type="button" style="color: white;" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            </div>
-
-            <!-- Corpo do Modal -->
-            <div class="modal-body">
-              <div class="row">
-                <div class="col-md-4">
-                  <img id="modalImagem" src="" class="img-fluid" />
-                </div>
-                <div class="col-md-4">
-                  <p class="mt-3">
-                    <strong>Numeração:</strong> <span id="modalId"></span>
-                  </p>
-                  <p>
-                    <strong>Nome:</strong> <span id="modalNome"></span>
-                  </p>
-                  <p>
-                    <strong>Descrição:</strong> <span id="modalDescricao"></span>
-                  </p>
-                  <p>
-                    <strong>Valor (Kg):</strong> <span id="modalValor"></span>
-                  </p>
-                  <p>
-                    <strong>Status:</strong> <span id="modalStatus" class="prato-status" data-status="{{ prato.status }}"></span>
-                  </p>
-                </div>
-                <div class="col-md-4">
-                  <div class="d-flex flex-column">
-                    <button type="button" class="btn btn-primary mt-3 mb-3" id="editarPrato">Editar</button>
-                    <button type="button" class="btn btn-warning mb-3 inativar-prato" id="inativarPrato" data-id="">Inativar</button>
-                    <button type="button" class="btn btn-success mb-3 ativar-prato" id="ativarPrato" data-id="">Ativar</button>
-                    <div class="dropdown-divider"></div>
-                    <button type="button" class="btn btn-danger mt-3" id="excluirPrato">Excluir</button>
+                        {% if reserva.pratos_adicionais_reserva.all %}
+                        {% for prato_adicional in reserva.pratos_adicionais_reserva.all %}
+                        <div class="dropdown-divider"></div>
+                        <p>Produto adicional: {{ prato_adicional.food.name_food }}</p>
+                        <p>Peso (kg): {{ prato_adicional.peso }}</p>
+                        <p>Valor (kg): R${{ prato_adicional.valor|floatformat:'2' }}</p>
+                        {% endfor %}
+                        {% endif %}
+                      </div>
+                      <!-- Exibir pratos adicionais -->
+                      <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                        <h6>Dia e Horário para Retirada:</h6>
+                        <br />
+                        <p>Data: {{ reserva.date }}</p>
+                        <p>Horário: {{ reserva.hora }}</p>
+                      </div>
+                      <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                        <!-- Soma dos preços convertidos -->
+                        <p>Total da Reserva:</p>
+                        <h3>R${{ reserva.preco_total|floatformat:'2' }}</h3>
+                        <br />
+                        <label style="font-size: 17px;" class="badge badge-info">Finalizado</label>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
+              {% endfor %}
+              {% else %}
+              <div class="col-12">
+                <div class="alert alert-info" role="alert">Nenhuma reserva finalizada.</div>
+              </div>
+              {% endif %}
             </div>
-            <!-- Footer do Modal -->
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+            <!-- Reservas Finalizadas -->
+          </div>
+          <!-- content-wrapper ends -->
+          <!-- partial:partials/_footer.html -->
+          <footer class="footer">
+            <div class="d-sm-flex justify-content-center justify-content-sm-between">
+              <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Direitos Autorais &copy; 2024 Le
+                Sorelle Desenvolvido por <a href="https://www.instagram.com/a.calorio/?next=%2F" target="_blank">Arthur
+                  Calorio</a></span>
             </div>
+          </footer>
+          <!-- partial -->
+        </div>
+        <!-- paineis -->
+      </div>
+      <!-- Direita -->
+    </div>
+
+    <!-- Modal Adicionar -->
+    <div class="modal fade" id="novoPratoModal" tabindex="-1" role="dialog" aria-labelledby="novoPratoModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="novoPratoModalLabel">Adicionar Novo Prato</h5>
+            <button type="button" style="color: white;" class="close" data-dismiss="modal" aria-label="Close"><span
+                aria-hidden="true">&times;</span></button>
+          </div>
+          <div class="modal-body">
+            <!-- Formulário para adicionar novo prato -->
+            <form method="post" enctype="multipart/form-data">
+              {% csrf_token %}
+              {{ form.as_p }}
+              <div class="modal-footer">
+                <button type="submit" id="adicionarbtn" class="btn btn-primary">Adicionar</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+              </div>
+            </form>
           </div>
         </div>
       </div>
-      <!-- Modal Detalhes do Prato -->
+    </div>
+    <!-- Modal Adicionar -->
 
-      <!-- Modal para edição de prato -->
-      <div class="modal fade" id="editarPratoModal" tabindex="-1" role="dialog" aria-labelledby="editarPratoModalLabel">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title">Editar Prato</h5>
-              <button type="button" style="color: white;" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <!-- Modal Todos Pratos -->
+    <div class="modal fade" id="modalPratos" tabindex="-1" role="dialog" aria-labelledby="modalPratosLabel"
+      aria-hidden="true">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalPratosLabel">Pratos Adicionados</h5>
+            <button type="button" style="color: white;" class="close" data-dismiss="modal" aria-label="Close"><span
+                aria-hidden="true">&times;</span></button>
+          </div>
+          <div class="modal-body">
+            {% if foods_modal %}
+            <div class="table-responsive">
+              <table class="table table-hover" id="modalPratosTable">
+                <thead>
+                  <tr>
+                    <th>Imagem</th>
+                    <th>Nome</th>
+                    <th>Descrição</th>
+                    <th>Valor Kg</th>
+                    <th>status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for food in foods_modal %}
+                  <tr class="prato-link" data-id="{{ food.id }}" data-nome="{{ food.name_food }}"
+                    data-descricao="{{ food.descricao }}" data-valor="{{ food.valor }}" data-imagem="{{ food.img.url }}"
+                    data-status="{{ food.status }}">
+                    <td>
+                      <img src="{{ food.img.url }}" class="rounded-sm" style="width: 100px; height: auto;" />
+                    </td>
+                    <td>{{ food.name_food }}</td>
+                    <td>{{ food.descricao }}</td>
+                    <td>{{ food.valor }}Kg</td>
+                    <td class="{% if food.status == 'ativo' %}text-success{% else %}text-danger{% endif %}">{{ food.status }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
             </div>
-            <div class="modal-body">
-              <!-- Formulário de edição de prato -->
-              <form id="editarPratoForm" method="POST" enctype="multipart/form-data">
-                {% csrf_token %}
-                <input type="hidden" id="pratoId" name="pratoId" />
-                <div class="form-group">
-                  <label for="editNome">Nome:</label>
-                  <input type="text" class="form-control" id="editNome" name="editNome" />
-                </div>
-                <div class="form-group">
-                  <label for="editDescricao">Descrição:</label>
-                  <textarea class="form-control" id="editDescricao" name="editDescricao"></textarea>
-                </div>
-                <div class="form-group">
-                  <label for="editValor">Valor (Kg):</label>
-                  <input type="text" class="form-control" id="editValor" name="editValor" />
-                </div>
-                <div class="form-group">
-                  <label for="editImagem">Imagem:</label>
-                  <input type="file" class="form-control-file" id="editImagem" name="editImagem" />
-                </div>
-                <button type="submit" class="btn btn-primary">Salvar Alterações</button>
-              </form>
-            </div>
+            {% else %}
+            <div class="alert alert-info m-2" role="alert">Não há pratos adicionados.</div>
+            {% endif %}
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
           </div>
         </div>
       </div>
-      <!-- Modal para edição de prato -->
-    {% endif %}
+    </div>
+    <!-- Modal Todos Pratos -->
 
-    <!-- plugins:js -->
-    <script src="{% static 'assets/vendors/js/vendor.bundle.base.js' %}"></script>
-    <!-- endinject -->
-    <!-- Plugin js for this page -->
-    <script src="{% static 'assets/vendors/chart.js/Chart.min.js' %}"></script>
-    <script src="{% static 'assets/vendors/progressbar.js/progressbar.min.js' %}"></script>
-    <script src="{% static 'assets/vendors/jvectormap/jquery-jvectormap.min.js' %}"></script>
-    <script src="{% static 'assets/vendors/jvectormap/jquery-jvectormap-world-mill-en.js' %}"></script>
-    <script src="{% static 'assets/vendors/owl-carousel-2/owl.carousel.min.js' %}"></script>
-    <!-- End plugin js for this page -->
-    <!-- inject:js -->
-    <script src="{% static 'assets/js/off-canvas.js' %}"></script>
-    <script src="{% static 'assets/js/hoverable-collapse.js' %}"></script>
-    <script src="{% static 'assets/js/misc.js' %}"></script>
-    <script src="{% static 'assets/js/settings.js' %}"></script>
-    <script src="{% static 'assets/js/todolist.js' %}"></script>
-    <script src="{% static 'js/sistema.js' %}"></script>
-    <!-- endinject -->
-    <!-- Custom js for this page -->
-    <script src="{% static 'assets/js/dashboard.js' %}"></script>
-    <!-- End custom js for this page -->
-  </body>
+    <!-- Modal de Todas as Reservas -->
+    <div class="modal fade" id="modalReservas" tabindex="-1" role="dialog" aria-labelledby="modalReservasLabel">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <!-- Cabeçalho do Modal -->
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalReservasLabel">Todas as Reservas</h5>
+            <button type="button" style="color: white;" class="close" data-dismiss="modal" aria-label="Close"><span
+                aria-hidden="true">&times;</span></button>
+          </div>
+          <!-- Corpo do Modal -->
+          <div class="modal-body">
+            <div class="table-responsive">
+              {% if reservas_modal %}
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>Numeração</th>
+                    <th>Cliente</th>
+                    <th>Email</th>
+                    <th>Telefone</th>
+                    <th>Comida</th>
+                    <th>Peso (kg)</th>
+                    <th>Preço Total</th>
+                    <th>Data</th>
+                    <th>Hora</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for reserva in reservas_modal %}
+                  <tr class="reserva-link" data-foto-comida="{{ reserva.food.img.url }}"
+                    data-cliente="{{ reserva.usuario.first_name }} {{ reserva.usuario.last_name }}"
+                    data-email="{{ reserva.get_email }}" data-telefone="{{ reserva.telefone }}"
+                    data-comida="{{ reserva.food.name_food }}" data-peso="{{ reserva.peso }}"
+                    data-preco-total="{{ reserva.preco_total|floatformat:'2' }}" data-data="{{ reserva.date }}"
+                    data-hora="{{ reserva.hora }}">
+                    <td>{{ reserva.id }}</td>
+                    <td>{{ reserva.usuario.first_name }} {{ reserva.usuario.last_name }}</td>
+                    <td>{{ reserva.get_email }}</td>
+                    <td>{{ reserva.telefone }}</td>
+                    <td>{{ reserva.food.name_food }}</td>
+                    <td>{{ reserva.peso }}</td>
+                    <td>{{ reserva.preco_total|floatformat:'2' }}</td>
+                    <td>{{ reserva.date }}</td>
+                    <td>{{ reserva.hora }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+              {% else %}
+              <div class="alert alert-info m-2" role="alert">Não há reservas.</div>
+              {% endif %}
+            </div>
+          </div>
+          <!-- Rodapé do Modal -->
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Modal de Todas as Reservas -->
+
+    <!-- Modal Detalhes do Prato -->
+    <div class="modal fade" id="modalPratoDetalhes">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <!-- Cabeçalho do Modal -->
+          <div class="modal-header">
+            <h5 class="modal-title">Detalhes do Prato</h5>
+            <button type="button" style="color: white;" class="close" data-dismiss="modal" aria-label="Close"><span
+                aria-hidden="true">&times;</span></button>
+          </div>
+
+          <!-- Corpo do Modal -->
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-4">
+                <img id="modalImagem" src="" class="img-fluid" />
+              </div>
+              <div class="col-md-4">
+                <p class="mt-3">
+                  <strong>Numeração:</strong> <span id="modalId"></span>
+                </p>
+                <p>
+                  <strong>Nome:</strong> <span id="modalNome"></span>
+                </p>
+                <p>
+                  <strong>Descrição:</strong> <span id="modalDescricao"></span>
+                </p>
+                <p>
+                  <strong>Valor (Kg):</strong> <span id="modalValor"></span>
+                </p>
+                <p>
+                  <strong>Status:</strong> <span id="modalStatus" class="prato-status"
+                    data-status="{{ prato.status }}"></span>
+                </p>
+              </div>
+              <div class="col-md-4">
+                <div class="d-flex flex-column">
+                  <button type="button" class="btn btn-primary mt-3 mb-3" id="editarPrato">Editar</button>
+                  <button type="button" class="btn btn-warning mb-3 inativar-prato" id="inativarPrato"
+                    data-id="">Inativar</button>
+                  <button type="button" class="btn btn-success mb-3 ativar-prato" id="ativarPrato"
+                    data-id="">Ativar</button>
+                  <div class="dropdown-divider"></div>
+                  <button type="button" class="btn btn-danger mt-3" id="excluirPrato">Excluir</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Footer do Modal -->
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Modal Detalhes do Prato -->
+
+    <!-- Modal para edição de prato -->
+    <div class="modal fade" id="editarPratoModal" tabindex="-1" role="dialog" aria-labelledby="editarPratoModalLabel">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Editar Prato</h5>
+            <button type="button" style="color: white;" class="close" data-dismiss="modal" aria-label="Close"><span
+                aria-hidden="true">&times;</span></button>
+          </div>
+          <div class="modal-body">
+            <!-- Formulário de edição de prato -->
+            <form id="editarPratoForm" method="POST" enctype="multipart/form-data">
+              {% csrf_token %}
+              <input type="hidden" id="pratoId" name="pratoId" />
+              <div class="form-group">
+                <label for="editNome">Nome:</label>
+                <input type="text" class="form-control" id="editNome" name="editNome" />
+              </div>
+              <div class="form-group">
+                <label for="editDescricao">Descrição:</label>
+                <textarea class="form-control" id="editDescricao" name="editDescricao"></textarea>
+              </div>
+              <div class="form-group">
+                <label for="editValor">Valor (Kg):</label>
+                <input type="text" class="form-control" id="editValor" name="editValor" />
+              </div>
+              <div class="form-group">
+                <label for="editImagem">Imagem:</label>
+                <input type="file" class="form-control-file" id="editImagem" name="editImagem" />
+              </div>
+              <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Modal para edição de prato -->
+  {% endif %}
+
+  <!-- plugins:js -->
+  <script src="{% static 'assets/vendors/js/vendor.bundle.base.js' %}"></script>
+  <!-- endinject -->
+  <!-- Plugin js for this page -->
+  <script src="{% static 'assets/vendors/chart.js/Chart.min.js' %}"></script>
+  <script src="{% static 'assets/vendors/progressbar.js/progressbar.min.js' %}"></script>
+  <script src="{% static 'assets/vendors/jvectormap/jquery-jvectormap.min.js' %}"></script>
+  <script src="{% static 'assets/vendors/jvectormap/jquery-jvectormap-world-mill-en.js' %}"></script>
+  <script src="{% static 'assets/vendors/owl-carousel-2/owl.carousel.min.js' %}"></script>
+  <!-- End plugin js for this page -->
+  <!-- inject:js -->
+  <script src="{% static 'assets/js/off-canvas.js' %}"></script>
+  <script src="{% static 'assets/js/hoverable-collapse.js' %}"></script>
+  <script src="{% static 'assets/js/misc.js' %}"></script>
+  <script src="{% static 'assets/js/settings.js' %}"></script>
+  <script src="{% static 'assets/js/todolist.js' %}"></script>
+  <script src="{% static 'js/sistema.js' %}"></script>
+  <!-- endinject -->
+  <!-- Custom js for this page -->
+  <script src="{% static 'assets/js/dashboard.js' %}"></script>
+  <!-- End custom js for this page -->
+</body>
+
 </html>
 
 <script>
@@ -733,31 +772,31 @@
   $(document).on('click', '#editarPrato', function () {
     // Obtenha a ID do prato selecionado
     var pratoId = $('#modalId').text()
-  
+
     // Preencher os campos do formulário com os detalhes do prato selecionado
     var pratoNome = $('#modalNome').text()
     var pratoDescricao = $('#modalDescricao').text()
     var pratoValor = $('#modalValor').text()
-  
+
     $('#pratoId').val(pratoId)
     $('#editNome').val(pratoNome)
     $('#editDescricao').val(pratoDescricao)
     $('#editValor').val(pratoValor)
-  
+
     // Exibir o modal de edição de prato
     $('#editarPratoModal').modal('show')
   })
-  
+
   // Manipulador de evento para o envio do formulário de edição de prato
   $(document).on('submit', '#editarPratoForm', function (event) {
     event.preventDefault() // Evita o envio padrão do formulário
-  
+
     // Obtenha a ID do prato diretamente do campo oculto
     var pratoId = $('#pratoId').val()
     var pratoNome = $('#editNome').val()
     var pratoDescricao = $('#editDescricao').val()
     var pratoValor = $('#editValor').val()
-  
+
     // Obtenha o token CSRF do cookie
     function getCookie(name) {
       var cookieValue = null
@@ -775,7 +814,7 @@
       return cookieValue
     }
     var csrftoken = getCookie('csrftoken')
-  
+
     // Crie um objeto FormData para enviar os dados do formulário, incluindo a imagem
     var formData = new FormData()
     formData.append('pratoId', pratoId)
@@ -783,7 +822,7 @@
     formData.append('editDescricao', pratoDescricao)
     formData.append('editValor', pratoValor)
     formData.append('editImagem', $('#editImagem')[0].files[0]) // Adicione a imagem ao FormData
-  
+
     // Envie uma solicitação AJAX para o backend para processar as alterações
     $.ajax({
       url: '/editar_prato/' + pratoId + '/', // Use pratoId em vez de prato_id
@@ -807,16 +846,16 @@
       }
     })
   })
-  
+
   // Quando o botão Excluir é clicado, exiba um modal de confirmação e, se confirmado, exclua o prato
   $(document).on('click', '#excluirPrato', function () {
     // Obtenha o ID do prato
     var pratoId = $('#modalId').text()
     var btn = $(this) // Referência ao botão clicado
-  
+
     // Desabilitar o botão e alterar seu texto para "Aguarde..."
     btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Aguarde...')
-  
+
     // Obtenha o token CSRF do cookie
     function getCookie(name) {
       var cookieValue = null
@@ -834,7 +873,7 @@
       return cookieValue
     }
     var csrftoken = getCookie('csrftoken')
-  
+
     // Exiba um modal de confirmação
     if (confirm('Tem certeza de que deseja excluir este prato?')) {
       // Se confirmado, envie uma solicitação AJAX para excluir o prato
@@ -860,17 +899,17 @@
       })
     }
   })
-  
+
   // Script para lidar com os botões de inativar e ativar prato
   $(document).ready(function () {
     // Lidar com o clique no botão de inativar prato
     $('#inativarPrato').click(function () {
       var pratoId = $('#modalId').text() // Obter o ID do prato
       var btn = $(this) // Referência ao botão clicado
-  
+
       // Desabilitar o botão e alterar seu texto para "Aguarde..."
       btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Aguarde...')
-  
+
       // Obtenha o token CSRF do cookie
       function getCookie(name) {
         var cookieValue = null
@@ -902,10 +941,10 @@
           // Desabilitar o botão de inativar e habilitar o botão de ativar
           $('#inativarPrato').prop('disabled', true)
           $('#ativarPrato').prop('disabled', false)
-  
+
           // Exibir mensagem de sucesso usando um alert
           alert('Prato inativado com sucesso!')
-  
+
           // Recarregar a página
           location.reload()
         },
@@ -915,15 +954,15 @@
         }
       })
     })
-  
+
     // Lidar com o clique no botão de ativar prato
     $('#ativarPrato').click(function () {
       var pratoId = $('#modalId').text() // Obter o ID do prato
       var btn = $(this) // Referência ao botão clicado
-  
+
       // Desabilitar o botão e alterar seu texto para "Aguarde..."
       btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Aguarde...')
-  
+
       // Obtenha o token CSRF do cookie
       function getCookie(name) {
         var cookieValue = null
@@ -941,7 +980,7 @@
         return cookieValue
       }
       var csrftoken = getCookie('csrftoken')
-  
+
       // Enviar uma solicitação AJAX para ativar o prato
       $.ajax({
         url: '/ativar_prato/' + pratoId + '/', // URL para a view que ativa o prato
@@ -956,10 +995,10 @@
           // Desabilitar o botão de ativar e habilitar o botão de inativar
           $('#ativarPrato').prop('disabled', true)
           $('#inativarPrato').prop('disabled', false)
-  
+
           // Exibir mensagem de sucesso usando um alert
           alert('Prato ativado com sucesso!')
-  
+
           location.reload()
         },
         error: function (xhr, status, error) {

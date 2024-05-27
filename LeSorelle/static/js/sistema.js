@@ -386,7 +386,7 @@ $(document).ready(function() {
     setInterval(getNotifications, 30000);
 
     // Adicionar evento de clique para o botão "Limpar Notificações"
-    $("#clearNotificationsButton").click(function() {
+    $("#clearNotificationsBtn").click(function() {
         clearNotifications();
     });
 });
