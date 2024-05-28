@@ -47,6 +47,7 @@ class IndexView(TemplateView):
             context['user_is_in_dashboard_group'] = user_is_in_dashboard_group
 
         context['form'] = ReservaForm(initial=initial_data)
+        context['modo_choices'] = dict(Reserva.MODO_CHOICES)  # Adicione esta linha
         return context
     
     def post(self, request, *args, **kwargs):
@@ -57,40 +58,33 @@ class IndexView(TemplateView):
             hora = form.cleaned_data['hora']
             food_id = form.cleaned_data['food']
             peso = form.cleaned_data['peso']
-            
-            # Imprimir valores da reserva principal
-            print(f"Telefone: {telefone}")
-            print(f"Data: {date}")
-            print(f"Hora: {hora}")
-            print(f"ID do Alimento: {food_id}")
-            print(f"Peso: {peso}")
-            
-            # Cria a reserva principal
+            modo = form.cleaned_data['modo']  # Captura o modo selecionado no formulário
+
             reserva_instance = form.save(commit=False)
             reserva_instance.usuario = request.user
+            reserva_instance.modo = modo  # Salva o modo na reserva principal
             reserva_instance.save()
-                        
-            # Salva os pratos adicionais
+
             pratos_adicionais = request.POST.getlist('nome_prato')
             pesos_pratos_adicionais = request.POST.getlist('peso_prato')
+            modos_pratos_adicionais = request.POST.getlist('modo')  # Ajuste o nome do campo para capturar os modos dos pratos adicionais
 
             for i in range(len(pratos_adicionais)):
-                nome_prato_id = pratos_adicionais[i]  # ID do alimento
+                nome_prato_id = pratos_adicionais[i]
                 peso_prato = pesos_pratos_adicionais[i]
-                
-                # Recupera o objeto Food a partir do ID
+                modo_prato = modos_pratos_adicionais[i]  # Captura o modo do prato adicional
+
                 nome_prato = Food.objects.get(pk=nome_prato_id)
-                
-                # Recupera o valor do prato adicional
                 valor_prato = nome_prato.valor
                 
                 # Imprimir valores dos pratos adicionais
                 print(f"ID Prato Adicional {i}: {nome_prato_id}")
                 print(f"Peso do Prato Adicional {i}: {peso_prato}")
+                print(f"Modo do Prato Adicional {i}: {modo_prato}")  # Adicione essa linha para imprimir o modo do prato adicional
                 print(f"Valor do Prato Adicional {i}: {valor_prato}")
                 
                 # Cria um prato adicional associado à reserva principal
-                PratoAdicional.objects.create(reserva=reserva_instance, food=nome_prato, peso=peso_prato, valor=valor_prato)
+                PratoAdicional.objects.create(reserva=reserva_instance, food=nome_prato, peso=peso_prato, modo=modo_prato, valor=valor_prato)
                 
                 # Verifica se a reserva atende aos critérios para gerar uma notificação
             if reserva_instance.status == 'pendente':
@@ -390,6 +384,18 @@ class reservasView(TemplateView):
         # Adicione as reservas passadas e futuras ao contexto
         context['reservas_passadas'] = reservas_passadas
         context['reservas_futuras'] = reservas_futuras
+        
+        # Adicionar modos dos pratos adicionais ao contexto para reservas passadas
+        for reserva in reservas_passadas:
+            pratos_adicionais = reserva.pratos_adicionais_reserva.all()
+            modos_pratos_adicionais = [(prato.food.name_food, prato.modo) for prato in pratos_adicionais if prato.modo]
+            reserva.modos_pratos_adicionais_passadas = modos_pratos_adicionais
+
+        # Adicionar modos dos pratos adicionais ao contexto para reservas futuras
+        for reserva in reservas_futuras:
+            pratos_adicionais = reserva.pratos_adicionais_reserva.all()
+            modos_pratos_adicionais = [(prato.food.name_food, prato.modo) for prato in pratos_adicionais if prato.modo]
+            reserva.modos_pratos_adicionais_futuras = modos_pratos_adicionais
         
         # Definir função para calcular o preço total de um prato
         def calcular_preco_convertido(valor, peso):

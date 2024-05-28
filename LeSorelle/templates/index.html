@@ -715,26 +715,26 @@
               <form id="reserva-form" class="reservations-box" method="post">
                 {% csrf_token %}
 
-                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12">
                   <div class="form-box">
                     <input type="text" name="telefone" id="telefone" placeholder="Telefone" required />
                   </div>
                 </div>
                 <!-- end col -->
 
-                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                <div class="col-lg-4 col-md-3 col-sm-3 col-xs-12">
                   <div class="form-box">
                     <input type="date" id="id_data" name="date" placeholder="Data de Retirada" required />
                   </div>
                 </div>
                 <!-- end col -->
 
-                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="col-lg-4 col-md-3 col-sm-12 col-xs-12">
                   <div class="form-box">{{ form.hora }}</div>
                 </div>
                 <!-- end col -->
 
-                <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
+                <div class="col-lg-6 col-md-8 col-sm-8 col-xs-12">
                   <div class="form-box">
                     <select name="food" id="preferred_food" class="selectpicker" required>
                       <option selected disabled>Prato</option>
@@ -746,20 +746,33 @@
                 </div>
                 <!-- end col -->
 
-                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
                   <div class="form-box">{{ form.peso }}</div>
                 </div>
                 <!-- end col -->
 
+                <div class="col-lg-3 col-md-8 col-sm-8 col-xs-12">
+                  <div class="form-box">
+                    <select name="modo" id="modo" class="selectpicker" required>
+                      <option selected disabled>Modo</option>
+                      {% for modo, modo_label in modo_choices.items %}
+                        <option value="{{ modo }}">{{ modo_label }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
+                <!-- end col -->
+                
+
                 <!-- Campos Adicionais -->
                 <div id="pratoContainer">
                   <div class="prato" style="display: none;">
-                    <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                    <div class="col-lg-4 col-md-7 col-sm-7 col-xs-12">
                       <div class="form-box">
                         <select name="nome_prato">
                           <option value="" selected disabled>Prato(Campo extra)</option>
                           {% for food_option in foods %}
-                            <option value="{{ food_option.id }}">{{ food_option.name_food }}</option>
+                            <option value="{{ food_option.id }}">{{ food_option.name_food }}</option> 
                           {% endfor %}
                         </select>
                       </div>
@@ -776,7 +789,18 @@
                       </div>
                     </div>
                     <!-- end col -->
-                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12">
+                    <div class="col-lg-3 col-md-8 col-sm-8 col-xs-12">
+                      <div class="form-box">
+                        <select name="modo" id="modo" required>
+                          <option selected disabled>Modo</option>
+                          {% for modo, modo_label in modo_choices.items %}
+                            <option value="{{ modo }}">{{ modo_label }}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                    <!-- end col -->
+                    <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12">
                       <div class="form-box text-center">
                         <a type="button" class="remover-prato" onclick="removerPrato(this.parentNode.parentNode)"><i class="fa fa-minus-circle" style="font-size: 3vh; color: red; margin-top: 15px;"></i></a>
                       </div>

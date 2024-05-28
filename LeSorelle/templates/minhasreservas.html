@@ -1,286 +1,311 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-  {% load static %}
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <title>Minhas Reservas</title>
-    <!-- plugins:css -->
-    <link rel="stylesheet" href="{% static 'assets/vendors/mdi/css/materialdesignicons.min.css' %}" />
-    <link rel="stylesheet" href="{% static 'assets/vendors/css/vendor.bundle.base.css' %}" />
-    <!-- endinject -->
+{% load static %}
 
-    <!-- Plugin css for this page -->
-    <link rel="stylesheet" href="{% static 'assets/vendors/jvectormap/jquery-jvectormap.css' %}" />
-    <link rel="stylesheet" href="{% static 'assets/vendors/flag-icon-css/css/flag-icon.min.css' %}" />
-    <link rel="stylesheet" href="{% static 'assets/vendors/owl-carousel-2/owl.carousel.min.css' %}" />
-    <link rel="stylesheet" href="{% static 'assets/vendors/owl-carousel-2/owl.theme.default.min.css' %}" />
-    <!-- End plugin css for this page -->
-    <!-- inject:css -->
-    <!-- endinject -->
-    <!-- Layout styles -->
-    <link rel="stylesheet" href="{% static 'assets/css/style.css' %}" />
-    <!-- End layout styles -->
-    <link rel="shortcut icon" href="{% static 'assets/images/favicon.png' %}" />
-  </head>
-  <body>
-    {% if user.is_authenticated %}
-      <div class="container-scroller">
-        <!-- Nav esquerda -->
-        <nav class="sidebar sidebar-offcanvas" id="sidebar">
-          <div class="sidebar-brand-wrapper d-none d-lg-flex align-items-center justify-content-center fixed-top">
-            <a class="sidebar-brand brand-logo" href="{% url 'index' %}"><img style="width: 80px; height: auto;" src="{% static 'images/logo.png' %}" alt="" /></a>
-            <a class="sidebar-brand brand-logo-mini" href="{% url 'index' %}"><img src="{% static 'images/logo.png' %}" alt="logo" /></a>
-          </div>
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <title>Minhas Reservas</title>
+  <!-- plugins:css -->
+  <link rel="stylesheet" href="{% static 'assets/vendors/mdi/css/materialdesignicons.min.css' %}" />
+  <link rel="stylesheet" href="{% static 'assets/vendors/css/vendor.bundle.base.css' %}" />
+  <!-- endinject -->
 
-          <ul class="nav">
-            <li class="nav-item nav-category">
-              <span class="nav-link">Navigation</span>
-            </li>
-            <li class="nav-item menu-items active">
-              <a class="nav-link">
-                <span class="menu-icon"><i class="mdi mdi-table-large"></i></span>
-                <span class="menu-title">Minhas Reservas</span>
-              </a>
+  <!-- Plugin css for this page -->
+  <link rel="stylesheet" href="{% static 'assets/vendors/jvectormap/jquery-jvectormap.css' %}" />
+  <link rel="stylesheet" href="{% static 'assets/vendors/flag-icon-css/css/flag-icon.min.css' %}" />
+  <link rel="stylesheet" href="{% static 'assets/vendors/owl-carousel-2/owl.carousel.min.css' %}" />
+  <link rel="stylesheet" href="{% static 'assets/vendors/owl-carousel-2/owl.theme.default.min.css' %}" />
+  <!-- End plugin css for this page -->
+  <!-- inject:css -->
+  <!-- endinject -->
+  <!-- Layout styles -->
+  <link rel="stylesheet" href="{% static 'assets/css/style.css' %}" />
+  <!-- End layout styles -->
+  <link rel="shortcut icon" href="{% static 'assets/images/favicon.png' %}" />
+</head>
+
+<body>
+  {% if user.is_authenticated %}
+  <div class="container-scroller">
+    <!-- Nav esquerda -->
+    <nav class="sidebar sidebar-offcanvas" id="sidebar">
+      <div class="sidebar-brand-wrapper d-none d-lg-flex align-items-center justify-content-center fixed-top">
+        <a class="sidebar-brand brand-logo" href="{% url 'index' %}"><img style="width: 80px; height: auto;"
+            src="{% static 'images/logo.png' %}" alt="" /></a>
+        <a class="sidebar-brand brand-logo-mini" href="{% url 'index' %}"><img src="{% static 'images/logo.png' %}"
+            alt="logo" /></a>
+      </div>
+
+      <ul class="nav">
+        <li class="nav-item nav-category">
+          <span class="nav-link">Navigation</span>
+        </li>
+        <li class="nav-item menu-items active">
+          <a class="nav-link">
+            <span class="menu-icon"><i class="mdi mdi-table-large"></i></span>
+            <span class="menu-title">Minhas Reservas</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+    <!-- Nav esquerda -->
+
+    <div class="container-fluid page-body-wrapper">
+      <!-- Nav alto -->
+      <nav class="navbar p-0 fixed-top d-flex flex-row">
+        <div class="navbar-brand-wrapper d-flex d-lg-none align-items-center justify-content-center">
+          <a class="navbar-brand brand-logo-mini" href="{% url 'index' %}"><img style="width: 50px; height: auto;"
+              src="{% static 'images/logo.png' %}" alt="logo" /></a>
+        </div>
+
+        <div class="navbar-menu-wrapper flex-grow d-flex align-items-stretch">
+          <!-- Pesquisa -->
+          <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize"><span
+              class="mdi mdi-menu"></span></button>
+          <ul class="navbar-nav w-100">
+            <li class="nav-item w-100">
+              <form class="nav-link mt-2 mt-md-0 d-none d-lg-flex search">
+                <input type="text" class="form-control" placeholder="Search products" />
+              </form>
             </li>
           </ul>
-        </nav>
-        <!-- Nav esquerda -->
+          <!-- Pesquisa -->
 
-        <div class="container-fluid page-body-wrapper">
-          <!-- Nav alto -->
-          <nav class="navbar p-0 fixed-top d-flex flex-row">
-            <div class="navbar-brand-wrapper d-flex d-lg-none align-items-center justify-content-center">
-              <a class="navbar-brand brand-logo-mini" href="{% url 'index' %}"><img style="width: 50px; height: auto;" src="{% static 'images/logo.png' %}" alt="logo" /></a>
-            </div>
+          <!-- Nav Direita -->
+          <ul class="navbar-nav navbar-nav-right">
 
-            <div class="navbar-menu-wrapper flex-grow d-flex align-items-stretch">
-              <!-- Pesquisa -->
-              <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize"><span class="mdi mdi-menu"></span></button>
-              <ul class="navbar-nav w-100">
-                <li class="nav-item w-100">
-                  <form class="nav-link mt-2 mt-md-0 d-none d-lg-flex search">
-                    <input type="text" class="form-control" placeholder="Search products" />
-                  </form>
-                </li>
-              </ul>
-              <!-- Pesquisa -->
-
-              <!-- Nav Direita -->
-              <ul class="navbar-nav navbar-nav-right">
-
-                <!-- Profile -->
-                <li class="nav-item dropdown">
-                  <a class="nav-link" id="profileDropdown" href="#" data-toggle="dropdown">
-                    <div class="navbar-profile">
-                      <p class="mb-0 d-none d-sm-block navbar-profile-name">{{ user.first_name }} {{ user.last_name }}</p>
-                      <i class="mdi mdi-menu-down d-none d-sm-block"></i>
+            <!-- Profile -->
+            <li class="nav-item dropdown">
+              <a class="nav-link" id="profileDropdown" href="#" data-toggle="dropdown">
+                <div class="navbar-profile">
+                  <p class="mb-0 d-none d-sm-block navbar-profile-name">{{ user.first_name }} {{ user.last_name }}</p>
+                  <i class="mdi mdi-menu-down d-none d-sm-block"></i>
+                </div>
+              </a>
+              <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list"
+                aria-labelledby="profileDropdown">
+                <h6 class="p-3 mb-0">Perfil</h6>
+                <div class="dropdown-divider"></div>
+                <a href="{% url 'index' %}" class="dropdown-item preview-item">
+                  <div class="preview-thumbnail">
+                    <div class="preview-icon bg-dark rounded-circle">
+                      <i class="mdi mdi-table text-success"></i>
                     </div>
-                  </a>
-                  <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="profileDropdown">
-                    <h6 class="p-3 mb-0">Perfil</h6>
-                    <div class="dropdown-divider"></div>
-                    <a href="{% url 'index' %}" class="dropdown-item preview-item">
-                      <div class="preview-thumbnail">
-                        <div class="preview-icon bg-dark rounded-circle">
-                          <i class="mdi mdi-table text-success"></i>
-                        </div>
-                      </div>
-                      <div class="preview-item-content">
-                        <p class="preview-subject mb-1">Inicio</p>
-                      </div>
-                    </a>
-                    <div class="dropdown-divider"></div>
-                    <a href="{% url 'login' %}" class="dropdown-item preview-item">
-                      <div class="preview-thumbnail">
-                        <div class="preview-icon bg-dark rounded-circle">
-                          <i class="mdi mdi-logout text-danger"></i>
-                        </div>
-                      </div>
-                      <div class="preview-item-content">
-                        <p class="preview-subject mb-1">Sair</p>
-                      </div>
-                    </a>
                   </div>
-                </li>
-                <!-- Profile -->
-              </ul>
-              <!-- Nav Direita -->
-
-              <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas"><span class="mdi mdi-format-line-spacing"></span></button>
-            </div>
-          </nav>
-          <!-- Nav alto -->
-
-          {% if reservas_futuras %}
-            <div class="main-panel">
-              <div class="content-wrapper">
-                <h3>Reservas Abertas</h3>
-                <div class="row">
-                  {% for reserva in reservas_futuras %}
-                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 grid-margin stretch-card">
-                      <div class="card">
-                        <div class="card-body">
-                          <h4 class="card-title">Reserva #{{ forloop.counter }}</h4>
-                          <div class="row">
-                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                              <!-- Prato Principal -->
-                              <p>Produto: {{ reserva.food.name_food }}</p>
-                              <p>Peso (kg): {{ reserva.peso }}</p>
-                              <p>Valor (kg): R${{ reserva.food.valor|floatformat:'2' }}</p>
-                              <!-- Prato Principal -->
-                              {% if reserva.pratos_adicionais_reserva.all %}
-                                {% for prato_adicional in reserva.pratos_adicionais_reserva.all %}
-                                  <div class="dropdown-divider"></div>
-                                  <p>Produto adicional: {{ prato_adicional.food.name_food }}</p>
-                                  <p>Peso (kg): {{ prato_adicional.peso }}</p>
-                                  <p>Valor (kg): R${{ prato_adicional.valor|floatformat:'2' }}</p>
-                                {% endfor %}
-                              {% endif %}
-                            </div>
-                            <!-- Exibir pratos adicionais -->
-                            <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
-                              <h6>Dia e Horário para Retirada:</h6>
-                              <br />
-                              <p>Data: {{ reserva.date }}</p>
-                              <p>Horário: {{ reserva.hora }}</p>
-                            </div>
-                            <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
-                              <!-- Soma dos preços convertidos -->
-                              <p>Total da Reserva:</p>
-                              <h3>R${{ reserva.preco_total|floatformat:'2' }}</h3>
-                              <br />
-                              <label style="font-size: 17px;"
-                                class="badge 
-                                {% if reserva.status == 'em_preparo' %} badge-info
-
-                                {% elif reserva.status == 'pendente' %} badge-warning
-
-                                {% elif reserva.status == 'pronto' %} badge-success
-
-                                {% elif reserva.status == 'finalizado' %} badge-info
-
-                                {% elif reserva.status == 'cancelado' %} badge-danger
-
-                                {% endif %}">
-                                {% if reserva.status == 'em_preparo' %}
-                                  Em Preparo
-                                {% else %}
-                                  {{ reserva.get_status_display }}
-                                {% endif %}
-                              </label>
-                              <br />
-                              {% csrf_token %}
-                              <div class="mt-3">
-                                {% if reserva.status == 'pendente' %}
-                                  <button style="font-size: 16px;" type="button" class="btn btn-danger btn-sm mr-2" onclick="marcarCancelado({{ reserva.id }})">Cancelar</button>
-                                {% endif %}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+                  <div class="preview-item-content">
+                    <p class="preview-subject mb-1">Inicio</p>
+                  </div>
+                </a>
+                <div class="dropdown-divider"></div>
+                <a href="{% url 'login' %}" class="dropdown-item preview-item">
+                  <div class="preview-thumbnail">
+                    <div class="preview-icon bg-dark rounded-circle">
+                      <i class="mdi mdi-logout text-danger"></i>
                     </div>
-                  {% endfor %}
-                </div>
+                  </div>
+                  <div class="preview-item-content">
+                    <p class="preview-subject mb-1">Sair</p>
+                  </div>
+                </a>
               </div>
-            </div>
-          {% endif %}
+            </li>
+            <!-- Profile -->
+          </ul>
+          <!-- Nav Direita -->
 
-          {% if reservas_passadas %}
-            <div class="main-panel">
-              <div class="content-wrapper">
-                <h3>Reservas Passadas</h3>
-                <div class="row">
-                  {% for reserva in reservas_passadas %}
-                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 grid-margin stretch-card">
-                      <div class="card">
-                        <div class="card-body">
-                          <h4 class="card-title">Reserva #{{ forloop.counter }}</h4>
-                          <div class="row">
-                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                              <!-- Prato Principal -->
-                              <p>Produto: {{ reserva.food.name_food }}</p>
-                              <p>Peso (kg): {{ reserva.peso }}</p>
-                              <p>Valor (kg): R${{ reserva.food.valor|floatformat:'2' }}</p>
-                              <!-- Prato Principal -->
-                              {% if reserva.pratos_adicionais_reserva.all %}
-                                {% for prato_adicional in reserva.pratos_adicionais_reserva.all %}
-                                  <div class="dropdown-divider"></div>
-                                  <p>Produto adicional: {{ prato_adicional.food.name_food }}</p>
-                                  <p>Peso (kg): {{ prato_adicional.peso }}</p>
-                                  <p>Valor (kg): R${{ prato_adicional.valor|floatformat:'2' }}</p>
-                                {% endfor %}
-                              {% endif %}
-                            </div>
-                            <!-- Exibir pratos adicionais -->
-                            <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
-                              <h6>Dia e Horário para Retirada:</h6>
-                              <br />
-                              <p>Data: {{ reserva.date }}</p>
-                              <p>Horário: {{ reserva.hora }}</p>
-                            </div>
-                            <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
-                              <!-- Soma dos preços convertidos -->
-                              <p>Total da Reserva:</p>
-                              <h3>R${{ reserva.preco_total|floatformat:'2' }}</h3>
-                              <br />
-                              <label style="font-size: 17px;"
-                                class="badge 
-                                {% if reserva.status == 'em_preparo' %} badge-info
-
-                                {% elif reserva.status == 'pendente' %} badge-warning
-
-                                {% elif reserva.status == 'pronto' %} badge-success
-
-                                {% elif reserva.status == 'finalizado' %} badge-info
-
-                                {% elif reserva.status == 'cancelado' %} badge-danger
-
-                                {% endif %}">
-                                {% if reserva.status == 'em_preparo' %}
-                                  Em Preparo
-                                {% else %}
-                                  {{ reserva.get_status_display }}
-                                {% endif %}
-                              </label>
-
-                              <br />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  {% endfor %}
-                </div>
-              </div>
-            </div>
-          {% endif %}
-
-          {% if not reservas_passadas and not reservas_futuras %}
-            <div class="col-12">
-              <div class="alert alert-info" role="alert">Nenhuma reserva feita.</div>
-            </div>
-          {% endif %}
+          <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button"
+            data-toggle="offcanvas"><span class="mdi mdi-format-line-spacing"></span></button>
         </div>
-        <!-- page-body-wrapper ends -->
+      </nav>
+      <!-- Nav alto -->
+
+      {% if reservas_futuras %}
+      <div class="main-panel">
+        <div class="content-wrapper">
+          <h3>Reservas Abertas</h3>
+          <div class="row">
+            {% for reserva in reservas_futuras %}
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 grid-margin stretch-card">
+              <div class="card">
+                <div class="card-body">
+                  <h4 class="card-title">Reserva #{{ forloop.counter }}</h4>
+                  <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                      <!-- Prato Principal -->
+                      <p>Produto: {{ reserva.food.name_food }}</p>
+                      <p>Peso (kg): {{ reserva.peso }}</p>
+                      <p>Valor (kg): R${{ reserva.food.valor|floatformat:'2' }}</p>
+                      <p>Modo de Preparo: {{ reserva.modo }}</p>
+                      
+                      <!-- Prato Principal -->
+                      {% if reserva.pratos_adicionais_reserva.all %}
+                      {% for prato_adicional in reserva.pratos_adicionais_reserva.all %}
+                      <div class="dropdown-divider"></div>
+                      <p>Produto adicional: {{ prato_adicional.food.name_food }}</p>
+                      <p>Peso (kg): {{ prato_adicional.peso }}</p>
+                      <p>Valor (kg): R${{ prato_adicional.valor|floatformat:'2' }}</p>
+                      <p>Modo de Preparo: {{ prato_adicional.modo }}</p>
+                      {% endfor %}
+                      {% endif %}
+                    </div>
+                    <!-- Exibir pratos adicionais -->
+                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                      <h6>Dia e Horário para Retirada:</h6>
+                      <br />
+                      <p>Data: {{ reserva.date }}</p>
+                      <p>Horário: {{ reserva.hora }}</p>
+                    </div>
+                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                      <!-- Soma dos preços convertidos -->
+                      <p>Total da Reserva:</p>
+                      <h3>R${{ reserva.preco_total|floatformat:'2' }}</h3>
+                      <br />
+                      <label style="font-size: 17px;" class="badge 
+                      {% if reserva.status == 'em_preparo' %} badge-info
+
+                      {% elif reserva.status == 'pendente' %} badge-warning
+
+                      {% elif reserva.status == 'pronto' %} badge-success
+
+                      {% elif reserva.status == 'finalizado' %} badge-info
+
+                      {% elif reserva.status == 'cancelado' %} badge-danger
+
+                      {% endif %}">
+                        {% if reserva.status == 'em_preparo' %}
+                        Em Preparo
+                        {% else %}
+                        {{ reserva.get_status_display }}
+                        {% endif %}
+                      </label>
+                      <br />
+                      {% csrf_token %}
+                      <div class="mt-3">
+                        {% if reserva.status == 'pendente' %}
+                        <button style="font-size: 16px;" type="button" class="btn btn-danger btn-sm mr-2"
+                          onclick="marcarCancelado ({{reserva.id}})">Cancelar</button>
+                        {% endif %}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
       </div>
-    {% endif %}
-    <!-- container-scroller -->
-    <!-- plugins:js -->
-    <script src="{% static 'assets/vendors/js/vendor.bundle.base.js' %}"></script>
-    <!-- endinject -->
-    <!-- Plugin js for this page -->
-    <!-- End plugin js for this page -->
-    <!-- inject:js -->
-    <script src="{% static 'assets/js/off-canvas.js' %}"></script>
-    <script src="{% static 'assets/js/hoverable-collapse.js' %}"></script>
-    <script src="{% static 'assets/js/settings.js' %}"></script>
-    <script src="{% static 'assets/js/todolist.js' %}"></script>
-    <script src="{% static 'js/sistema.js' %}"></script>
-    <!-- endinject -->
-    <!-- Custom js for this page -->
-    <!-- End custom js for this page -->
-  </body>
+      {% else %}
+      <!-- Aqui você pode colocar o conteúdo que deseja exibir caso não haja reservas futuras -->
+      <div class="main-panel">
+        <div class="content-wrapper">
+          <h3>Não há reservas</h3>
+          <p>Faça sua reserva agora mesmo <a href="{% url 'index' %}">aqui</a>.</p>
+        </div>
+      </div>
+      {% endif %}
+
+      {% if reservas_passadas %}
+      <div class="main-panel">
+        <div class="content-wrapper">
+          <h3>Reservas Passadas</h3>
+          <div class="row">
+            {% for reserva in reservas_passadas %}
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 grid-margin stretch-card">
+              <div class="card">
+                <div class="card-body">
+                  <h4 class="card-title">Reserva #{{ forloop.counter }}</h4>
+                  <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                      <!-- Prato Principal -->
+                      <p>Produto: {{ reserva.food.name_food }}</p>
+                      <p>Peso (kg): {{ reserva.peso }}</p>
+                      <p>Valor (kg): R${{ reserva.food.valor|floatformat:'2' }}</p>
+                      <p>Modo Preparo: {{ reserva.modo }}</p>
+                      <!-- Prato Principal -->
+                      {% if reserva.pratos_adicionais_reserva.all %}
+                      {% for prato_adicional in reserva.pratos_adicionais_reserva.all %}
+                      <div class="dropdown-divider"></div>
+                      <p>Produto adicional: {{ prato_adicional.food.name_food }}</p>
+                      <p>Peso (kg): {{ prato_adicional.peso }}</p>
+                      <p>Valor (kg): R${{ prato_adicional.valor|floatformat:'2' }}</p>
+                      <p>Peso (kg): {{ prato_adicional.peso }}</p>
+                      <p>Modo de Preparo: {{ prato_adicional.modo }} </p>
+                      {% endfor %}
+                      {% endif %}
+                    </div>
+                    <!-- Exibir pratos adicionais -->
+                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                      <h6>Dia e Horário para Retirada:</h6>
+                      <br />
+                      <p>Data: {{ reserva.date }}</p>
+                      <p>Horário: {{ reserva.hora }}</p>
+                    </div>
+                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                      <!-- Soma dos preços convertidos -->
+                      <p>Total da Reserva:</p>
+                      <h3>R${{ reserva.preco_total|floatformat:'2' }}</h3>
+                      <br />
+                      <label style="font-size: 17px;" class="badge 
+                      {% if reserva.status == 'em_preparo' %} badge-info
+
+                      {% elif reserva.status == 'pendente' %} badge-warning
+
+                      {% elif reserva.status == 'pronto' %} badge-success
+
+                      {% elif reserva.status == 'finalizado' %} badge-info
+
+                      {% elif reserva.status == 'cancelado' %} badge-danger
+
+                      {% endif %}">
+                        {% if reserva.status == 'em_preparo' %}
+                        Em Preparo
+                        {% else %}
+                        {{ reserva.get_status_display }}
+                        {% endif %}
+                      </label>
+                      <br />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      {% else %}
+      <!-- Aqui você pode colocar o conteúdo que deseja exibir caso não haja reservas passadas -->
+      <div class="main-panel">
+        <div class="content-wrapper">
+          <h3>Não há reservas passadas</h3>
+          <p>Atualmente não há reservas passadas para exibir.</p>
+        </div>
+      </div>
+      {% endif %}
+
+
+    </div>
+    <!-- page-body-wrapper ends -->
+  </div>
+  {% endif %}
+  <!-- container-scroller -->
+  <!-- plugins:js -->
+  <script src="{% static 'assets/vendors/js/vendor.bundle.base.js' %}"></script>
+  <!-- endinject -->
+  <!-- Plugin js for this page -->
+  <!-- End plugin js for this page -->
+  <!-- inject:js -->
+  <script src="{% static 'assets/js/off-canvas.js' %}"></script>
+  <script src="{% static 'assets/js/hoverable-collapse.js' %}"></script>
+  <script src="{% static 'assets/js/settings.js' %}"></script>
+  <script src="{% static 'assets/js/todolist.js' %}"></script>
+  <script src="{% static 'js/sistema.js' %}"></script>
+  <!-- endinject -->
+  <!-- Custom js for this page -->
+  <!-- End custom js for this page -->
+</body>
+
 </html>

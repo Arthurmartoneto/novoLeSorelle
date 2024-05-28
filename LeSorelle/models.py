@@ -26,10 +26,17 @@ class Reserva(models.Model):
         ('cancelado', 'Cancelado'),
     )
     
+    MODO_CHOICES = (
+        ('fresco', 'Fresco'),
+        ('congelado', 'Congelado'),
+        ('Aquecido', 'Aquecido'),
+    )
+    
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
     telefone = models.CharField(max_length=20)
     food = models.ForeignKey(Food, on_delete=models.CASCADE, related_name='reservas_principal')
     peso = models.CharField(max_length=10, null=True)
+    modo = models.CharField(max_length=10, choices=MODO_CHOICES, null=True)
     date = models.DateField(null=True)
     hora = models.CharField(null=True, max_length=10)    
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pendente')
@@ -41,9 +48,17 @@ class Reserva(models.Model):
         return self.usuario.email
     
 class PratoAdicional(models.Model):
+    MODO_CHOICES = (
+        ('fresco', 'Fresco'),
+        ('congelado', 'Congelado'),
+        ('aquecido', 'Aquecido'),
+    )
+    
     reserva = models.ForeignKey(Reserva, on_delete=models.CASCADE, related_name='pratos_adicionais_reserva')
     food = models.ForeignKey(Food, on_delete=models.CASCADE, related_name='pratos_adicionais_food')
     peso = models.CharField(max_length=10, null=True)
+    modo = models.CharField(max_length=10, choices=MODO_CHOICES, null=True)
+
     valor = models.DecimalField(max_digits=10, decimal_places=2, null=True)  # Adicionando campo valor
 
 
