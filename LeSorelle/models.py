@@ -72,3 +72,14 @@ class Notification(models.Model):
 
     def __str__(self):
         return self.subject   
+    
+    
+class Blog(models.Model):
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    link = models.URLField(max_length=200)
+    img = models.ImageField(upload_to='blog/')
+    description = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.description[:50]  # Retorna os primeiros 50 caracteres da descrição como representação do objeto

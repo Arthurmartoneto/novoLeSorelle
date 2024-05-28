@@ -336,7 +336,7 @@ $(document).ready(function() {
     // Função para limpar as notificações
     function clearNotifications() {
         // Altera o texto do botão para "Limpando..."
-        $("#clearNotificationsButton").text("Limpando...");
+        $("#clearNotificationsBtn").text("Limpando...");
         // Realiza a requisição AJAX para limpar as notificações
         $.ajax({
             url: "/clear-notifications/",
@@ -353,12 +353,14 @@ $(document).ready(function() {
                 // Definir o contador de notificações como zero
                 $("#notificationCount").text("0");
                 // Retorna o texto original do botão após a conclusão da limpeza
-                $("#clearNotificationsButton").text("Limpar Notificações");
+                $("#clearNotificationsBtn").text("Limpar Notificações");
+                // Atualiza a página
+                location.reload();
             },
             error: function(xhr, status, error) {
                 console.error("Erro ao limpar notificações:", error);
                 // Retorna o texto original do botão em caso de erro
-                $("#clearNotificationsButton").text("Limpar Notificações");
+                $("#clearNotificationsBtn").text("Limpar Notificações");
             }
         });
     }

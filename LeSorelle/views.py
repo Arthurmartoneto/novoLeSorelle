@@ -145,12 +145,15 @@ class dashboardView(LoginRequiredMixin, TemplateView):
         context['foods_modal'] = Food.objects.all()
         
         # Filtrar as reservas para hoje e ordená-las por data
-        reservas_abertas = Reserva.objects.filter(date__gte=date.today(), status__in=['pendente', 'em_preparo', 'pronto']).order_by('date')
-        reservas_finalizadas = Reserva.objects.filter(status='finalizado', date__gte=date.today()).order_by('date')
+        data_atual = timezone.now().date()  # Usando timezone.now() para obter a data e hora atuais
+        reservas_abertas = Reserva.objects.filter(date__gte=data_atual, status__in=['pendente', 'em_preparo', 'pronto']).order_by('date')
+        reservas_finalizadas = Reserva.objects.filter(status='finalizado', date__gte=data_atual).order_by('date')
+        reservas_canceladas = Reserva.objects.filter(status='cancelado', date__gte=data_atual).order_by('date')
         
         # Adicionar as reservas ao contexto
         context['reservas_abertas'] = reservas_abertas
         context['reservas_finalizadas'] = reservas_finalizadas
+        context['reservas_canceladas'] = reservas_canceladas
         
         # Calcular o preço total de cada reserva
         for reserva in reservas_abertas:
@@ -172,7 +175,7 @@ class dashboardView(LoginRequiredMixin, TemplateView):
             preco_adicionais = sum(prato_adicional.food.valor * Decimal(prato_adicional.peso.replace('kg', '').replace('g', '').strip()) / 1000 for prato_adicional in reserva_finalizada.pratos_adicionais_reserva.all())
             reserva_finalizada.preco_adicionais = preco_adicionais
             reserva_finalizada.preco_total = reserva_finalizada.preco_principal + reserva_finalizada.preco_adicionais
-
+                
         # Calcular a soma total do valor das reservas
         context['soma_total_preco'] = sum(reserva.preco_total for reserva in reservas_abertas) + sum(reserva_finalizada.preco_total for reserva_finalizada in reservas_finalizadas)
 
@@ -183,13 +186,13 @@ class dashboardView(LoginRequiredMixin, TemplateView):
 
         # Adicionar contagem de vendas por dia
         vendas_por_dia = {}
-        reservas_por_dia = Reserva.objects.values('date').annotate(total_vendas=Sum('food__valor'))
+        reservas_por_dia = Reserva.objects.filter(date__gte=data_atual).values('date').annotate(total_vendas=Sum('food__valor'))
         for reserva in reservas_por_dia:
             data_reserva = reserva['date']
             vendas_por_dia[data_reserva] = reserva['total_vendas']
         
         # Se não houver reservas para um determinado dia, definimos a contagem de vendas como 0
-        dias_sem_vendas = [day for day in (date.today() - timedelta(n) for n in range(7)) if day not in vendas_por_dia]
+        dias_sem_vendas = [day for day in (data_atual - timedelta(n) for n in range(7)) if day not in vendas_por_dia]
         for dia in dias_sem_vendas:
             vendas_por_dia[dia] = 0
         
