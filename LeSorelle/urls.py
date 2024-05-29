@@ -1,6 +1,6 @@
 from django.urls import path
 from django.contrib.auth.decorators import login_required
-from .views import IndexView, dashboardView, registerView, loginView, tablesView, reservasView, finalizadasView, editar_prato, excluir_prato, inativar_prato, ativar_prato, cancelar_reserva, marcar_em_preparo, marcar_pronto, marcar_finalizado, get_notifications, clear_notifications
+from .views import IndexView, dashboardView, registerView, loginView, tablesView, reservasView, finalizadasView, redefinicao, editar_prato, excluir_prato, inativar_prato, ativar_prato, cancelar_reserva, marcar_em_preparo, marcar_pronto, marcar_finalizado, get_notifications, clear_notifications
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -15,6 +15,7 @@ urlpatterns = [
     path('minhasreservas', login_required(reservasView.as_view()), name='minhasreservas'),
     
     path('register/', registerView.as_view(), name='register'),
+    path('redefinicao/', redefinicao.as_view(), name='redefinicao'),
     path('login/', loginView.as_view(), name='login'),
     
     

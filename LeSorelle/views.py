@@ -19,7 +19,7 @@ from django.http import JsonResponse, HttpResponseRedirect
 
 from .forms import ReservaForm, FoodForm
 
-from .models import Food, Reserva, PratoAdicional, Notification
+from .models import Food, Reserva, PratoAdicional, Notification, Blog
 
 from django.db.models.signals import post_save
 from django.db.models import Sum
@@ -37,6 +37,9 @@ class IndexView(TemplateView):
         context['user'] = self.request.user
         context['foods'] = Food.objects.filter(status='ativo')  # Passe todos os alimentos para o contexto
         context['pratos'] = Food.objects.filter(status='ativo')
+        blogs = Blog.objects.all()
+        context['blogs'] = blogs
+        context['no_posts'] = not blogs.exists()
         initial_data = {}
         if self.request.user.is_authenticated:
             initial_data['name_completo'] = self.request.user.get_full_name()
@@ -491,4 +494,31 @@ class registerView(TemplateView):
         user = User.objects.create_user(username=username, email=email, password=password, first_name=first_name, last_name=last_name)
 
         # Redireciona para a página de login após o registro
+        return redirect('login')
+
+
+class redefinicao(TemplateView):
+    template_name = "login/redefinicao.html"
+
+    def post(self, request, *args, **kwargs):
+        email = request.POST.get('email')
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+
+        # Verifica se o e-mail fornecido existe
+        user = User.objects.filter(email=email).first()
+        if not user:
+            messages.error(request, 'E-mail não encontrado. Por favor, tente novamente.')
+            return render(request, self.template_name)
+
+        # Verifica se as senhas coincidem
+        if new_password != confirm_password:
+            messages.error(request, 'As senhas não coincidem. Por favor, tente novamente.')
+            return render(request, self.template_name)
+
+        # Define a nova senha para o usuário
+        user.set_password(new_password)
+        user.save()
+
+        messages.success(request, 'Senha redefinida com sucesso.')
         return redirect('login')

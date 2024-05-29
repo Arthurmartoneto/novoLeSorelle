@@ -27,39 +27,28 @@
           <div class="content-wrapper full-page-wrapper d-flex align-items-center auth login-bg">
             <div class="card col-lg-4 mx-auto">
               <div class="card-body px-5 py-5">
-                <h3 class="card-title text-left mb-3">Login</h3>
-                <form method="post" action="{% url 'login' %}">
+                <h3 class="card-title text-left mb-3">Redefinição de Senha</h3>
+                <!-- login/password_reset.html -->
+                <form method="post">
                   {% csrf_token %}
                   <div class="form-group">
-                    <label for="username_or_email">Usuário ou E-mail*</label>
-                    <input type="text" id="username_or_email" name="username_or_email" class="form-control p_input" required />
+                    <label for="email">E-mail:</label>
+                    <input type="email" id="email" name="email" class="form-control" required />
                   </div>
                   <div class="form-group">
-                    <label for="password">Senha *</label>
-                    <div class="input-group">
-                      <input type="password" id="password" name="password" class="form-control p_input" required />
-                      <div class="input-group-append">
-                        <button class="btn btn-outline-secondary togglePasswordBtn" type="button" id="togglePassword">Mostrar</button>
-                      </div>
-                    </div>
+                    <label for="new_password">Nova Senha:</label>
+                    <input type="password" id="new_password" name="new_password" class="form-control" required />
                   </div>
-                  <div class="form-group d-flex align-items-center justify-content-between">
-                    <div class="form-check">
-                      <label class="form-check-label"><input type="checkbox" class="form-check-input" name="remember_me" />Remember me</label>
-                    </div>
-                    <a href="#" class="forgot-pass">Esqueceu a senha?</a>
+                  <div class="form-group">
+                    <label for="confirm_password">Confirme a Nova Senha:</label>
+                    <input type="password" id="confirm_password" name="confirm_password" class="form-control" required />
                   </div>
-                  <div class="text-center">
-                    <button type="submit" class="btn btn-primary btn-block enter-btn">Entrar</button>
-                    <p class="sign-up text-center">
-                      Ainda não tem conta?<a href="{% url 'register' %}"> Registro</a><br>
-                      Esqueceu a senha?<a href="{% url 'redefinicao' %}"> Redefinir</a>
-                    </p>
-                  </div>
-                  {% if error_message %}
-                    <div class="alert alert-danger mt-3" role="alert">{{ error_message }}</div>
-                  {% endif %}
+                  <button type="submit" class="btn btn-primary btn-block enter-btn">Redefinir Senha</button>
                 </form>
+                <p class="sign-up text-center">
+                  Ainda não tem conta?<a href="{% url 'register' %}"> Registro</a><br>
+                  Já tem conta?<a href="{% url 'login' %}"> Entrar</a><br>
+                </p>
               </div>
             </div>
           </div>
@@ -86,16 +75,16 @@
 </html>
 
 <script>
-  document.getElementById("togglePassword").addEventListener("click", function() {
-      var passwordInput = document.getElementById("password");
-      var toggleButton = document.getElementById("togglePassword");
-      
-      if (passwordInput.type === "password") {
-          passwordInput.type = "text";
-          toggleButton.textContent = "Ocultar";
-      } else {
-          passwordInput.type = "password";
-          toggleButton.textContent = "Mostrar";
-      }
-  });
+  document.getElementById('togglePassword').addEventListener('click', function () {
+    var passwordInput = document.getElementById('password')
+    var toggleButton = document.getElementById('togglePassword')
+  
+    if (passwordInput.type === 'password') {
+      passwordInput.type = 'text'
+      toggleButton.textContent = 'Ocultar'
+    } else {
+      passwordInput.type = 'password'
+      toggleButton.textContent = 'Mostrar'
+    }
+  })
 </script>
