@@ -1,5 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models.signals import post_init
+
+def set_email_unique(instance, **kwargs):
+    instance._meta.get_field('email')._unique = True
+
+post_init.connect(set_email_unique, sender=User)
 
 class Food(models.Model):
     STATUS_CHOICES = (

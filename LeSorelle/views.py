@@ -449,23 +449,23 @@ class loginView(TemplateView):
     template_name = "login/login.html"
     
     def post(self, request, *args, **kwargs):
-            email = request.POST.get('username_or_email')  # Alterado para 'username_or_email'
-            password = request.POST.get('password')
-            remember_me = request.POST.get('remember_me') == 'on'
+        email = request.POST.get('username_or_email')  # Agora capturamos o email
+        password = request.POST.get('password')
+        remember_me = request.POST.get('remember_me') == 'on'
 
-            # Autenticar usuário
-            user = authenticate(request, username=email, password=password)  # Alterado para 'username'
+        # Autenticar usuário com o email
+        user = authenticate(request, username=email, password=password)  # Passamos o email como username
 
-            if user is not None:
-                # Login bem-sucedido
-                login(request, user)
-                if remember_me:
-                    # Defina um tempo de expiração mais longo para o login
-                    request.session.set_expiry(604800)  # 1 semana em segundos
-                return redirect('index')  # Redireciona para a página de dashboard após o login
-            else:
-                # Login falhou
-                return render(request, self.template_name, {'error_message': 'E-mail ou senha inválidos'})  # Ajustado a mensagem de erro
+        if user is not None:
+            # Login bem-sucedido
+            login(request, user)
+            if remember_me:
+                # Defina um tempo de expiração mais longo para o login
+                request.session.set_expiry(604800)  # 1 semana em segundos
+            return redirect('index')  # Redireciona para a página de dashboard após o login
+        else:
+            # Login falhou
+            return render(request, self.template_name, {'error_message': 'E-mail ou senha inválidos'})
     
 
 class registerView(TemplateView):
@@ -483,12 +483,12 @@ class registerView(TemplateView):
         if password != confirm_password:
             return render(request, self.template_name, {'error_message': 'As senhas não coincidem'})
 
+        # Verifica se o e-mail já está cadastrado
+        if User.objects.filter(email=email).exists():
+            return render(request, self.template_name, {'error_message': 'Email já cadastrado. Por favor, escolha outro.'})
+
         # Cria um novo usuário com os detalhes fornecidos
         user = User.objects.create_user(username=username, email=email, password=password, first_name=first_name, last_name=last_name)
-
-        # Concede a permissão de adicionar notificação ao novo usuário
-        permission = Permission.objects.get(codename='add_notification')
-        user.user_permissions.add(permission)
 
         # Redireciona para a página de login após o registro
         return redirect('login')
