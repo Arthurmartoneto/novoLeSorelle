@@ -55,6 +55,12 @@
             </a>
           </li>
           <li class="nav-item menu-items">
+            <a class="nav-link" href="{% url 'blog' %}">
+              <span class="menu-icon"><i class="mdi mdi-newspaper"></i></span>
+              <span class="menu-title">Blog</span>
+            </a>
+          </li>
+          <li class="nav-item menu-items">
             <a class="nav-link" data-toggle="collapse" href="#auth" aria-expanded="false" aria-controls="auth">
               <span class="menu-icon"><i class="mdi mdi-security"></i></span>
               <span class="menu-title">Página de usuários</span>
@@ -99,12 +105,40 @@
 
             <!-- Nav Direita -->
             <ul class="navbar-nav navbar-nav-right">
-              <!-- Adicionar -->
-              <li class="nav-item dropdown d-none d-lg-block">
-                <button type="button" class="nav-link btn btn-success create-new-button" data-toggle="modal"
-                  data-target="#novoPratoModal">+ Adicionar Novo Prato</button>
+              <!-- Adicionar Dropdown -->
+              <li class="nav-item dropdown">
+                <button class="nav-link btn btn-success" type="button" id="adicionarDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <div class="navbar-profile">
+                    <p class="mb-0 d-none d-sm-block navbar-profile-name">Adicionar</p>
+                    <i class="mdi mdi-menu-down d-none d-sm-block"></i>
+                  </div>
+                </button>
+                <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="adicionarDropdown">
+                  <h6 class="p-3 mb-0">Adicionar</h6>
+                  <div class="dropdown-divider"></div>
+                  <a href="#" class="dropdown-item preview-item" data-toggle="modal" data-target="#novoPratoModal">
+                    <div class="preview-thumbnail">
+                      <div class="preview-icon bg-dark rounded-circle">
+                        <i class="mdi mdi-food text-success"></i>
+                      </div>
+                    </div>
+                    <div class="preview-item-content">
+                      <p class="preview-subject mb-1">Novo Prato</p>
+                    </div>
+                  </a>
+                  <a href="#" class="dropdown-item preview-item" data-toggle="modal" data-target="#adicionarBlogModal">
+                    <div class="preview-thumbnail">
+                      <div class="preview-icon bg-dark rounded-circle">
+                        <i class="mdi mdi-newspaper text-info"></i>
+                      </div>
+                    </div>
+                    <div class="preview-item-content">
+                      <p class="preview-subject mb-1">Novo Blog</p>
+                    </div>
+                  </a>
+                </div>
               </li>
-              <!-- Adicionar -->
+              <!-- Adicionar Dropdown -->
 
               <!-- Notifications -->
               <audio id="notificationSound" src="{% static 'songs/ifood.mp3' %}" preload="auto"></audio>
@@ -566,7 +600,7 @@
       <!-- Direita -->
     </div>
 
-    <!-- Modal Adicionar -->
+    <!-- Modal Adicionar Prato-->
     <div class="modal fade" id="novoPratoModal" tabindex="-1" role="dialog" aria-labelledby="novoPratoModalLabel"
       aria-hidden="true">
       <div class="modal-dialog" role="document">
@@ -582,7 +616,7 @@
               {% csrf_token %}
               {{ form.as_p }}
               <div class="modal-footer">
-                <button type="submit" id="adicionarbtn" class="btn btn-primary">Adicionar</button>
+                <button type="submit" class="btn btn-primary" name="food_submit">Adicionar</button>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
               </div>
             </form>
@@ -590,59 +624,31 @@
         </div>
       </div>
     </div>
-    <!-- Modal Adicionar -->
+    <!-- Modal Adicionar Prato-->
 
-    <!-- Modal Todos Pratos -->
-    <div class="modal fade" id="modalPratos" tabindex="-1" role="dialog" aria-labelledby="modalPratosLabel"
-      aria-hidden="true">
-      <div class="modal-dialog modal-lg" role="document">
+    <!-- Modal Adicionar Blog -->
+    <div class="modal fade" id="adicionarBlogModal" tabindex="-1" role="dialog" aria-labelledby="adicionarBlogModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="modalPratosLabel">Pratos Adicionados</h5>
-            <button type="button" style="color: white;" class="close" data-dismiss="modal" aria-label="Close"><span
-                aria-hidden="true">&times;</span></button>
+            <h5 class="modal-title" id="adicionarBlogModalLabel">Novo Blog</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+              <span aria-hidden="true">&times;</span>
+            </button>
           </div>
           <div class="modal-body">
-            {% if foods_modal %}
-            <div class="table-responsive">
-              <table class="table table-hover" id="modalPratosTable">
-                <thead>
-                  <tr>
-                    <th>Imagem</th>
-                    <th>Nome</th>
-                    <th>Descrição</th>
-                    <th>Valor Kg</th>
-                    <th>status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for food in foods_modal %}
-                  <tr class="prato-link" data-id="{{ food.id }}" data-nome="{{ food.name_food }}"
-                    data-descricao="{{ food.descricao }}" data-valor="{{ food.valor }}" data-imagem="{{ food.img.url }}"
-                    data-status="{{ food.status }}">
-                    <td>
-                      <img src="{{ food.img.url }}" class="rounded-sm" style="width: 100px; height: auto;" />
-                    </td>
-                    <td>{{ food.name_food }}</td>
-                    <td>{{ food.descricao }}</td>
-                    <td>{{ food.valor }}Kg</td>
-                    <td class="{% if food.status == 'ativo' %}text-success{% else %}text-danger{% endif %}">{{ food.status }}</td>
-                  </tr>
-                  {% endfor %}
-                </tbody>
-              </table>
-            </div>
-            {% else %}
-            <div class="alert alert-info m-2" role="alert">Não há pratos adicionados.</div>
-            {% endif %}
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+            <form method="post" enctype="multipart/form-data">
+              {% csrf_token %}
+              {{ blog_form.as_p }}
+              <button type="submit" class="btn btn-primary" name="blog_submit">Adicionar</button>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+            </form>
           </div>
         </div>
       </div>
     </div>
-    <!-- Modal Todos Pratos -->
+    <!-- Modal Adicionar Blog -->
+
 
     <!-- Modal de Todas as Reservas -->
     <div class="modal fade" id="modalReservas" tabindex="-1" role="dialog" aria-labelledby="modalReservasLabel">
@@ -706,6 +712,59 @@
       </div>
     </div>
     <!-- Modal de Todas as Reservas -->
+
+        
+    <!-- Modal Todos Pratos -->
+    <div class="modal fade" id="modalPratos" tabindex="-1" role="dialog" aria-labelledby="modalPratosLabel"
+      aria-hidden="true">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalPratosLabel">Pratos Adicionados</h5>
+            <button type="button" style="color: white;" class="close" data-dismiss="modal" aria-label="Close"><span
+                aria-hidden="true">&times;</span></button>
+          </div>
+          <div class="modal-body">
+            {% if foods_modal %}
+            <div class="table-responsive">
+              <table class="table table-hover" id="modalPratosTable">
+                <thead>
+                  <tr>
+                    <th>Imagem</th>
+                    <th>Nome</th>
+                    <th>Descrição</th>
+                    <th>Valor Kg</th>
+                    <th>status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for food in foods_modal %}
+                  <tr class="prato-link" data-id="{{ food.id }}" data-nome="{{ food.name_food }}"
+                    data-descricao="{{ food.descricao }}" data-valor="{{ food.valor }}" data-imagem="{{ food.img.url }}"
+                    data-status="{{ food.status }}">
+                    <td>
+                      <img src="{{ food.img.url }}" class="rounded-sm" style="width: 100px; height: auto;" />
+                    </td>
+                    <td>{{ food.name_food }}</td>
+                    <td>{{ food.descricao }}</td>
+                    <td>{{ food.valor }}Kg</td>
+                    <td class="{% if food.status == 'ativo' %}text-success{% else %}text-danger{% endif %}">{{ food.status }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+            {% else %}
+            <div class="alert alert-info m-2" role="alert">Não há pratos adicionados.</div>
+            {% endif %}
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Modal Todos Pratos -->
 
     <!-- Modal Detalhes do Prato -->
     <div class="modal fade" id="modalPratoDetalhes">

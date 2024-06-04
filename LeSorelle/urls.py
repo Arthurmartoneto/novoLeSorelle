@@ -1,6 +1,6 @@
 from django.urls import path
 from django.contrib.auth.decorators import login_required
-from .views import IndexView, dashboardView, registerView, loginView, tablesView, reservasView, finalizadasView, redefinicao, editar_prato, excluir_prato, inativar_prato, ativar_prato, cancelar_reserva, marcar_em_preparo, marcar_pronto, marcar_finalizado, get_notifications, clear_notifications
+from .views import IndexView, dashboardView, registerView, loginView, tablesView, reservasView, finalizadasView, redefinicao, blogView, editar_prato, excluir_prato, inativar_prato, ativar_prato, cancelar_reserva, marcar_em_preparo, marcar_pronto, marcar_finalizado, get_notifications, clear_notifications
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -11,13 +11,13 @@ urlpatterns = [
     path('dashboard/', login_required(dashboardView.as_view()), name='dashboard'),
     path('dashboard/tables', login_required(tablesView.as_view()), name='tables'),
     path('dashboard/finalizadas', login_required(finalizadasView.as_view()), name='finalizadas'),
+    path('dashboard/blog', login_required(blogView.as_view()), name='blog'),
     
     path('minhasreservas', login_required(reservasView.as_view()), name='minhasreservas'),
     
     path('register/', registerView.as_view(), name='register'),
     path('redefinicao/', redefinicao.as_view(), name='redefinicao'),
-    path('login/', loginView.as_view(), name='login'),
-    
+    path('login/', loginView.as_view(), name='login'),    
     
     path('excluir_prato/<int:prato_id>/', excluir_prato, name='excluir_prato'),
     path('editar_prato/<int:prato_id>/', editar_prato, name='editar_prato'),

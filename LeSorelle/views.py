@@ -17,7 +17,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 
 from django.http import JsonResponse, HttpResponseRedirect
 
-from .forms import ReservaForm, FoodForm
+from .forms import ReservaForm, FoodForm, BlogForm
 
 from .models import Food, Reserva, PratoAdicional, Notification, Blog
 
@@ -79,13 +79,7 @@ class IndexView(TemplateView):
 
                 nome_prato = Food.objects.get(pk=nome_prato_id)
                 valor_prato = nome_prato.valor
-                
-                # Imprimir valores dos pratos adicionais
-                print(f"ID Prato Adicional {i}: {nome_prato_id}")
-                print(f"Peso do Prato Adicional {i}: {peso_prato}")
-                print(f"Modo do Prato Adicional {i}: {modo_prato}")  # Adicione essa linha para imprimir o modo do prato adicional
-                print(f"Valor do Prato Adicional {i}: {valor_prato}")
-                
+                                
                 # Cria um prato adicional associado à reserva principal
                 PratoAdicional.objects.create(reserva=reserva_instance, food=nome_prato, peso=peso_prato, modo=modo_prato, valor=valor_prato)
                 
@@ -219,18 +213,36 @@ class dashboardView(LoginRequiredMixin, TemplateView):
 
         # Adicionar o formulário de adição de pratos ao contexto
         context['form'] = FoodForm()
+        
+        context['blog_form'] = BlogForm()
 
         return context
 
     def post(self, request, *args, **kwargs):
-        form = FoodForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('dashboard')
-        else:
-            context = self.get_context_data()
-            context['form'] = form
-            return render(request, self.template_name, context)
+        if 'food_submit' in request.POST:  # Se o formulário de Food foi submetido
+            food_form = FoodForm(request.POST, request.FILES)
+            if food_form.is_valid():
+                food_form.save()
+                return redirect('dashboard')
+            else:
+                context = self.get_context_data()
+                context['form'] = food_form
+                return render(request, self.template_name, context)
+        elif 'blog_submit' in request.POST:  # Se o formulário de Blog foi submetido
+            blog_form = BlogForm(request.POST, request.FILES)
+            if blog_form.is_valid():
+                blog = blog_form.save(commit=False)
+                blog.usuario = request.user
+                blog.save()
+                return redirect('blog')
+            else:
+                context = self.get_context_data()
+                context['blog_form'] = blog_form
+                return render(request, self.template_name, context)
+        
+        # Se nenhum formulário foi submetido ou nenhum dos ramos anteriores foi acionado,
+        # renderize a página com o contexto padrão
+        return render(request, self.template_name, self.get_context_data())
         
 
 @login_required        
@@ -320,6 +332,43 @@ def marcar_finalizado(request, reserva_id):
         reserva.save()
         return JsonResponse({'success': True})
     return JsonResponse({'success': False})
+
+
+class blogView(TemplateView):
+    template_name = "blog.html"
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['blogs'] = Blog.objects.all()  # Recupera todos os objetos do modelo Blog
+        context['blog_form'] = BlogForm()  # Adiciona o formulário de adição de blog ao contexto
+        context['form'] = FoodForm()  # Adiciona o formulário de adição de prato ao contexto
+        return context
+    
+    def post(self, request, *args, **kwargs):
+        if 'food_submit' in request.POST:  # Se o formulário de Food foi submetido
+            food_form = FoodForm(request.POST, request.FILES)
+            if food_form.is_valid():
+                food_form.save()
+                return redirect('dashboard')
+            else:
+                context = self.get_context_data()
+                context['form'] = food_form
+                return render(request, self.template_name, context)
+        elif 'blog_submit' in request.POST:  # Se o formulário de Blog foi submetido
+            blog_form = BlogForm(request.POST, request.FILES)
+            if blog_form.is_valid():
+                blog = blog_form.save(commit=False)
+                blog.usuario = request.user
+                blog.save()
+                return redirect('blog')
+            else:
+                context = self.get_context_data()
+                context['blog_form'] = blog_form
+                return render(request, self.template_name, context)
+        
+        # Se nenhum formulário foi submetido ou nenhum dos ramos anteriores foi acionado,
+        # renderize a página com o contexto padrão
+        return render(request, self.template_name, self.get_context_data())
 
 
 class finalizadasView(TemplateView):

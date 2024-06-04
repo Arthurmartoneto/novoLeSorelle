@@ -612,7 +612,7 @@
                         <div class="blog-img-box">
                           <img src="{{ blog.img.url }}" alt="" />
                           <div class="overlay">
-                            <a href="{{ blog.link }}"><i class="fa fa-link" aria-hidden="true"></i></a>
+                            <a href="{{ blog.link }}" target="_blank"><i class="fa fa-link" aria-hidden="true"></i></a>
                           </div>
                         </div>
                         <div class="blog-dit">
@@ -620,7 +620,7 @@
                             <span>{{ blog.created_at|date:'d F, Y' }}</span>
                           </p>
                           <h2>{{ blog.description }}</h2>
-                          <h5>BY {{ blog.usuario.username }}</h5>
+                          <h5>Criado por {{ blog.usuario.first_name }} {{ blog.usuario.last_name }}</h5>
                         </div>
                       </div>
                     </div>

@@ -1,5 +1,5 @@
 from django import forms
-from .models import Reserva, Food
+from .models import Reserva, Food, Blog
 
 class ReservaForm(forms.ModelForm):
     PESO_CHOICES = [
@@ -49,5 +49,16 @@ class FoodForm(forms.ModelForm):
             'name_food': forms.TextInput(attrs={'class': 'form-control'}),
             'descricao': forms.Textarea(attrs={'class': 'form-control'}),
             'valor': forms.NumberInput(attrs={'class': 'form-control'}),
+            'img': forms.ClearableFileInput(attrs={'class': 'form-control-file'}),
+        }
+        
+        
+class BlogForm(forms.ModelForm):
+    class Meta:
+        model = Blog
+        fields = ['link', 'description', 'img']
+        widgets = {
+            'description': forms.Textarea(attrs={'class': 'form-control'}),
+            'link': forms.URLInput(attrs={'class': 'form-control'}),
             'img': forms.ClearableFileInput(attrs={'class': 'form-control-file'}),
         }
