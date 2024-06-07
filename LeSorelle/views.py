@@ -337,6 +337,11 @@ def marcar_finalizado(request, reserva_id):
 class blogView(TemplateView):
     template_name = "blog.html"
     
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.groups.filter(name='Dashboard').exists():
+            return redirect_to_login(request.get_full_path(), self.login_url)
+        return super().dispatch(request, *args, **kwargs)
+    
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['blogs'] = Blog.objects.all()  # Recupera todos os objetos do modelo Blog
@@ -369,10 +374,18 @@ class blogView(TemplateView):
         # Se nenhum formulário foi submetido ou nenhum dos ramos anteriores foi acionado,
         # renderize a página com o contexto padrão
         return render(request, self.template_name, self.get_context_data())
+    
+
+
 
 
 class finalizadasView(TemplateView):
     template_name = "finalizadas.html"
+    
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.groups.filter(name='Dashboard').exists():
+            return redirect_to_login(request.get_full_path(), self.login_url)
+        return super().dispatch(request, *args, **kwargs)
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

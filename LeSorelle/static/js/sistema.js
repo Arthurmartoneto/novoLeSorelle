@@ -60,17 +60,6 @@ $(document).ready(function() {
     });
   });
 
-  $(document).ready(function() {
-      // Evento de clique para o botão de cancelar entrega
-      $('#cancelarEntrega').click(function() {
-          // Coloque aqui o código para cancelar a entrega
-          // Por exemplo, você pode enviar uma requisição AJAX para o servidor para cancelar a entrega
-          // Ou exibir uma mensagem de confirmação ao usuário e tomar a ação apropriada
-          // Neste exemplo, apenas fecharemos o modal
-          $('#myModal').modal('hide');
-      });
-  });
-
 
 // Função para desativar o botão após o envio do formulário
 function disableButton() {
@@ -397,4 +386,99 @@ $(document).ready(function() {
 // Impedir que o dropdown desapareça ao clicar nele
 $(document).on('click', '#notificationList', function (e) {
     e.stopPropagation();
+});
+
+
+// Blog ----------------------------------------------------------------------
+$(document).ready(function() {
+    // Evento de clique em uma linha da tabela
+    $('.blog-link').click(function() {
+        // Obter os dados do blog da linha clicada
+        var id = $(this).data('id');
+        var descricao = $(this).data('descricao');
+        var link = $(this).data('link');
+        var usuario = $(this).data('usuario');
+        var imagem = $(this).data('imagem');
+
+        // Preencher o modal de detalhes com os dados do blog
+        $('#modalId').text(id); // Atualizar o valor do modalId
+        $('#modalDescricao').text(descricao);
+        $('#modalLink').attr('href', link);
+        $('#modalUsuario').text(usuario);
+        $('#modalImagemBlog').attr('src', imagem);
+
+        // Abrir o modal de detalhes do blog
+        $('#modalBlogDetalhes').modal('show');
+    });
+
+    // Evento de clique no botão de editar no modal de detalhes do blog
+    $('#editarBlog').click(function() {
+        // Obter os dados do blog do modal de detalhes
+        var id = $('#modalId').text(); // Agora vai pegar o ID do blog corretamente
+        var descricao = $('#modalDescricao').text();
+        var link = $('#modalLink').attr('href');
+        var usuario = $('#modalUsuario').text();
+        var imagem = $('#modalImagemBlog').attr('src'); // Obter a URL da imagem do modal de detalhes
+        
+        // Preencher o modal de edição com os dados do blog
+        $('#editDescricao').val(descricao);
+        $('#editLink').val(link);
+        $('#editUsuario').val(usuario);
+        $('#previewImagem').attr('src', imagem); // Exibir a mesma imagem no modal de edição
+        $('#modalBlogDetalhes').modal('hide');
+        $('#modalBlogEdicao').modal('show');
+    });
+
+    $('#salvarEdicaoBlog').click(function() {
+        // Obter os dados do formulário de edição
+        var id = $('#modalId').text();
+        var descricao = $('#editDescricao').val();
+        var link = $('#editLink').val();
+        var usuario = $('#editUsuario').val();
+        var imagem = $('#editImagem')[0].files[0]; // Para enviar arquivos, pegamos o primeiro elemento do array de arquivos
+        
+        console.log("Dados do formulário de edição:");
+        console.log("ID:", id);
+        console.log("Descrição:", descricao);
+        console.log("Link:", link);
+        console.log("Usuário:", usuario);
+        console.log("Imagem:", imagem);
+    
+        // Criar um objeto FormData para enviar os dados do formulário via AJAX
+        var formData = new FormData();
+        formData.append('id', id);
+        formData.append('descricao', descricao);
+        formData.append('link', link);
+        formData.append('usuario', usuario);
+        formData.append('imagem', imagem);
+    
+        var csrftoken = $('input[name=csrfmiddlewaretoken]').val();
+        
+        // Enviar os dados do formulário via AJAX
+        $.ajax({
+            headers: {
+                'X-CSRFToken': csrftoken // inclui o token CSRF como cabeçalho na requisição
+            },
+            url: '/editar_blog/' + id + '/', // URL da sua view Django
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                console.log(response);
+                if (response.status === 'success') {
+                    // Sucesso: recarregar a página
+                    location.reload();
+                } else {
+                    // Erro: exibir mensagem de erro
+                    alert('Erro ao salvar: ' + response.errors);
+                }
+            },
+            error: function(xhr, status, error) {
+                // Erro na requisição AJAX
+                console.error(xhr.responseText);
+                alert('Erro na requisição AJAX: ' + error);
+            }
+        });
+    });
 });
