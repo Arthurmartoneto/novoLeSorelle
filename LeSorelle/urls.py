@@ -30,5 +30,7 @@ urlpatterns = [
     path('marcar_finalizado/<int:reserva_id>/', views.marcar_finalizado, name='marcar_finalizado'),
     path('get-notifications/', views.get_notifications, name='get_notifications'),
     path('clear-notifications/', views.clear_notifications, name='clear_notifications'),
+    
+    path('excluir_blog/<int:id>/', views.excluir_blog, name='excluir_blog'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

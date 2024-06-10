@@ -312,9 +312,12 @@
                 <!-- Botões de Ação -->
                 <div class="col-md-5">
                   <div class="d-flex flex-column">
-                    <button type="button" class="btn btn-primary mt-3 mb-3" id="editarBlog">Editar</button>
-                    <div class="dropdown-divider"></div>
-                    <button type="button" class="btn btn-danger mb-3" id="excluirBlog">Excluir</button>
+                    <input type="hidden" id="csrf_token" value="{{ csrf_token }}">
+                    <button type="button" class="btn btn-danger mb-3" id="excluirBlog">
+                      <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span>
+                      <span class="ml-2" style="display: none;">Aguarde...</span>
+                      <span>Excluir</span>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -329,54 +332,6 @@
       </div>
       <!-- Modal Detalhes do Blog -->
 
-      <!-- Modal Edição do Blog -->
-      <div class="modal fade" id="modalBlogEdicao">
-        <div class="modal-dialog modal-lg">
-          <div class="modal-content">
-            <!-- Cabeçalho do Modal -->
-            <div class="modal-header">
-              <h5 class="modal-title">Editar Blog</h5>
-              <button type="button" style="color: white;" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            </div>
-
-            <!-- Corpo do Modal -->
-            <div class="modal-body">
-              <form id="formEdicaoBlog" method="POST" enctype="multipart/form-data">
-                {% csrf_token %}
-                <p style="display: none;">
-                  <strong>id</strong> <span id="modalId"></span>
-                </p>
-                <div class="form-group">
-                  <label for="editDescricao">Descrição:</label>
-                  <input type="text" class="form-control" id="editDescricao" name="editDescricao" />
-                </div>
-                <div class="form-group">
-                  <label for="editLink">Link:</label>
-                  <input type="url" class="form-control" id="editLink" name="editLink" />
-                </div>
-                <div class="form-group">
-                  <label for="editUsuario">Usuário:</label>
-                  <input type="text" class="form-control" id="editUsuario" name="editUsuario"/>
-                </div>
-                <div class="form-group">
-                  <label for="editImagem">Imagem:</label>
-                  <input type="file" class="form-control-file" id="editImagem" name="editImagem" />
-                </div>
-                <div class="form-group">
-                  <img id="previewImagem" src="" class="img-fluid" alt="Pré-visualização da imagem" />
-                </div>
-              </form>
-            </div>
-
-            <!-- Footer do Modal -->
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-              <button type="button" class="btn btn-primary" id="salvarEdicaoBlog">Salvar</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- Modal Edição do Blog -->
     {% endif %}
 
     <!-- plugins:js -->

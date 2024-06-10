@@ -375,9 +375,22 @@ class blogView(TemplateView):
         # renderize a página com o contexto padrão
         return render(request, self.template_name, self.get_context_data())
     
+@login_required  
+def excluir_blog(request, id):
+    blog = get_object_or_404(Blog, pk=id)
 
-
-
+    if request.method == "POST":
+        try:
+            blog.delete()
+            print("Blog excluído com sucesso!")
+            return JsonResponse({'status': 'success'}, status=200)
+        except Exception as e:
+            print("Erro ao excluir o blog:", e)
+            return JsonResponse({'status': 'error'}, status=500)
+    else:
+        print("Método de requisição inválido.")
+        return JsonResponse({'status': 'fail'}, status=400)
+    
 
 class finalizadasView(TemplateView):
     template_name = "finalizadas.html"
@@ -431,8 +444,14 @@ class finalizadasView(TemplateView):
     
 class tablesView(TemplateView):
     template_name = "tables/tables.html"
-    
 
+    def dispatch(self, request, *args, **kwargs):
+            if not request.user.groups.filter(name='Dashboard').exists():
+                return redirect_to_login(request.get_full_path(), self.login_url)
+            return super().dispatch(request, *args, **kwargs)
+
+    
+    
 class reservasView(TemplateView):
     template_name = "minhasreservas.html"
 
