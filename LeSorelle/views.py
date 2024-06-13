@@ -54,13 +54,12 @@ class IndexView(TemplateView):
         return context
     
     def post(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            # Se o usuário não estiver autenticado, redirecione para a página de login
+            return redirect('register')  # ajuste 'login' para o nome da sua view de login
+        
         form = ReservaForm(request.POST)
         if form.is_valid():
-            telefone = form.cleaned_data['telefone']
-            date = form.cleaned_data['date']
-            hora = form.cleaned_data['hora']
-            food_id = form.cleaned_data['food']
-            peso = form.cleaned_data['peso']
             modo = form.cleaned_data['modo']  # Captura o modo selecionado no formulário
 
             reserva_instance = form.save(commit=False)
@@ -450,8 +449,7 @@ class tablesView(TemplateView):
                 return redirect_to_login(request.get_full_path(), self.login_url)
             return super().dispatch(request, *args, **kwargs)
 
-    
-    
+       
 class reservasView(TemplateView):
     template_name = "minhasreservas.html"
 
@@ -526,6 +524,12 @@ def cancelar_reserva(request, reserva_id):
         reserva = get_object_or_404(Reserva, id=reserva_id, usuario=request.user)
         reserva.status = 'cancelado'
         reserva.save()
+
+        # Criar notificação
+        notification_subject = "RESERVA CANCELADA"
+        notification_message = f"A reserva {reserva.id} foi CANCELADA."
+        Notification.objects.create(subject=notification_subject, message=notification_message)
+
         return JsonResponse({'success': True})
     return JsonResponse({'success': False})
 

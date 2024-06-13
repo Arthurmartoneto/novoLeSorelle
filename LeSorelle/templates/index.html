@@ -660,7 +660,7 @@
               </p>
 
               <!-- form -->
-              <form id="reserva-form" class="reservations-box" method="post">
+              <form id="reserva-form" class="reservations-box" method="post" action="{% url 'index' %}">
                 {% csrf_token %}
 
                 <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12">

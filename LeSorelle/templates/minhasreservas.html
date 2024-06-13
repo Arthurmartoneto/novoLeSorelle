@@ -130,7 +130,7 @@
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 grid-margin stretch-card">
               <div class="card">
                 <div class="card-body">
-                  <h4 class="card-title">Reserva #{{ forloop.counter }}</h4>
+                  <h4 class="card-title">Reserva #{{ reserva.id }}</h4>
                   <div class="row">
                     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                       <!-- Prato Principal -->
@@ -213,65 +213,65 @@
           <h3>Reservas Passadas</h3>
           <div class="row">
             {% for reserva in reservas_passadas %}
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 grid-margin stretch-card">
-              <div class="card">
-                <div class="card-body">
-                  <h4 class="card-title">Reserva #{{ forloop.counter }}</h4>
-                  <div class="row">
-                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                      <!-- Prato Principal -->
-                      <p>Produto: {{ reserva.food.name_food }}</p>
-                      <p>Peso (kg): {{ reserva.peso }}</p>
-                      <p>Valor (kg): R${{ reserva.food.valor|floatformat:'2' }}</p>
-                      <p>Modo Preparo: {{ reserva.modo }}</p>
-                      <!-- Prato Principal -->
-                      {% if reserva.pratos_adicionais_reserva.all %}
-                      {% for prato_adicional in reserva.pratos_adicionais_reserva.all %}
-                      <div class="dropdown-divider"></div>
-                      <p>Produto adicional: {{ prato_adicional.food.name_food }}</p>
-                      <p>Peso (kg): {{ prato_adicional.peso }}</p>
-                      <p>Valor (kg): R${{ prato_adicional.valor|floatformat:'2' }}</p>
-                      <p>Peso (kg): {{ prato_adicional.peso }}</p>
-                      <p>Modo de Preparo: {{ prato_adicional.modo }} </p>
-                      {% endfor %}
-                      {% endif %}
-                    </div>
-                    <!-- Exibir pratos adicionais -->
-                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
-                      <h6>Dia e Horário para Retirada:</h6>
-                      <br />
-                      <p>Data: {{ reserva.date }}</p>
-                      <p>Horário: {{ reserva.hora }}</p>
-                    </div>
-                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
-                      <!-- Soma dos preços convertidos -->
-                      <p>Total da Reserva:</p>
-                      <h3>R${{ reserva.preco_total|floatformat:'2' }}</h3>
-                      <br />
-                      <label style="font-size: 17px;" class="badge 
-                      {% if reserva.status == 'em_preparo' %} badge-info
-
-                      {% elif reserva.status == 'pendente' %} badge-warning
-
-                      {% elif reserva.status == 'pronto' %} badge-success
-
-                      {% elif reserva.status == 'finalizado' %} badge-info
-
-                      {% elif reserva.status == 'cancelado' %} badge-danger
-
-                      {% endif %}">
-                        {% if reserva.status == 'em_preparo' %}
-                        Em Preparo
-                        {% else %}
-                        {{ reserva.get_status_display }}
+              <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                    <h4 class="card-title">Reserva #{{ reserva.id }}</h4>
+                    <div class="row">
+                      <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <!-- Prato Principal -->
+                        <p>Produto: {{ reserva.food.name_food }}</p>
+                        <p>Peso (kg): {{ reserva.peso }}</p>
+                        <p>Valor (kg): R${{ reserva.food.valor|floatformat:'2' }}</p>
+                        <p>Modo Preparo: {{ reserva.modo }}</p>
+                        <!-- Prato Principal -->
+                        {% if reserva.pratos_adicionais_reserva.all %}
+                        {% for prato_adicional in reserva.pratos_adicionais_reserva.all %}
+                        <div class="dropdown-divider"></div>
+                        <p>Produto adicional: {{ prato_adicional.food.name_food }}</p>
+                        <p>Peso (kg): {{ prato_adicional.peso }}</p>
+                        <p>Valor (kg): R${{ prato_adicional.valor|floatformat:'2' }}</p>
+                        <p>Peso (kg): {{ prato_adicional.peso }}</p>
+                        <p>Modo de Preparo: {{ prato_adicional.modo }} </p>
+                        {% endfor %}
                         {% endif %}
-                      </label>
-                      <br />
+                      </div>
+                      <!-- Exibir pratos adicionais -->
+                      <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                        <h6>Dia e Horário para Retirada:</h6>
+                        <br />
+                        <p>Data: {{ reserva.date }}</p>
+                        <p>Horário: {{ reserva.hora }}</p>
+                      </div>
+                      <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                        <!-- Soma dos preços convertidos -->
+                        <p>Total da Reserva:</p>
+                        <h3>R${{ reserva.preco_total|floatformat:'2' }}</h3>
+                        <br />
+                        <label style="font-size: 17px;" class="badge 
+                        {% if reserva.status == 'em_preparo' %} badge-info
+
+                        {% elif reserva.status == 'pendente' %} badge-warning
+
+                        {% elif reserva.status == 'pronto' %} badge-success
+
+                        {% elif reserva.status == 'finalizado' %} badge-info
+
+                        {% elif reserva.status == 'cancelado' %} badge-danger
+
+                        {% endif %}">
+                          {% if reserva.status == 'em_preparo' %}
+                          Em Preparo
+                          {% else %}
+                          {{ reserva.get_status_display }}
+                          {% endif %}
+                        </label>
+                        <br />
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
             {% endfor %}
           </div>
         </div>
